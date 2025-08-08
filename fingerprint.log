@@ -4109,3 +4109,194 @@ Call log:
 2025-08-08 14:44:46,289 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
 2025-08-08 14:44:47,482 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
 2025-08-08 14:45:03,834 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 14:54:23,586 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 14:54:23,799 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 14:54:24,821 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 14:54:26,066 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 14:54:32,050 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 14:54:38,696 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 14:54:44,476 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 14:54:48,519 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 14:54:49,062 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 14:55:02,819 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 14:55:09,631 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 14:55:10,968 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 14:55:18,237 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 14:55:22,308 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 14:55:28,675 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 14:55:32,729 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 14:55:33,329 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 14:55:39,468 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 14:56:15,672 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 14:56:19,729 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 14:56:28,701 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 14:56:32,754 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 14:56:33,381 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 14:56:43,037 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 14:56:50,305 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 14:56:51,618 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 14:56:59,324 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 14:56:59,333 - Attempting to click element with bbox_id: 20
+2025-08-08 14:56:59,354 - Attempting native click...
+2025-08-08 14:57:04,359 - Native click failed for bbox_id 20: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"20\"]")
+. Falling back.
+2025-08-08 14:57:04,359 - Attempting human-like click...
+2025-08-08 14:57:06,709 - Human-like fallback click on bbox_id 20 successful.
+2025-08-08 14:57:10,745 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 14:57:17,954 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 14:57:21,995 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 14:57:22,304 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 14:57:31,571 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 14:57:31,581 - Attempting to click element with bbox_id: 25
+2025-08-08 14:57:31,610 - Attempting native click...
+2025-08-08 14:57:36,615 - Native click failed for bbox_id 25: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"25\"]")
+. Falling back.
+2025-08-08 14:57:36,615 - Attempting human-like click...
+2025-08-08 14:57:38,531 - Detected a new tab. Switched to tab index 3.
+2025-08-08 14:57:38,531 - Human-like fallback click on bbox_id 25 successful.
+2025-08-08 14:57:48,404 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 14:57:49,546 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 14:58:00,553 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 14:58:05,148 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 14:58:10,118 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 14:58:14,170 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 14:58:14,405 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 14:58:22,499 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 14:58:22,509 - Attempting to click element with bbox_id: 25
+2025-08-08 14:58:22,533 - Attempting native click...
+2025-08-08 14:58:27,536 - Native click failed for bbox_id 25: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"25\"]")
+. Falling back.
+2025-08-08 14:58:27,536 - Attempting human-like click...
+2025-08-08 14:58:30,118 - Detected a new tab. Switched to tab index 5.
+2025-08-08 14:58:30,118 - Human-like fallback click on bbox_id 25 successful.
+2025-08-08 15:03:16,692 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 15:03:16,888 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 15:03:17,595 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 15:03:18,800 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 15:03:26,295 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 15:03:32,776 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 15:03:38,017 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 15:03:42,070 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 15:03:42,606 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 15:03:50,459 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 15:04:15,242 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 15:04:19,305 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 15:04:19,931 - Retrying request to /chat/completions in 0.430012 seconds
+2025-08-08 15:04:28,551 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 15:04:32,602 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 15:04:33,121 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 15:04:39,304 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 15:04:45,528 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 15:04:52,199 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 15:04:56,241 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 15:04:56,751 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 15:05:06,748 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 15:05:12,987 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 15:05:20,472 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 15:05:24,523 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 15:05:25,026 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 15:05:32,606 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 15:05:38,851 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 15:05:45,047 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 15:05:49,095 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 15:05:49,612 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 15:12:05,902 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 15:12:06,100 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 15:12:06,848 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 15:12:08,042 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 15:12:13,970 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 15:12:20,430 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 15:12:27,216 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 15:12:31,268 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 15:12:31,744 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 15:12:39,494 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 15:13:20,221 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 15:13:24,280 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 15:13:32,122 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 15:13:36,176 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 15:13:36,649 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 15:13:36,684 - Retrying request to /chat/completions in 0.488460 seconds
+2025-08-08 15:13:43,619 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 15:13:43,627 - Attempting to click element with bbox_id: 28
+2025-08-08 15:13:43,657 - Attempting native click...
+2025-08-08 15:13:48,663 - Native click failed for bbox_id 28: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"28\"]")
+. Falling back.
+2025-08-08 15:13:48,663 - Attempting human-like click...
+2025-08-08 15:13:51,002 - Human-like fallback click on bbox_id 28 successful.
+2025-08-08 15:13:55,040 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 15:14:01,732 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 15:14:05,767 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 15:14:06,069 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 15:14:14,492 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 15:14:14,502 - Attempting to click element with bbox_id: 31
+2025-08-08 15:14:14,527 - Attempting native click...
+2025-08-08 15:14:19,532 - Native click failed for bbox_id 31: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"31\"]")
+. Falling back.
+2025-08-08 15:14:19,532 - Attempting human-like click...
+2025-08-08 15:14:22,005 - All click attempts on bbox_id 31 failed to change the page state.
+2025-08-08 15:14:26,046 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 15:14:33,318 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 15:14:37,363 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 15:14:37,621 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 15:14:44,616 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 15:14:44,626 - Attempting to click element with bbox_id: 1
+2025-08-08 15:14:44,646 - Attempting native click...
+2025-08-08 15:14:49,651 - Native click failed for bbox_id 1: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"1\"]")
+. Falling back.
+2025-08-08 15:14:49,651 - Attempting human-like click...
+2025-08-08 15:14:51,544 - Detected a new tab. Switched to tab index 2.
+2025-08-08 15:14:51,544 - Human-like fallback click on bbox_id 1 successful.
+2025-08-08 15:14:58,220 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 15:14:59,360 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 15:15:06,726 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 15:15:10,803 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 15:15:20,239 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 15:15:24,288 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 15:15:24,534 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 15:15:29,760 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 15:15:37,949 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 15:15:39,089 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 15:15:43,173 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 15:15:47,232 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 15:15:52,902 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 15:15:56,945 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 15:15:57,209 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 15:16:14,612 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 15:20:05,458 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 15:20:05,658 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 15:20:06,413 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 15:20:07,609 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 15:20:13,109 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 15:20:19,208 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 15:21:14,002 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 15:21:14,270 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 15:21:15,005 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 15:21:16,209 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 15:21:24,481 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 15:21:37,063 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 15:21:44,386 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 15:21:48,430 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 15:21:48,816 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 15:21:54,899 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 15:22:00,756 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 15:22:08,380 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 15:22:12,406 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 15:22:12,821 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 15:22:18,749 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 15:22:22,868 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 15:22:34,211 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 15:22:38,268 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 15:22:38,742 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 15:22:53,695 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"

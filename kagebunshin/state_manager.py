@@ -532,41 +532,39 @@ class WebVoyagerStateManager:
             url = page.url
             title = await page.title()
             html_content = await page.content()
-
-            # Build a compact DOM outline using BeautifulSoup
-            dom_outline = self._build_dom_outline(html_content)
+            
             # Build a full cleaned Markdown representation of the visible HTML
             cleaned_markdown = html_to_markdown(html_content)
 
-            summary_text = ""
-            if self.summarizer_llm is not None:
-                try:
-                    prompt = (
-                        "You are a faithful HTML-to-Markdown converter. Given the page's cleaned Markdown text, "
-                        "produce a high-fidelity Markdown of the page content. "
-                        "Preserve headings, paragraphs, lists, tables, code blocks, and hyperlinks. Do not invent content. "
-                        "Prefer the provided cleaned Markdown text over the outline when in doubt."
-                    )
-                    # Cap lengths to keep within budget for the cheap model
-                    # max_clean_md = 12000
-                    # max_outline = 6000
-                    cleaned_md_snippet = cleaned_markdown
-                    dom_snippet = dom_outline
-                    messages = [
-                        SystemMessage(content=prompt),
-                        HumanMessage(content=(
-                            f"URL: {url}\nTitle: {title}\n\n"
-                            f"Cleaned Markdown (truncated):\n{cleaned_md_snippet}\n\n"
-                            # f"DOM Outline (truncated):\n{dom_snippet}\n\n"
-                            f"Output the final Markdown only."
-                        )),
-                    ]
-                    summary_response = await self.summarizer_llm.ainvoke(messages)
-                    summary_text = str(getattr(summary_response, "content", "")).strip()
-                except Exception as e:
-                    logger.warning(f"Summarizer failed, returning DOM only: {e}")
-
-            return summary_text
+            # summary_text = ""
+            # if self.summarizer_llm is not None:
+            #     try:
+            #         prompt = (
+            #             "You are a faithful HTML-to-Markdown converter. Given the page's cleaned Markdown text, "
+            #             "produce a high-fidelity Markdown of the page content. "
+            #             "Preserve headings, paragraphs, lists, tables, code blocks, and hyperlinks. Do not invent content. "
+            #             "Prefer the provided cleaned Markdown text over the outline when in doubt."
+            #         )
+            #         # Cap lengths to keep within budget for the cheap model
+            #         # max_clean_md = 12000
+            #         # max_outline = 6000
+            #         cleaned_md_snippet = cleaned_markdown
+            #         dom_snippet = dom_outline
+            #         messages = [
+            #             SystemMessage(content=prompt),
+            #             HumanMessage(content=(
+            #                 f"URL: {url}\nTitle: {title}\n\n"
+            #                 f"Cleaned Markdown (truncated):\n{cleaned_md_snippet}\n\n"
+            #                 # f"DOM Outline (truncated):\n{dom_snippet}\n\n"
+            #                 f"Output the final Markdown only."
+            #             )),
+            #         ]
+            #         summary_response = await self.summarizer_llm.ainvoke(messages)
+            #         summary_text = str(getattr(summary_response, "content", "")).strip()
+            #     except Exception as e:
+            #         logger.warning(f"Summarizer failed, returning DOM only: {e}")
+            output = f"URL: {url}\nTitle: {title}\n\n{cleaned_markdown}"
+            return output
 
         except Exception as e:
             logger.error(f"Error extracting page content: {e}")
