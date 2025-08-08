@@ -4,7 +4,7 @@ import os
 from datetime import datetime
 from typing import Optional
 import logging
-
+import argparse
 from playwright.async_api import async_playwright
 
 from .config import BROWSER_EXECUTABLE_PATH, USER_DATA_DIR, DEFAULT_PERMISSIONS
@@ -83,7 +83,7 @@ class WebVoyagerRunner:
         print(f"{Colors.ENDC}")
         self._print_banner("🏁 MISSION COMPLETED", Colors.OKGREEN)
 
-    async def run(self, user_query: str, thread_id: Optional[str] = None):
+    async def run(self, user_query: str):
         """Run WebVoyager using the simplified stateless orchestrator approach"""
         self._print_banner("🌐 WebVoyager V2 (Stateless Orchestrator)", Colors.HEADER)
         print(f"{Colors.OKCYAN}Query: {Colors.BOLD}{user_query}{Colors.ENDC}\n")
@@ -300,36 +300,24 @@ class WebVoyagerRunner:
                 import traceback
                 traceback.print_exc()
 
-async def main():
-    """Main function"""
+
+# CLI entry point
+async def main(user_query:str) -> None:
+    dotenv.load_dotenv()
+    # One-shot mode (classic colored stream)
+    if not user_query:
+        user_query = "Open google.com and summarize the page"
     runner = WebVoyagerRunner()
-    
-    today = datetime.now().strftime("%Y-%m-%d")
-    url_list = [
-        # "https://www.airrosti.com/schedule-appointment/",
-        # "https://www.riveroakspt.com",
-        "https://www.elationpt.com",
-        "https://www.twofrontteethdds.com", # success
-        "https://www.troothandsmiles.com/?utm_source=google&utm_medium=organic&utm_campaign=gbp-listing", # failure
-        "https://dentistryofnashville.com",
-        "https://www.fwdentalarts.com",
-        "https://www.lyonprimarycare.com/?utm_source=gmb_auth",
-        "https://www.familymedicinenyc.com/?utm_source=gmb_auth",
-        "https://citycarefamilypractice.com"
-    ]
-    
-    # for url in url_list:
-#     query = f"""You are now a seasoned tech journalist. Here's what you need to do:
-# 1. Literature Review Phase: Check what has been covered in the latest tech industry. This involves checking out the latest news on Google News, The Verge, TechCrunch, etc. This is for you to understand what is covered and what isn't yet.
-# 2. Novelty Mining Phase: You will need to find something that has not been covered yet. You want to be on the cutting edge of it. Do anything necessary to achieve this goal.
-# 3. Once you think you have enough information, write a blog post in markdown format and end the process.
-# """
+    await runner.run(user_query)
 
-    query = f"""Use FairHealthConsumer to find whether getting billed $2000 for a colonoscopy in Manhattan, NY is normal.
-"""
-
-    await runner.run(query)
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
+def run() -> None:
+    """Synchronous entry point for console_scripts."""
+    parser = argparse.ArgumentParser(prog="kagebunshin", description="AI web automation agent")
+    parser.add_argument("query", nargs="?", help="User task for the agent to execute")
+    parser.add_argument("--repl", action="store_true", help="Run classic colored stream with persistent memory (REPL)")
+    args = parser.parse_args()
+    if args.repl:
+        # Classic colored stream with persistent memory
+        asyncio.run(WebVoyagerRunner().run_loop(args.query or None, thread_id="cli-session"))
+    else:
+        asyncio.run(main(args.query))

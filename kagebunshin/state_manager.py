@@ -12,12 +12,10 @@ from typing import Dict, Any, List, Optional, Tuple
 from bs4 import BeautifulSoup
 from langchain.chat_models.base import init_chat_model
 from langchain_core.tools import tool
-from langchain_core.messages import HumanMessage, AIMessage, ToolMessage, SystemMessage
 from playwright.async_api import Page, BrowserContext
-from langgraph.types import Command
 
 from .models import WebVoyagerState, BBox, TabInfo, Annotation
-from .tool_utils import annotate_page
+from .utils import html_to_markdown, annotate_page
 from .human_behavior import (
     smart_delay_between_actions,
     human_delay,
@@ -28,8 +26,6 @@ from .human_behavior import (
 )
 from .fingerprint_evasion import apply_fingerprint_profile
 from .config import LLM_SUMMARIZER_MODEL, LLM_SUMMARIZER_PROVIDER
-from .utils import html_to_markdown
-
 logger = logging.getLogger(__name__)
 
 

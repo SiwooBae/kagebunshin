@@ -28,7 +28,6 @@ from .config import (
 )
 from .utils import format_img_context, format_bbox_context, format_text_context, format_tab_context, generate_agent_name
 from .group_chat import GroupChatClient
-import petname
 
 logger = logging.getLogger(__name__)
 

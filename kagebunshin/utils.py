@@ -3,15 +3,21 @@ from datetime import datetime
 from typing import List, Dict
 import secrets
 import petname
-from langchain_core.messages import BaseMessage, HumanMessage, SystemMessage
 import logging
-import re
 import html2text
 from bs4 import BeautifulSoup
-from .models import BBox
+from .models import BBox, Annotation, FrameStats, TabInfo
+import os
+from io import BytesIO
+from playwright.async_api import Page
+import base64
+import pypdf
+import asyncio
+import logging
 
 # Suppress logging warnings
-logging.getLogger().setLevel(logging.ERROR)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.ERROR)
 
 
 def log_with_timestamp(message: str) -> None:
@@ -19,6 +25,136 @@ def log_with_timestamp(message: str) -> None:
     timestamp = datetime.now().strftime("%H:%M:%S")
     print(f"[{timestamp}] {message}")
 
+# Get the directory of the current file
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Load the JavaScript to mark the page
+with open(os.path.join(current_dir, "mark_page.js")) as f:
+    mark_page_script = f.read()
+
+
+async def _annotate_pdf_page(page: Page) -> Annotation:
+    """Process a PDF page to extract text and take a screenshot."""
+    logger.info("DEBUG: PDF page detected. Extracting text content.")
+    try:
+        api_request_context = page.context.request
+        response = await api_request_context.get(page.url)
+        pdf_bytes = await response.body()
+
+        # Extract text from PDF
+        pdf_file = BytesIO(pdf_bytes)
+        reader = pypdf.PdfReader(pdf_file)
+        text = ""
+        for p in reader.pages:
+            text += p.extract_text() or ""
+
+        # Truncate to 5000 words as requested
+        words = text.split()
+        markdown = " ".join(words[:5000])
+
+        screenshot = await page.screenshot()
+
+        return Annotation(
+            img=base64.b64encode(screenshot).decode(),
+            bboxes=[],
+            markdown=markdown,
+            viewportCategories={},
+            frameStats=FrameStats(totalFrames=0, accessibleFrames=0, maxDepth=0),
+            totalElements=0
+        )
+    except Exception as e:
+        logger.error(f"DEBUG: Failed to process PDF page: {e}")
+        return Annotation(
+            img="",
+            bboxes=[],
+            markdown=f"Failed to extract text from PDF at {page.url}. Error: {e}",
+            viewportCategories={},
+            frameStats=FrameStats(totalFrames=0, accessibleFrames=0, maxDepth=0),
+            totalElements=0
+        )
+
+
+async def _annotate_html_page(page: Page) -> Annotation:
+    """Annotate an HTML page with bounding boxes and take a screenshot."""
+    # await asyncio.sleep(0.5)  # wait for half second
+
+    try:
+        await page.wait_for_load_state("networkidle", timeout=3000)
+    except Exception as e:
+        logger.warning(f"DEBUG: 'networkidle' failed: {e}. Trying 'load' state.")
+        try:
+            await page.wait_for_load_state("load", timeout=5000)
+        except Exception as e2:
+            logger.warning(f"DEBUG: Both 'networkidle' and 'load' failed: {e2}")
+            return Annotation(
+                img="",
+                bboxes=[],
+                markdown=f"Failed to stabilize page load. Error: {e2}",
+                viewportCategories={},
+                frameStats={"totalFrames": 0, "accessibleFrames": 0, "maxDepth": 0},
+                totalElements=0
+            )
+    
+    try:
+        await page.evaluate(mark_page_script)
+        for _ in range(10):
+            try:
+                mark_result = await page.evaluate("markPage()")
+                break
+            except Exception:
+                logger.warning("DEBUG: Marking page failed. Retrying...")
+                await asyncio.sleep(0.5)
+        else:
+            mark_result = {"coordinates": [], "viewportCategories": {}, "frameStats": {"totalFrames": 0, "accessibleFrames": 0, "maxDepth": 0}}
+
+        # Extract the coordinates (bboxes) from the enhanced result
+        bboxes = mark_result.get("coordinates", []) if isinstance(mark_result, dict) else mark_result or []
+        viewport_categories_raw = mark_result.get("viewportCategories", {}) if isinstance(mark_result, dict) else {}
+        frame_stats_dict = mark_result.get("frameStats", {"totalFrames": 0, "accessibleFrames": 0, "maxDepth": 0}) if isinstance(mark_result, dict) else {"totalFrames": 0, "accessibleFrames": 0, "maxDepth": 0}
+        frame_stats = FrameStats(**frame_stats_dict)
+        
+        # Convert viewport categories to counts
+        viewport_categories = {
+            position: len(elements) for position, elements in viewport_categories_raw.items()
+        } if viewport_categories_raw else {}
+
+        markdown = ""
+        screenshot = await page.screenshot()
+        await page.evaluate("unmarkPage()")
+
+        return Annotation(
+            img=base64.b64encode(screenshot).decode(),
+            bboxes=bboxes,
+            markdown=markdown,
+            viewportCategories=viewport_categories,
+            frameStats=frame_stats,
+            totalElements=len(bboxes)
+        )
+    except Exception as e:
+        logger.error(f"DEBUG: Failed to annotate page after stabilizing: {e}")
+        return Annotation(
+            img="",
+            bboxes=[],
+            markdown=f"Failed to annotate page. Error: {e}",
+            viewportCategories={},
+            frameStats=FrameStats(totalFrames=0, accessibleFrames=0, maxDepth=0),
+            totalElements=0
+        )
+
+
+async def annotate_page(page: Page) -> Annotation:
+    """Annotate the page with bounding boxes and take a screenshot."""
+    try:
+        content = await page.content()
+        if 'type="application/pdf"' in content or 'class="pdf' in content:
+            return await _annotate_pdf_page(page)
+    except Exception as e:
+        logger.error(
+            "DEBUG: Could not get page content to check for PDF, "
+            f"proceeding with normal annotation. Error: {e}"
+        )
+
+    return await _annotate_html_page(page)
 
 def html_to_markdown(html_content: str) -> str:
     """Convert visible HTML content to markdown, preserving links."""
@@ -258,7 +394,7 @@ def format_enhanced_page_context(bboxes: List[BBox], markdown_content: str = "",
     return "\n".join(sections)
 
 
-def format_tab_context(tabs: List[Dict], current_tab_index: int) -> str:
+def format_tab_context(tabs: List[TabInfo], current_tab_index: int) -> str:
     """Format tab information into a human-readable context string."""
     if not tabs:
         return "Browser Tabs: No tabs available"
@@ -282,7 +418,6 @@ def format_img_context(img_base64: str) -> dict:
         "type": "image_url",
         "image_url": {"url": f"data:image/jpeg;base64,{img_base64}"},
     }
-
 
 # =============================
 # Agent identity helpers
