@@ -20,6 +20,91 @@ document.head.append(styleTag);
 
 let labels = [];
 let globalElementIndex = 0;
+let overlaySvg = null;
+let overlayLayer = null;
+let redrawTimeoutId = null;
+let autoUpdateHandlersAttached = false;
+let lastMarkPageOptions = null;
+
+// Color-blind friendly palette (Okabe & Ito)
+const TYPE_COLORS = {
+  button: "#E69F00", // orange
+  a: "#0072B2", // blue (links)
+  input: "#009E73", // green
+  textarea: "#009E73",
+  select: "#009E73",
+  label: "#CC79A7", // purple
+  iframe: "#D55E00", // vermillion
+  video: "#56B4E9", // sky blue
+  generic: "#BBBBBB", // grey fallback
+  captcha: "#F0E442" // yellow
+};
+
+function getColorForItem(item) {
+  if (item.isCaptcha) return TYPE_COLORS.captcha;
+  const tag = (item.type || "").toLowerCase();
+  if (TYPE_COLORS[tag]) return TYPE_COLORS[tag];
+  // Role-based mapping
+  const role = (item.hierarchy && item.hierarchy.semanticRole) || "";
+  if (role === "button") return TYPE_COLORS.button;
+  return TYPE_COLORS.generic;
+}
+
+function removeOverlay() {
+  try {
+    if (overlaySvg && overlaySvg.parentElement) {
+      overlaySvg.parentElement.removeChild(overlaySvg);
+    }
+  } catch (_) {}
+  overlaySvg = null;
+  overlayLayer = null;
+}
+
+function ensureOverlay() {
+  removeOverlay();
+  const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+  const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+  overlaySvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  overlaySvg.setAttribute("id", "ai-annotation-overlay");
+  overlaySvg.setAttribute("width", String(vw));
+  overlaySvg.setAttribute("height", String(vh));
+  overlaySvg.setAttribute("viewBox", `0 0 ${vw} ${vh}`);
+  overlaySvg.style.position = "fixed";
+  overlaySvg.style.top = "0";
+  overlaySvg.style.left = "0";
+  overlaySvg.style.pointerEvents = "none";
+  overlaySvg.style.zIndex = 2147483647;
+
+  // Layer group
+  overlayLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  overlayLayer.setAttribute("data-layer", "annotations");
+  overlaySvg.appendChild(overlayLayer);
+  document.body.appendChild(overlaySvg);
+}
+
+function detachUpdateListeners() {
+  if (!autoUpdateHandlersAttached) return;
+  try {
+    window.removeEventListener("resize", handleWindowUpdate);
+    window.removeEventListener("scroll", handleWindowUpdate, true);
+  } catch (_) {}
+  autoUpdateHandlersAttached = false;
+}
+
+function handleWindowUpdate() {
+  clearTimeout(redrawTimeoutId);
+  redrawTimeoutId = setTimeout(() => {
+    try { markPage(lastMarkPageOptions || {}); } catch (_) {}
+  }, 150);
+}
+
+function attachUpdateListeners() {
+  if (autoUpdateHandlersAttached) return;
+  window.addEventListener("resize", handleWindowUpdate);
+  // capture scrolls from nested containers/iframes
+  window.addEventListener("scroll", handleWindowUpdate, true);
+  autoUpdateHandlersAttached = true;
+}
 
 function unmarkPage() {
   // Unmark page logic
@@ -30,6 +115,8 @@ function unmarkPage() {
   }
   labels = [];
   globalElementIndex = 0;
+  detachUpdateListeners();
+  removeOverlay();
 
   // Also clear any stale data-ai-label attributes from current document, shadow roots, and accessible iframes
   try {
@@ -374,6 +461,7 @@ function markPage(options = {}) {
   try {
     console.log("DEBUG: Starting enhanced markPage function");
     const { includeOutOfViewport = true, maxOutOfViewportDistance = 2000 } = options;
+    lastMarkPageOptions = options;
     
     unmarkPage();
     console.log("DEBUG: Unmark page completed");
@@ -481,71 +569,102 @@ function markPage(options = {}) {
         return !(rect1.right < rect2.left || rect1.left > rect2.right || rect1.bottom < rect2.top || rect1.top > rect2.bottom);
     }
 
+    // Use a single SVG overlay for performance and clarity
+    ensureOverlay();
+
     items.forEach(function (item, index) {
-        item.element.setAttribute('data-ai-label', index);
-        item.rects.forEach((bbox) => {
-            const newElement = document.createElement("div");
-            const borderColor = getRandomColor();
-            newElement.style.outline = `2px dashed ${borderColor}`;
-            newElement.style.position = "fixed";
-            newElement.style.left = bbox.left + "px";
-            newElement.style.top = bbox.top + "px";
-            newElement.style.width = bbox.width + "px";
-            newElement.style.height = bbox.height + "px";
-            newElement.style.pointerEvents = "none";
-            newElement.style.boxSizing = "border-box";
-            newElement.style.zIndex = 2147483647;
+      item.element.setAttribute('data-ai-label', index);
+      const color = getColorForItem(item);
 
-            const label = document.createElement("span");
-            label.textContent = index;
-            label.style.position = "absolute";
-            label.style.background = borderColor;
-            label.style.color = "white";
-            label.style.padding = "2px 4px";
-            label.style.fontSize = "12px";
-            label.style.borderRadius = "2px";
-            
-            // De-conflict label positions
-            const labelHeight = 18;
-            const labelWidth = (label.textContent.length * 8) + 8;
-            const potentialPositions = [
-                { top: -labelHeight, left: 0 }, // Top-left
-                { top: -labelHeight, left: bbox.width - labelWidth }, // Top-right
-                { top: bbox.height, left: 0 }, // Bottom-left
-                { top: bbox.height, left: bbox.width - labelWidth }  // Bottom-right
-            ];
+      item.rects.forEach((bbox) => {
+        // Only render in-viewport boxes; keep others in data only
+        if (bbox.viewportPosition !== 'in-viewport') return;
 
-            let bestPosition = potentialPositions[0];
-            let foundPosition = false;
-            for (const pos of potentialPositions) {
-                const labelRect = {
-                    left: bbox.left + pos.left,
-                    top: bbox.top + pos.top,
-                    right: bbox.left + pos.left + labelWidth,
-                    bottom: bbox.top + pos.top + labelHeight
-                };
-                if (!labelPositions.some(existing => isOverlapping(labelRect, existing))) {
-                    bestPosition = pos;
-                    foundPosition = true;
-                    break;
-                }
-            }
-            
-            label.style.top = bestPosition.top + "px";
-            label.style.left = bestPosition.left + "px";
-            
-            const finalLabelRect = {
-                left: bbox.left + bestPosition.left,
-                top: bbox.top + bestPosition.top,
-                right: bbox.left + bestPosition.left + labelWidth,
-                bottom: bbox.top + bestPosition.top + labelHeight
-            };
-            labelPositions.push(finalLabelRect);
+        // High-contrast rectangle: black halo + bright colored stroke + stronger fill
+        const rectShadow = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        rectShadow.setAttribute("x", String(bbox.left));
+        rectShadow.setAttribute("y", String(bbox.top));
+        rectShadow.setAttribute("width", String(bbox.width));
+        rectShadow.setAttribute("height", String(bbox.height));
+        rectShadow.setAttribute("fill", "none");
+        rectShadow.setAttribute("stroke", "#000000");
+        rectShadow.setAttribute("stroke-width", "5");
+        rectShadow.setAttribute("opacity", "0.75");
 
-            newElement.appendChild(label);
-            document.body.appendChild(newElement);
-            labels.push(newElement);
-        });
+        const rectEl = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        rectEl.setAttribute("x", String(bbox.left));
+        rectEl.setAttribute("y", String(bbox.top));
+        rectEl.setAttribute("width", String(bbox.width));
+        rectEl.setAttribute("height", String(bbox.height));
+        rectEl.setAttribute("fill", color + "66"); // ~40% alpha for strong contrast
+        rectEl.setAttribute("stroke", color);
+        rectEl.setAttribute("stroke-width", "3");
+        rectEl.setAttribute("stroke-dasharray", "6 4");
+
+        // Create label as SVG (background rect + text)
+        const labelText = String(index);
+        const approxCharW = 7;
+        const labelHeight = 18;
+        const labelWidth = (labelText.length * approxCharW) + 8;
+
+        const potentialPositions = [
+          { dx: 0, dy: -labelHeight }, // top-left
+          { dx: bbox.width - labelWidth, dy: -labelHeight }, // top-right
+          { dx: 0, dy: bbox.height }, // bottom-left
+          { dx: bbox.width - labelWidth, dy: bbox.height } // bottom-right
+        ];
+
+        let best = potentialPositions[0];
+        let found = false;
+        for (const pos of potentialPositions) {
+          const l = bbox.left + pos.dx;
+          const t = bbox.top + pos.dy;
+          const candidate = { left: l, top: t, right: l + labelWidth, bottom: t + labelHeight };
+          if (!labelPositions.some(existing => isOverlapping(candidate, existing))) {
+            best = pos; found = true; break;
+          }
+        }
+        const labelLeft = Math.max(0, Math.min(bbox.left + best.dx, overlaySvg.viewBox.baseVal.width - labelWidth));
+        const labelTop = Math.max(0, Math.min(bbox.top + best.dy, overlaySvg.viewBox.baseVal.height - labelHeight));
+
+        const finalLabelRect = { left: labelLeft, top: labelTop, right: labelLeft + labelWidth, bottom: labelTop + labelHeight };
+        labelPositions.push(finalLabelRect);
+
+        const labelBg = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        labelBg.setAttribute("x", String(labelLeft));
+        labelBg.setAttribute("y", String(labelTop));
+        labelBg.setAttribute("width", String(labelWidth));
+        labelBg.setAttribute("height", String(labelHeight));
+        labelBg.setAttribute("rx", "3");
+        labelBg.setAttribute("fill", color);
+        labelBg.setAttribute("opacity", "0.95");
+        labelBg.setAttribute("stroke", "#000");
+        labelBg.setAttribute("stroke-width", "2");
+
+        const textEl = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        textEl.setAttribute("x", String(labelLeft + 4));
+        textEl.setAttribute("y", String(labelTop + labelHeight - 5));
+        textEl.setAttribute("fill", "#ffffff");
+        textEl.setAttribute("font-size", "12");
+        textEl.setAttribute("font-family", "system-ui, -apple-system, Segoe UI, Roboto, sans-serif");
+        // Halo for readability on any background
+        textEl.setAttribute("stroke", "#000000");
+        textEl.setAttribute("stroke-width", "2");
+        textEl.setAttribute("paint-order", "stroke fill");
+        textEl.setAttribute("stroke-linejoin", "round");
+        textEl.textContent = labelText;
+
+        // Tooltip for context
+        const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
+        const shortText = (item.text || '').slice(0, 80);
+        title.textContent = `type: ${item.type} role: ${(item.hierarchy && item.hierarchy.semanticRole) || ''}\naria: ${item.ariaLabel || ''}\ntext: ${shortText}${item.text && item.text.length > 80 ? '…' : ''}\nframe: ${item.frameContext || 'main'}`;
+        rectEl.appendChild(title);
+
+        overlayLayer.appendChild(rectShadow);
+        overlayLayer.appendChild(rectEl);
+        overlayLayer.appendChild(labelBg);
+        overlayLayer.appendChild(textEl);
+      });
     });
 
     console.log("DEBUG: About to create coordinates from", items.length, "items");
@@ -616,6 +735,8 @@ function markPage(options = {}) {
         `${key}: ${viewportCategories[key].length}`).join(', '));
     console.log("DEBUG: Frame stats:", result.frameStats);
     
+    // Attach lightweight auto-update so labels remain aligned
+    attachUpdateListeners();
     return result;
   
   } catch (error) {
