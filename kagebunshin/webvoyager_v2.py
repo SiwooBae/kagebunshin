@@ -111,7 +111,7 @@ class WebVoyagerV2:
         self.agent = workflow.compile()
 
         # Post intro message asynchronously (do not block init)
-        asyncio.create_task(self._post_intro_message())
+        # asyncio.create_task(self._post_intro_message())
 
     def dispose(self) -> None:
         """Release this orchestrator's slot in the global instance counter."""
@@ -172,6 +172,7 @@ class WebVoyagerV2:
         # Announce task to group chat
         try:
             await self.group_client.connect()
+            await self._post_intro_message()
             await self.group_client.post(self.group_room, self.username, f"Starting task: {user_query}")
         except Exception:
             pass
@@ -260,7 +261,7 @@ class WebVoyagerV2:
     async def _post_intro_message(self) -> None:
         try:
             await self.group_client.connect()
-            intro = f"Hello, I am {self.username}. I am a WebVoyager agent. I will collaborate here while working on tasks."
+            intro = f"Hello, I am {self.username}. I will collaborate here while working on tasks."
             await self.group_client.post(self.group_room, self.username, intro)
         except Exception:
             pass

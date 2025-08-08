@@ -298,8 +298,9 @@ def generate_agent_name() -> str:
     """
     for _ in range(100):
         base = petname.generate(2, separator="-")
-        suffix = secrets.token_hex(2)  # 4 hex chars
-        candidate = f"{base}-{suffix}"
+        # suffix = secrets.token_hex(2)  # 4 hex chars
+        # candidate = f"{base}-{suffix}"
+        candidate = base
         if candidate not in _ASSIGNED_AGENT_NAMES:
             _ASSIGNED_AGENT_NAMES.add(candidate)
             return candidate

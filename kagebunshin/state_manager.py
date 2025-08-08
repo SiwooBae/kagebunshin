@@ -566,19 +566,7 @@ class WebVoyagerStateManager:
                 except Exception as e:
                     logger.warning(f"Summarizer failed, returning DOM only: {e}")
 
-            result_parts = [
-                f"URL: {url}",
-                f"Title: {title}",
-                "",
-                "Page Content (Markdown, truncated):",
-                cleaned_markdown[:20000],
-                "",
-                "Page DOM Outline (truncated):",
-                dom_outline[:10000],
-            ]
-            if summary_text:
-                result_parts.extend(["", "LLM Parsed Markdown:", summary_text])
-            return "\n".join(result_parts)
+            return summary_text
 
         except Exception as e:
             logger.error(f"Error extracting page content: {e}")
