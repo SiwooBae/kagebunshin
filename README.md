@@ -27,6 +27,11 @@ uv run playwright install chromium
 uv run -m kagebunshin
 ```
 
+2b) Launch the interactive chat UI (Textual):
+```
+uv run -m kagebunshin --chat
+```
+
 3) Run with a custom query (without adding an entry point):
 ```
 uv run python -c 'import asyncio; from kagebunshin.cli import main; asyncio.run(main("Open google.com and summarize the page"))'
@@ -48,6 +53,16 @@ from kagebunshin import WebVoyagerV2
 # orchestrator = await WebVoyagerV2.create(context)
 # async for chunk in orchestrator.astream("Your task"):
 #     ...
+```
+
+### Chat UI
+- The chat UI is built with Textual and supports back-and-forth messaging with streaming updates.
+- Your previous few lines are prepended to each turn to provide lightweight context across turns.
+- Exit with Ctrl-C or by closing the terminal window.
+
+If you don't have browsers installed for Playwright, run:
+```
+uv run playwright install chromium
 ```
 
 ### Notes

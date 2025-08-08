@@ -28,12 +28,16 @@ class WebVoyagerV2:
                  context: BrowserContext,
                  state_manager: WebVoyagerStateManager,
                  additional_tools: List[Any] = None, 
-                 system_prompt: str = SYSTEM_TEMPLATE):
+                 system_prompt: str = SYSTEM_TEMPLATE,
+                 enable_summarization: bool = True):
         """Initializes the orchestrator with browser context and state manager."""
         
         self.initial_context = context
         self.state_manager = state_manager
         self.system_prompt = system_prompt
+        self.enable_summarization = enable_summarization
+        # Simple in-process memory of message history across turns
+        self.persistent_messages: List[BaseMessage] = []
 
         self.llm = init_chat_model(
             model=LLM_MODEL,
@@ -63,7 +67,8 @@ class WebVoyagerV2:
 
         workflow.add_node("agent", self.call_agent)
         workflow.add_node("action", ToolNode(self.all_tools))
-        workflow.add_node("summarizer", self.summarize_tool_results)
+        if self.enable_summarization:
+            workflow.add_node("summarizer", self.summarize_tool_results)
 
         workflow.set_entry_point("agent")
 
@@ -75,9 +80,13 @@ class WebVoyagerV2:
                 "end": END,
             },
         )
-        workflow.add_edge("action", "summarizer")
-        workflow.add_edge("summarizer", "agent")
+        if self.enable_summarization:
+            workflow.add_edge("action", "summarizer")
+            workflow.add_edge("summarizer", "agent")
+        else:
+            workflow.add_edge("action", "agent")
         
+        # Compile without external checkpointer (BrowserContext is not serializable)
         self.agent = workflow.compile()
 
     @classmethod
@@ -122,7 +131,7 @@ class WebVoyagerV2:
         
         initial_state = WebVoyagerState(
             input=user_query,
-            messages=[HumanMessage(content=user_query)],
+            messages=[*self.persistent_messages, HumanMessage(content=user_query)],
             context=self.initial_context,
         )
         
@@ -131,6 +140,11 @@ class WebVoyagerV2:
         
         # Update the state manager with the final state before extracting the answer
         self.state_manager.set_state(final_state)
+        # Persist messages for subsequent turns
+        try:
+            self.persistent_messages = final_state["messages"]
+        except Exception:
+            pass
         
         return self._extract_final_answer()
         
@@ -143,11 +157,17 @@ class WebVoyagerV2:
         """
         initial_state = WebVoyagerState(
             input=user_query,
-            messages=[HumanMessage(content=user_query)],
+            messages=[*self.persistent_messages, HumanMessage(content=user_query)],
             context=self.initial_context,
         )
         async for chunk in self.agent.astream(initial_state, stream_mode="updates", config={"recursion_limit": 100}):
             yield chunk
+        # After stream completes, persist final messages from state manager if available
+        try:
+            if self.state_manager.current_state:
+                self.persistent_messages = self.state_manager.current_state["messages"]
+        except Exception:
+            pass
             
     async def _build_agent_messages(self, state: WebVoyagerState) -> List[BaseMessage]:
         """

@@ -7,3 +7,164 @@
 2025-08-08 01:04:06,413 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
 2025-08-08 01:04:11,941 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
 2025-08-08 01:04:29,448 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 01:21:55,061 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 01:21:55,236 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 01:25:15,735 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 01:25:15,995 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 01:26:48,913 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 01:26:49,156 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 01:27:25,403 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 01:27:25,424 - Attempting to type 'MDsave head MRI without contrast Manhattan price' into element with bbox_id: 6
+2025-08-08 01:27:25,439 - Attempting native type...
+2025-08-08 01:27:26,554 - Native type on bbox_id 6 successful.
+2025-08-08 01:27:35,335 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 01:27:42,809 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 01:27:42,818 - Attempting to click element with bbox_id: 28
+2025-08-08 01:27:42,846 - Attempting native click...
+2025-08-08 01:27:43,900 - Native click on bbox_id 28 successful and caused a page change.
+2025-08-08 01:27:47,912 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.
+=========================== logs ===========================
+"domcontentloaded" event fired
+"load" event fired
+============================================================. Trying 'load' state.
+2025-08-08 01:27:54,279 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 01:28:01,553 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 01:28:01,558 - Attempting to click element with bbox_id: 24
+2025-08-08 01:28:01,577 - Attempting native click...
+2025-08-08 01:28:02,663 - Native click on bbox_id 24 successful and caused a page change.
+2025-08-08 01:28:04,028 - Retrying request to /chat/completions in 0.442644 seconds
+2025-08-08 01:28:10,664 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 01:28:16,498 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 01:28:16,505 - Attempting to click element with bbox_id: 24
+2025-08-08 01:28:16,526 - Attempting native click...
+2025-08-08 01:28:17,586 - Native click on bbox_id 24 had no effect. Falling back.
+2025-08-08 01:28:17,586 - Attempting human-like click...
+2025-08-08 01:28:20,415 - All click attempts on bbox_id 24 failed to change the page state.
+2025-08-08 01:28:27,354 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 01:28:37,447 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 01:28:37,462 - Attempting to type '10001' into element with bbox_id: 24
+2025-08-08 01:28:37,493 - Attempting native type...
+2025-08-08 01:28:38,559 - Native type on bbox_id 24 successful.
+2025-08-08 01:28:44,350 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 01:28:50,805 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 01:28:50,821 - Attempting to click element with bbox_id: 90
+2025-08-08 01:28:50,849 - Attempting native click...
+2025-08-08 01:28:51,908 - Native click on bbox_id 90 successful and caused a page change.
+2025-08-08 01:28:58,380 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 01:29:03,909 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 01:29:03,914 - Attempting to click element with bbox_id: 36
+2025-08-08 01:29:03,933 - Attempting native click...
+2025-08-08 01:29:05,047 - Native click on bbox_id 36 successful and caused a page change.
+2025-08-08 01:29:10,895 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 01:29:16,794 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 01:29:22,763 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 01:29:29,061 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 01:29:36,923 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 01:29:43,298 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 01:29:43,306 - Attempting to click element with bbox_id: 38
+2025-08-08 01:29:43,329 - Attempting native click...
+2025-08-08 01:29:44,400 - Native click on bbox_id 38 had no effect. Falling back.
+2025-08-08 01:29:44,400 - Attempting human-like click...
+2025-08-08 01:29:47,635 - Human-like fallback click on bbox_id 38 successful.
+2025-08-08 01:29:59,518 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 01:30:17,175 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 01:38:48,869 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 01:38:49,026 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 01:38:55,999 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 01:39:06,288 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 01:39:11,412 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 01:39:15,454 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 01:39:26,411 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 01:50:22,268 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 01:50:22,518 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 01:50:29,621 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 01:50:40,582 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 01:50:47,246 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 01:50:51,290 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 01:51:07,519 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 02:14:05,581 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 02:14:05,828 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 02:14:15,172 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 02:14:15,428 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 02:14:24,059 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 02:14:34,999 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 02:14:43,000 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 02:14:47,040 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 02:15:03,034 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 02:27:12,530 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 02:27:12,759 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 02:27:23,402 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 02:27:34,376 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 02:27:40,942 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 02:27:44,984 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 02:28:03,439 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 02:28:39,336 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 02:28:59,280 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 02:30:54,674 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 02:31:05,391 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 02:31:05,401 - Attempting to click element with bbox_id: 2
+2025-08-08 02:31:05,424 - Attempting native click...
+2025-08-08 02:31:06,586 - Native click on bbox_id 2 successful and caused a page change.
+2025-08-08 02:31:10,616 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 02:31:16,880 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 02:31:20,920 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 02:31:40,536 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 02:34:31,614 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 02:34:45,782 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 02:34:45,792 - Attempting to click element with bbox_id: 197
+2025-08-08 02:34:45,817 - Attempting native click...
+2025-08-08 02:34:46,930 - Native click on bbox_id 197 successful and caused a page change.
+2025-08-08 02:34:50,957 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 02:35:02,471 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 02:35:06,524 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 02:35:18,341 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 02:35:18,352 - Attempting to click element with bbox_id: 36
+2025-08-08 02:35:18,375 - Attempting native click...
+2025-08-08 02:35:19,481 - Native click on bbox_id 36 successful and caused a page change.
+2025-08-08 02:35:23,514 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 02:35:32,685 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 02:35:36,723 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 02:35:48,652 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 02:35:48,664 - Attempting to click element with bbox_id: 179
+2025-08-08 02:35:48,687 - Attempting native click...
+2025-08-08 02:35:53,694 - Native click failed for bbox_id 179: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"179\"]")
+. Falling back.
+2025-08-08 02:35:53,694 - Attempting human-like click...
+2025-08-08 02:35:56,413 - Human-like fallback click on bbox_id 179 successful.
+2025-08-08 02:36:00,452 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 02:36:10,349 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 02:36:14,399 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 02:36:28,385 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 02:36:28,395 - Attempting to type 'AI healthcare United States' into element with bbox_id: 179
+2025-08-08 02:36:28,418 - Attempting native type...
+2025-08-08 02:36:28,427 - Native type failed for bbox_id 179: Page.fill: Error: Element is not an <input>, <textarea>, <select> or [contenteditable] and does not have a role allowing [aria-readonly]
+Call log:
+  - waiting for locator("[data-ai-label=\"179\"]")
+    - locator resolved to <span data-ai-label="179" class="css-1jxf684 r-bcqeeo r-1ttztb7 r-qvutc0 r-poiln3">More</span>
+    - fill("AI healthcare United States")
+  - attempting fill action
+    - waiting for element to be visible, enabled and editable
+. Falling back.
+2025-08-08 02:36:28,428 - Attempting human-like type...
+2025-08-08 02:36:36,586 - Human-like fallback type on bbox_id 179 successful.
+2025-08-08 02:36:40,623 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 02:36:50,769 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 02:36:54,809 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 02:37:05,760 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 02:37:05,771 - Attempting to click element with bbox_id: 40
+2025-08-08 02:37:05,799 - Attempting native click...
+2025-08-08 02:37:06,931 - Native click on bbox_id 40 successful and caused a page change.
+2025-08-08 02:37:10,967 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 02:37:22,046 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 02:37:26,100 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 02:37:37,176 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 02:37:41,326 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 02:37:50,314 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 02:37:54,366 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 02:38:14,192 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 02:38:20,318 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 02:38:31,275 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 02:38:35,320 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 02:39:09,076 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"

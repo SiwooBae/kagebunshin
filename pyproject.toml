@@ -15,4 +15,5 @@ dependencies = [
     "pypdf>=5.9.0",
     "readability>=0.3.2",
     "readability-lxml>=0.8.4.1",
+    "textual>=5.3.0",
 ]
