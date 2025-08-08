@@ -30,6 +30,42 @@ function unmarkPage() {
   }
   labels = [];
   globalElementIndex = 0;
+
+  // Also clear any stale data-ai-label attributes from current document, shadow roots, and accessible iframes
+  try {
+    const clearLabelsInRoot = (root) => {
+      if (!root) return;
+      try {
+        // Remove attribute on elements in this root
+        const labeled = root.querySelectorAll('[data-ai-label]');
+        labeled.forEach((el) => {
+          try { el.removeAttribute('data-ai-label'); } catch (e) {}
+        });
+        // Traverse shadow roots
+        if (root.querySelectorAll) {
+          root.querySelectorAll('*').forEach((el) => {
+            try { if (el.shadowRoot) clearLabelsInRoot(el.shadowRoot); } catch (e) {}
+          });
+        }
+      } catch (e) {}
+    };
+
+    // Current document and shadow roots
+    clearLabelsInRoot(document);
+
+    // Accessible iframes (best-effort; cross-origin will be skipped)
+    const iframes = document.querySelectorAll('iframe');
+    iframes.forEach((iframe) => {
+      try {
+        const doc = iframe.contentDocument || (iframe.contentWindow && iframe.contentWindow.document);
+        clearLabelsInRoot(doc);
+      } catch (e) {
+        // Ignore cross-origin
+      }
+    });
+  } catch (e) {
+    // Best-effort cleanup; ignore errors
+  }
 }
 
 /**
@@ -528,7 +564,7 @@ function markPage(options = {}) {
     
     items.forEach((item, index) => {
         const selector = `[data-ai-label="${index}"]`;
-        
+
         // Update frame statistics
         if (item.frameContext) {
             const depth = item.frameContext.split('.').length;
@@ -538,11 +574,25 @@ function markPage(options = {}) {
                 result.frameStats.accessibleFrames++;
             }
         }
-        
-        item.rects.forEach(({ left, top, width, height, viewportPosition, distanceFromViewport }) => {
+
+        if (item.rects && item.rects.length > 0) {
+            // Choose a single representative rect per item so that bbox_id matches the visual label/index
+            // Prefer the rect with the largest area
+            let bestRect = item.rects[0];
+            let bestArea = bestRect.width * bestRect.height;
+            for (let i = 1; i < item.rects.length; i++) {
+                const r = item.rects[i];
+                const a = r.width * r.height;
+                if (a > bestArea) {
+                    bestRect = r;
+                    bestArea = a;
+                }
+            }
+
+            const { left, top, width, height, viewportPosition, distanceFromViewport } = bestRect;
             result.coordinates.push({
-                x: (left + left + width) / 2,
-                y: (top + top + height) / 2,
+                x: left + width / 2,
+                y: top + height / 2,
                 type: item.type,
                 text: item.text,
                 ariaLabel: item.ariaLabel,
@@ -558,7 +608,7 @@ function markPage(options = {}) {
                 globalIndex: item.globalIndex,
                 boundingBox: { left, top, width, height }
             });
-        });
+        }
     });
     
     console.log("DEBUG: Created enhanced result with", result.coordinates.length, "coordinates");
