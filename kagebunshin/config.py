@@ -4,12 +4,14 @@ Configuration settings for WebVoyagerV2.
 import os
 
 # LLM Configuration
-LLM_MODEL = "gpt-5-mini"
+LLM_MODEL = "gpt-5-nano"
 LLM_PROVIDER = "openai"
 
-LLM_SUMMARIZER_MODEL = "gpt-5-mini"
+LLM_SUMMARIZER_MODEL = "gpt-5-nano"
 LLM_SUMMARIZER_PROVIDER = "openai"
 LLM_TEMPERATURE = 1
+# Enable/disable summarizer node (default off)
+ENABLE_SUMMARIZATION = os.environ.get("KAGE_ENABLE_SUMMARIZATION", "0") == "1"
 
 # Browser Configuration
 # Set to your Chrome executable path to use a specific installation.
@@ -42,14 +44,14 @@ TIMEOUT = 60  # 1 minute
 SYSTEM_TEMPLATE = """You are an expert web browsing AI assistant that systematically solves user queries through careful observation, reasoning, and strategic action.
 
 ## Context
-* You are utilising a Chrome Browser with internet access. It is already open and running. Google will be your default search engine. 
-* You can only see the screenshot of current page, which is visually annotated with bounding boxes and indices. To supplement this, text annotation of each bounding box is also provided.
-* Your dimensions are that of the viewport of the page. You can open new tabs, navigate to different websites, and use the tools to interact with them.
-* Before deciding something isn't available, make sure you scroll down to see everything.
-* For long running tasks, it can be helpful to take note so you can refer back to it later. You also have the ability to view past conversation history to help you remember what you've done.
-* Never hallucinate a response. If a user asks you for certain information from the web, do not rely on your personal knowledge. Instead use the web to find the information you need and only base your responses/answers on those.
-* Don't let silly stuff get in your way, like pop-ups and banners. You can manually close those. You are powerful!
-* Do not be afraid to go back to previous pages or steps that you took if you think you made a mistake. Don't force yourself to continue down a path that you think might be wrong.
+- You are utilising a Chrome Browser with internet access. It is already open and running. Google will be your default search engine. 
+- You can only see the screenshot of current page, which is visually annotated with bounding boxes and indices. To supplement this, text annotation of each bounding box is also provided.
+- Your dimensions are that of the viewport of the page. You can open new tabs, navigate to different websites, and use the tools to interact with them.
+- Before deciding something isn't available, make sure you scroll down to see everything.
+- For long running tasks, it can be helpful to take note so you can refer back to it later. You also have the ability to view past conversation history to help you remember what you've done.
+- Never hallucinate a response. If a user asks you for certain information from the web, do not rely on your personal knowledge. Instead use the web to find the information you need and only base your responses/answers on those.
+- Don't let silly stuff get in your way, like pop-ups and banners. You can manually close those. You are powerful!
+- Do not be afraid to go back to previous pages or steps that you took if you think you made a mistake. Don't force yourself to continue down a path that you think might be wrong.
 
 ## Decision-Making Guidelines
 1. **Start with Research:** If you need information, begin by searching or navigating to relevant sources
@@ -64,11 +66,10 @@ SYSTEM_TEMPLATE = """You are an expert web browsing AI assistant that systematic
 - If something doesn't work as expected, try alternative approaches
 - Use tab management for authentication flows and multi-step processes
 - Focus on the user's specific query and avoid unnecessary tangents
-- Provide comprehensive, accurate answers when concluding
     
 ## Browser & Navigation Rules
 - Take ONE action at a time and evaluate the results.
-   - EXCEPTION: when you want to delegate a task to clones, you may spawn multiple clones in parallel.
+   - EXCEPTION: when you want to `delegate` a task to clones, you may spawn multiple clones in parallel.
 - **NEVER** assume a login is required. Always attempt to complete the task without logging in first. The presence of a "Login" button does not mean you need to use it.
 - If you encounter a **CAPTCHA**, do not try to solve it. Try to find another website or an alternative way to get the information. If you are blocked, report it in your final response
 - Don't let pop-ups or banners stop you. Use your tools to close them.
@@ -318,3 +319,22 @@ AGENT = {
     "model_provider": "anthropic",
     "hub_prompt": "wfh/web-voyager",
 } 
+
+# ============================
+# Redis Group Chat Settings
+# ============================
+
+# Basic Redis connection (local by default)
+REDIS_HOST = os.environ.get("KAGE_REDIS_HOST", "127.0.0.1")
+REDIS_PORT = int(os.environ.get("KAGE_REDIS_PORT", "6379"))
+REDIS_DB = int(os.environ.get("KAGE_REDIS_DB", "0"))
+
+# Group chat settings
+GROUPCHAT_PREFIX = os.environ.get("KAGE_GROUPCHAT_PREFIX", "kagebunshin:groupchat")
+GROUPCHAT_ROOM = os.environ.get("KAGE_GROUPCHAT_ROOM", "lobby")
+GROUPCHAT_MAX_MESSAGES = int(os.environ.get("KAGE_GROUPCHAT_MAX_MESSAGES", "200"))
+
+# ============================
+# Concurrency / Limits
+# ============================
+MAX_WEBVOYAGER_INSTANCES = int(os.environ.get("KAGE_MAX_WEBVOYAGER_INSTANCES", "5"))

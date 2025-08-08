@@ -168,3 +168,877 @@ Call log:
 2025-08-08 02:38:31,275 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
 2025-08-08 02:38:35,320 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
 2025-08-08 02:39:09,076 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:22:30,232 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:22:30,443 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:22:31,296 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:22:31,346 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:22:32,564 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:22:51,305 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:22:51,331 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:22:51,402 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:22:51,998 - Processing query: Research and summarize the legal standard for “tipping” insider information under U.S. federal securities law. Provide key elements the government must prove, leading cases (Dirks v. SEC, Salman v. United States, Newman, etc.), and statutory bases (if any). Explain the legal tests for (1) a duty to keep information confidential, (2) what constitutes material nonpublic information, (3) what qualifies as a “personal benefit” to the tipper, and (4) the knowledge standard for the tippee. Include citations/links to primary sources or reliable summaries (SEC, court opinions, law review or legal treatises). Keep to a concise, authoritative summary suitable for legal evaluation.
+2025-08-08 03:22:51,998 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:22:52,001 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:22:53,133 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:23:02,736 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:23:02,745 - Attempting to type 'tipping insider trading Dirks v. SEC Salman Newman Chiarella O'Hagan Section 10(b) Rule 10b-5 "personal benefit" tippee knowledge standard' into element with bbox_id: 6
+2025-08-08 03:23:02,762 - Attempting native type...
+2025-08-08 03:23:03,833 - Native type on bbox_id 6 successful.
+2025-08-08 03:23:14,972 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:23:16,286 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:23:29,092 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:23:29,097 - Attempting to type 'Dirks v. SEC 463 U.S. 646 1983 opinion pdf' into element with bbox_id: 1
+2025-08-08 03:23:29,121 - Attempting native type...
+2025-08-08 03:23:30,167 - Native type on bbox_id 1 successful.
+2025-08-08 03:23:41,675 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:23:42,961 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:23:50,829 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:23:50,835 - Attempting to click element with bbox_id: 20
+2025-08-08 03:23:50,853 - Attempting native click...
+2025-08-08 03:23:52,053 - Native click on bbox_id 20 successful and caused a page change.
+2025-08-08 03:23:52,060 - DEBUG: PDF page detected. Extracting text content.
+2025-08-08 03:24:00,956 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:24:00,967 - DEBUG: PDF page detected. Extracting text content.
+2025-08-08 03:24:01,377 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:24:17,181 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:24:27,936 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:24:29,228 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:24:39,341 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:24:39,349 - Attempting to click element with bbox_id: 20
+2025-08-08 03:24:39,362 - Attempting native click...
+2025-08-08 03:24:40,536 - Native click on bbox_id 20 successful and caused a page change.
+2025-08-08 03:24:40,544 - DEBUG: PDF page detected. Extracting text content.
+2025-08-08 03:24:47,556 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:24:47,572 - DEBUG: PDF page detected. Extracting text content.
+2025-08-08 03:24:47,786 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:24:57,109 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:25:08,910 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:25:10,187 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:25:13,150 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:25:13,162 - Attempting to click element with bbox_id: 20
+2025-08-08 03:25:13,186 - Attempting native click...
+2025-08-08 03:25:14,451 - Native click on bbox_id 20 successful and caused a page change.
+2025-08-08 03:25:14,460 - DEBUG: PDF page detected. Extracting text content.
+2025-08-08 03:25:20,319 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:25:20,336 - DEBUG: PDF page detected. Extracting text content.
+2025-08-08 03:25:20,553 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:25:37,004 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:26:14,688 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:26:14,956 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:26:15,896 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:26:15,938 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:26:17,122 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:26:46,076 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:26:46,104 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:26:46,106 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:26:46,109 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:26:46,112 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:26:46,255 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:26:46,258 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:26:46,261 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:26:46,273 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:26:46,775 - Processing query: Research typical evidence SEC investigations look for in insider trading/tipping cases (communication records, trading timing, phone logs, email/Slack, motive, unusual trading patterns), plus common defenses (independent trading, public rumors, lack of access, no benefit, no knowledge). Also summarize potential criminal and civil penalties if liability is proven. Provide citations to SEC enforcement releases and example cases and a concise checklist of evidence the SEC would seek and defenses an accused might raise.
+2025-08-08 03:26:46,775 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:26:46,778 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:26:46,811 - Processing query: Research the 'personal benefit' requirement for tipper liability and how courts treat gifts to relatives or friends. Focus on Salman v. United States (2016) and any follow-up clarifications about indirect benefits (e.g., social benefit or expectation of future benefit). Explain how a chain of disclosure (Alice → her brother → his friend Bob) affects tipper/tippee liability, and what tippee knowledge must be shown. Provide citations and a concise summary.
+2025-08-08 03:26:46,855 - Processing query: Research whether a senior software engineer at a publicly traded company (like Alice) can be considered an 'insider' or otherwise in possession of material nonpublic information about a pending acquisition. Cover: employee roles normally considered insiders, 'temporary insiders' or gatekeepers (e.g., employees involved in M&A projects), relevant case law or SEC guidance about access-based insider status, and examples where technical employees were held liable (if any). Provide citations/links and a concise summary.
+2025-08-08 03:26:46,856 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:26:46,859 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:26:46,859 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:26:46,862 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:26:46,896 - Processing query: Research and summarize the legal elements of insider trading under Section 10(b) of the Securities Exchange Act and SEC Rule 10b-5, focusing on the tipper-tippee doctrine. Include key Supreme Court cases (Dirks v. SEC; United States v. O'Hagan for misappropriation theory; Salman v. United States) and explain: (a) what constitutes material nonpublic information (MNPI) for an acquisition, (b) the requirements for tipping liability (breach of duty, personal benefit), (c) what tippee liability requires (knowledge of breach and scienter), and (d) authoritative SEC guidance or enforcement policy. Provide citations/links to primary sources (opinions, SEC releases). Return a concise bullet-point summary and direct citations/URLs.
+2025-08-08 03:26:46,897 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:26:46,897 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:26:48,017 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:26:48,104 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:26:48,106 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:26:48,111 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:26:54,137 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:26:54,148 - Attempting to click element with bbox_id: 6
+2025-08-08 03:26:54,167 - Attempting native click...
+2025-08-08 03:26:54,979 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:26:54,989 - Attempting to click element with bbox_id: 6
+2025-08-08 03:26:55,007 - Attempting native click...
+2025-08-08 03:26:55,276 - Native click on bbox_id 6 successful and caused a page change.
+2025-08-08 03:26:55,832 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:26:55,836 - Attempting to click element with bbox_id: 6
+2025-08-08 03:26:55,845 - Attempting native click...
+2025-08-08 03:26:56,112 - Native click on bbox_id 6 successful and caused a page change.
+2025-08-08 03:26:56,940 - Native click on bbox_id 6 successful and caused a page change.
+2025-08-08 03:26:58,567 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:26:58,573 - Attempting to type 'can a senior software engineer be considered an insider material nonpublic information acquisition Dirks Salman O'Hagan temporary insider gatekeeper technical employee held liable' into element with bbox_id: 6
+2025-08-08 03:26:58,591 - Attempting native type...
+2025-08-08 03:26:59,631 - Native type on bbox_id 6 successful.
+2025-08-08 03:27:02,319 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:27:03,455 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:27:03,996 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:27:04,226 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:27:05,119 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:27:05,331 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:27:08,194 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:27:09,362 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:27:10,680 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:27:10,690 - Attempting to type 'SEC evidence insider trading tipping communications phone logs email Slack trading timing 'personal benefit' Salman Dirks O'Hagan enforcement release examples' into element with bbox_id: 6
+2025-08-08 03:27:10,719 - Attempting native type...
+2025-08-08 03:27:11,795 - Native type on bbox_id 6 successful.
+2025-08-08 03:27:14,956 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:27:14,963 - Attempting to type 'Dirks v. SEC 463 U.S. 646 1983 opinion pdf' into element with bbox_id: 6
+2025-08-08 03:27:14,978 - Attempting native type...
+2025-08-08 03:27:15,337 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:27:15,341 - Attempting to type 'Salman v. United States 2016 personal benefit tipper liability gifts relatives friends Dirks Newman tippee knowledge' into element with bbox_id: 6
+2025-08-08 03:27:15,351 - Attempting native type...
+2025-08-08 03:27:16,020 - Native type on bbox_id 6 successful.
+2025-08-08 03:27:16,379 - Native type on bbox_id 6 successful.
+2025-08-08 03:27:18,858 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:27:18,867 - Attempting to type 'Dirks v. SEC 1983 opinion PDF' into element with bbox_id: 1
+2025-08-08 03:27:18,890 - Attempting native type...
+2025-08-08 03:27:19,927 - Native type on bbox_id 1 successful.
+2025-08-08 03:27:20,652 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:27:21,978 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:27:25,629 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:27:26,437 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:27:26,902 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:27:27,773 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:27:29,130 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:27:30,011 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:27:30,015 - Attempting to click element with bbox_id: 20
+2025-08-08 03:27:30,040 - Attempting native click...
+2025-08-08 03:27:30,373 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:27:31,128 - Native click on bbox_id 20 successful and caused a page change.
+2025-08-08 03:27:34,840 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:27:34,846 - Attempting to click element with bbox_id: 29
+2025-08-08 03:27:34,864 - Attempting native click...
+2025-08-08 03:27:35,944 - Native click on bbox_id 29 successful and caused a page change.
+2025-08-08 03:27:36,114 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:27:36,117 - Attempting to click element with bbox_id: 19
+2025-08-08 03:27:36,126 - Attempting native click...
+2025-08-08 03:27:37,053 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:27:37,058 - Attempting to type 'Salman v. United States 2016 opinion PDF personal benefit' into element with bbox_id: 1
+2025-08-08 03:27:37,067 - Attempting native type...
+2025-08-08 03:27:37,269 - Native click on bbox_id 19 successful and caused a page change.
+2025-08-08 03:27:37,273 - DEBUG: PDF page detected. Extracting text content.
+2025-08-08 03:27:38,099 - Native type on bbox_id 1 successful.
+2025-08-08 03:27:39,393 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:27:40,541 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:27:43,864 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:27:44,923 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:27:44,931 - DEBUG: PDF page detected. Extracting text content.
+2025-08-08 03:27:45,262 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:27:45,296 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:27:48,896 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:27:49,064 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:27:50,375 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:27:53,354 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:27:53,365 - Attempting to click element with bbox_id: 25
+2025-08-08 03:27:53,377 - Attempting native click...
+2025-08-08 03:27:54,473 - Native click on bbox_id 25 successful and caused a page change.
+2025-08-08 03:27:58,049 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:27:58,100 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:27:59,414 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:28:02,415 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:28:02,712 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:28:03,811 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:28:05,377 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:28:05,381 - Attempting to click element with bbox_id: 20
+2025-08-08 03:28:05,391 - Attempting native click...
+2025-08-08 03:28:06,528 - Native click on bbox_id 20 successful and caused a page change.
+2025-08-08 03:28:08,350 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:28:09,477 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:28:10,359 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:28:11,534 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:28:12,708 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:28:15,829 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:28:16,968 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:28:17,845 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:28:18,952 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:28:19,010 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:28:24,706 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:28:24,715 - Attempting to type 'United States v. O'Hagan 521 U.S. 642 1997 opinion pdf' into element with bbox_id: 6
+2025-08-08 03:28:24,726 - Attempting native type...
+2025-08-08 03:28:25,766 - Native type on bbox_id 6 successful.
+2025-08-08 03:28:27,567 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:28:28,396 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:28:28,741 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:28:31,763 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:28:33,554 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:28:34,834 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:28:37,051 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:28:41,013 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:28:41,016 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:28:42,465 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:28:42,474 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:28:42,811 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:28:42,817 - Attempting to click element with bbox_id: 19
+2025-08-08 03:28:42,833 - Attempting native click...
+2025-08-08 03:28:43,964 - Native click on bbox_id 19 successful and caused a page change.
+2025-08-08 03:28:43,973 - DEBUG: PDF page detected. Extracting text content.
+2025-08-08 03:28:45,351 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:28:46,697 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:28:51,061 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:28:51,072 - Attempting to click element with bbox_id: 25
+2025-08-08 03:28:51,103 - Attempting native click...
+2025-08-08 03:28:51,430 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:28:51,434 - DEBUG: PDF page detected. Extracting text content.
+2025-08-08 03:28:52,042 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:28:52,137 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:28:52,141 - Attempting to click element with bbox_id: 26
+2025-08-08 03:28:52,153 - Attempting native click...
+2025-08-08 03:28:52,271 - Native click on bbox_id 25 successful and caused a page change.
+2025-08-08 03:28:53,378 - Native click on bbox_id 26 successful and caused a page change.
+2025-08-08 03:28:53,382 - DEBUG: PDF page detected. Extracting text content.
+2025-08-08 03:28:55,207 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:28:55,216 - Attempting to type 'Dirks temporary insider gatekeeper SEC guidance "temporary insider" "gatekeeper"' into element with bbox_id: 1
+2025-08-08 03:28:55,248 - Attempting native type...
+2025-08-08 03:28:56,302 - Native type on bbox_id 1 successful.
+2025-08-08 03:28:59,302 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:28:59,888 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:28:59,901 - DEBUG: PDF page detected. Extracting text content.
+2025-08-08 03:29:00,182 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:29:00,536 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:29:01,577 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:29:01,602 - DEBUG: PDF page detected. Extracting text content.
+2025-08-08 03:29:05,719 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:29:06,962 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:29:08,492 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:29:09,570 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:29:09,580 - DEBUG: PDF page detected. Extracting text content.
+2025-08-08 03:29:10,175 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:29:11,589 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:29:13,495 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 03:29:15,647 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:29:15,656 - Attempting to type '"software engineer" insider trading acquisition SEC DOJ press release' into element with bbox_id: 1
+2025-08-08 03:29:15,679 - Attempting native type...
+2025-08-08 03:29:16,731 - Native type on bbox_id 1 successful.
+2025-08-08 03:29:22,880 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:29:23,274 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:29:23,813 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:29:24,165 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:29:24,461 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:29:25,137 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:29:25,722 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:29:26,934 - Future exception was never retrieved
+future: <Future finished exception=TargetClosedError('Target page, context or browser has been closed')>
+playwright._impl._errors.TargetClosedError: Target page, context or browser has been closed
+2025-08-08 03:34:58,254 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:34:58,442 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:34:59,380 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:34:59,423 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:35:00,607 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:35:28,294 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:35:28,320 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:35:28,323 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:35:28,325 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:35:28,327 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:35:28,328 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:35:28,638 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:35:28,643 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:35:28,647 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:35:28,650 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:35:28,652 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:35:29,257 - Processing query: Apply the legal standards to the hypothetical facts: Alice (senior software engineer at publicly traded TechNova), Bob (friend of Alice's brother) buys large call options a week before a surprise acquisition announcement. For each legal element of tipping, list what concrete evidence would be required to prove Alice tipped Bob. Evaluate strengths and weaknesses for prosecution and defenses, and suggest investigative lines to prove/disprove tipping.
+2025-08-08 03:35:29,259 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:35:29,266 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:35:29,329 - Processing query: Explain the misappropriation theory versus the classical theory of insider trading (e.g., United States v. O'Hagan), describe when each applies, and explain how tippee liability is treated under both. Provide citations to cases and SEC guidance.
+2025-08-08 03:35:29,380 - Processing query: Research the legal elements for insider tipping liability under U.S. law (classical tipper/tippee). Summarize Dirks v. SEC (463 U.S. 646), list the elements required for tipper liability and tippee liability, explain 'material nonpublic information' and fiduciary breach, and cite authoritative sources (Supreme Court opinions, SEC guidance). Provide links to primary sources and concise explanations.
+2025-08-08 03:35:29,380 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:35:29,383 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:35:29,415 - Processing query: Research what constitutes a 'personal benefit' to a tipper in insider trading cases. Summarize relevant case law including Salman v. United States (2016) and United States v. Newman (2014) where relevant, explain examples (pecuniary gain, reputational benefit, gift to relative/friend), and cite sources/links.
+2025-08-08 03:35:29,415 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:35:29,420 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:35:29,420 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:35:29,423 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:35:29,463 - Processing query: Describe typical SEC investigative steps and the types of evidence the SEC uses to prove tipping/insider trading: communications (emails, texts), trading records, access logs, witness interviews, trading pattern analysis, and metadata. Provide examples from SEC enforcement releases or official guidance and cite sources.
+2025-08-08 03:35:29,463 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:35:29,465 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:35:30,611 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:35:30,740 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:35:30,742 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:35:30,744 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:35:30,748 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:35:38,259 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:35:38,268 - Attempting to type 'SEC insider trading investigation evidence communications emails texts trading records access logs witness interviews metadata enforcement release examples' into element with bbox_id: 6
+2025-08-08 03:35:38,284 - Attempting native type...
+2025-08-08 03:35:38,509 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:35:38,515 - Attempting to type 'what constitutes "personal benefit" to a tipper in insider trading cases Dirks Newman Salman personal benefit examples' into element with bbox_id: 6
+2025-08-08 03:35:38,528 - Attempting native type...
+2025-08-08 03:35:39,330 - Native type on bbox_id 6 successful.
+2025-08-08 03:35:39,565 - Native type on bbox_id 6 successful.
+2025-08-08 03:35:41,155 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:35:41,159 - Attempting to type 'Dirks v. SEC O'Hagan misappropriation classical theory tippee liability Salman Newman Texas Gulf Sulphur SEC guidance insider trading' into element with bbox_id: 6
+2025-08-08 03:35:41,166 - Attempting native type...
+2025-08-08 03:35:42,197 - Native type on bbox_id 6 successful.
+2025-08-08 03:35:43,363 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 03:35:43,596 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:35:43,603 - Attempting to type 'Dirks v. SEC 463 U.S. 646 opinion pdf' into element with bbox_id: 6
+2025-08-08 03:35:43,641 - Attempting native type...
+2025-08-08 03:35:44,797 - Native type on bbox_id 6 successful.
+2025-08-08 03:35:49,321 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:35:50,093 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:35:50,752 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:35:51,076 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:35:51,504 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:35:52,330 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:35:52,698 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:35:54,088 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:35:56,590 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:35:56,600 - Attempting to click element with bbox_id: 21
+2025-08-08 03:35:56,646 - Attempting native click...
+2025-08-08 03:35:57,763 - Detected a new tab. Switched to tab index 1.
+2025-08-08 03:35:57,763 - Native click on bbox_id 21 successful and caused a page change.
+2025-08-08 03:35:59,764 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:35:59,768 - Attempting to click element with bbox_id: 20
+2025-08-08 03:35:59,782 - Attempting native click...
+2025-08-08 03:36:00,178 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:36:00,181 - Attempting to click element with bbox_id: 30
+2025-08-08 03:36:00,212 - Attempting native click...
+2025-08-08 03:36:00,969 - Native click on bbox_id 20 successful and caused a page change.
+2025-08-08 03:36:00,974 - DEBUG: PDF page detected. Extracting text content.
+2025-08-08 03:36:01,515 - Native click on bbox_id 30 successful and caused a page change.
+2025-08-08 03:36:01,924 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:36:01,934 - Attempting to click element with bbox_id: 1
+2025-08-08 03:36:01,954 - Attempting native click...
+2025-08-08 03:36:03,052 - Native click on bbox_id 1 successful and caused a page change.
+2025-08-08 03:36:07,675 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:36:08,013 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:36:08,731 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:36:08,740 - DEBUG: PDF page detected. Extracting text content.
+2025-08-08 03:36:09,248 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:36:09,330 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:36:09,335 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:36:10,699 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:36:11,953 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:36:16,552 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:36:16,553 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:36:16,565 - Attempting to click element with bbox_id: 20
+2025-08-08 03:36:16,571 - Attempting to click element with bbox_id: 5
+2025-08-08 03:36:16,578 - Attempting native click...
+2025-08-08 03:36:16,591 - Attempting native click...
+2025-08-08 03:36:17,700 - Native click on bbox_id 20 successful and caused a page change.
+2025-08-08 03:36:18,008 - Native click on bbox_id 5 successful and caused a page change.
+2025-08-08 03:36:20,194 - Future exception was never retrieved
+future: <Future finished exception=TargetClosedError('Target page, context or browser has been closed')>
+playwright._impl._errors.TargetClosedError: Target page, context or browser has been closed
+2025-08-08 03:36:20,194 - Future exception was never retrieved
+future: <Future finished exception=TargetClosedError('Target page, context or browser has been closed')>
+playwright._impl._errors.TargetClosedError: Target page, context or browser has been closed
+2025-08-08 03:44:47,238 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:44:47,440 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:44:48,081 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:44:48,121 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:44:49,318 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:45:08,542 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:45:08,571 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:45:08,574 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:45:08,579 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:45:08,580 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:45:08,586 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:45:08,587 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:45:08,809 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:45:08,817 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:45:08,820 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:45:08,822 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:45:08,824 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:45:08,826 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:45:09,475 - Processing query: Research Task 4: Typical evidence and investigative methods used by the SEC in insider trading/tipping investigations. Include examples of evidence (phone/email logs, trade records, brokerage account info, IP logs, witness statements), how call option purchases before acquisitions are treated, and any enforcement actions with similar fact patterns (large call option buys by friends/family). Provide links to SEC enforcement releases or public filings illustrating such cases.
+2025-08-08 03:45:09,476 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:45:09,481 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:45:09,531 - Processing query: Research Task 2: Materiality and 'personal benefit' in tipping cases. Summarize how courts define 'material nonpublic information' and how 'personal benefit' to the tipper is established (including explicit and implicit benefits, reputational benefits, pecuniary benefit, and gifts to relatives). Cite cases (Dirks, Salman, and other relevant circuits) and guidance from SEC enforcement releases or law review commentary. Provide examples and short explanations.
+2025-08-08 03:45:09,572 - Processing query: Research Task 3: Tippee liability requirements: knowledge, scienter, and when a tippee is liable for trading. Explain what the Government must prove about the tippee's knowledge and state of mind. Cite case law and enforcement examples. Include how proof is often established (communications, timing, pattern of trades).
+2025-08-08 03:45:09,572 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:45:09,578 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:45:09,611 - Processing query: Research Task 1: Legal elements of insider trading and tipping under U.S. law. Find and summarize the controlling statutes and precedent Supreme Court/appeals court cases (e.g., Dirks v. SEC, Salman v. United States, United States v. O'Hagan, Chiarella v. United States, SEC Rule 10b-5). Explain the elements required to prove illegal tipping and insider trading, and list statutory citations and key quotes or holdings. Provide links to authoritative sources (SCOTUS opinions, SEC guidance, law review summaries).
+2025-08-08 03:45:09,612 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:45:09,615 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:45:09,643 - Processing query: Research Task 5: Common defenses and how they are evaluated in tipping/insider trading cases. Cover defenses like independent source, coincidence, no access to information, lack of personal benefit, or absence of scienter. Cite cases or examples where these defenses succeeded or failed. Provide practical guidance on what evidence supports each defense.
+2025-08-08 03:45:09,644 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:45:09,647 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:45:09,676 - Processing query: Research Task 6: Apply the law to the provided facts. Using findings from the above research, analyze whether Alice likely illegally tipped Bob given these facts: Alice is a senior software engineer at TechNova; a week before a surprise acquisition is announced, large call options are purchased by Bob, a friend of Alice’s brother; the SEC has begun an investigation. Identify the elements missing from the fact pattern, what additional evidence would be needed to prove tipping, and produce a checklist of investigative steps the SEC would likely take and indicators that point toward liability vs. innocence.
+2025-08-08 03:45:09,676 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:45:09,679 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:45:09,679 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:45:09,681 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:45:10,940 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:45:10,942 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:45:10,945 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:45:10,949 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:45:10,952 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:45:11,041 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:45:16,015 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:45:16,027 - Attempting to click element with bbox_id: 6
+2025-08-08 03:45:16,042 - Attempting native click...
+2025-08-08 03:45:16,258 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:45:16,262 - Attempting to click element with bbox_id: 6
+2025-08-08 03:45:16,272 - Attempting native click...
+2025-08-08 03:45:17,102 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:45:17,119 - Attempting to type 'Dirks v. SEC material nonpublic information personal benefit Salman v. United States personal benefit tipping courts circuits SEC guidance law review' into element with bbox_id: 6
+2025-08-08 03:45:17,133 - Native click on bbox_id 6 successful and caused a page change.
+2025-08-08 03:45:17,138 - Attempting native type...
+2025-08-08 03:45:17,254 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:45:17,257 - Attempting to click element with bbox_id: 6
+2025-08-08 03:45:17,264 - Attempting native click...
+2025-08-08 03:45:17,350 - Native click on bbox_id 6 successful and caused a page change.
+2025-08-08 03:45:17,354 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:45:17,356 - Attempting to type 'tippee liability knowledge scienter Dirks Salman proof communications timing pattern of trades SEC enforcement examples' into element with bbox_id: 6
+2025-08-08 03:45:17,363 - Attempting native type...
+2025-08-08 03:45:18,178 - Native type on bbox_id 6 successful.
+2025-08-08 03:45:18,306 - Native click on bbox_id 6 successful and caused a page change.
+2025-08-08 03:45:18,403 - Native type on bbox_id 6 successful.
+2025-08-08 03:45:22,626 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:45:23,760 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:45:24,207 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:45:24,718 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:45:25,356 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:45:25,869 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:45:27,176 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:45:27,228 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:45:28,592 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:45:28,634 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:45:30,248 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:45:30,258 - Attempting to type 'insider trading tipping defenses independent source coincidence no access lack of personal benefit absence of scienter cases Dirks Salman O'Hagan' into element with bbox_id: 6
+2025-08-08 03:45:30,274 - Attempting native type...
+2025-08-08 03:45:31,315 - Native type on bbox_id 6 successful.
+2025-08-08 03:45:31,819 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:45:31,830 - Attempting to type 'Dirks v. SEC Chiarella O'Hagan Salman insider trading tipping 10b-5 15 U.S.C. 78j(b) SCOTUS opinion pdf SEC guidance law review summary' into element with bbox_id: 6
+2025-08-08 03:45:31,851 - Attempting native type...
+2025-08-08 03:45:32,173 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:45:32,180 - Attempting to type 'SEC insider trading investigation evidence phone email logs trade records call option purchases enforcement release large call option buys friends family site:sec.gov' into element with bbox_id: 6
+2025-08-08 03:45:32,197 - Attempting native type...
+2025-08-08 03:45:32,877 - Native type on bbox_id 6 successful.
+2025-08-08 03:45:33,230 - Native type on bbox_id 6 successful.
+2025-08-08 03:45:35,778 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:45:35,783 - Attempting to click element with bbox_id: 31
+2025-08-08 03:45:35,810 - Attempting native click...
+2025-08-08 03:45:36,869 - Native click on bbox_id 31 successful and caused a page change.
+2025-08-08 03:45:37,253 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 03:45:37,481 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:45:37,484 - Attempting to click element with bbox_id: 37
+2025-08-08 03:45:37,500 - Attempting native click...
+2025-08-08 03:45:38,561 - Native click on bbox_id 37 successful and caused a page change.
+2025-08-08 03:45:39,668 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:45:40,179 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:45:40,897 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:45:41,527 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:45:44,160 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:45:44,483 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:45:45,463 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:45:45,795 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:45:46,137 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:45:46,178 - Retrying request to /chat/completions in 0.418227 seconds
+2025-08-08 03:45:47,738 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:45:48,006 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:45:48,012 - Attempting to click element with bbox_id: 30
+2025-08-08 03:45:48,028 - Attempting native click...
+2025-08-08 03:45:48,092 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:45:48,096 - Attempting to click element with bbox_id: 20
+2025-08-08 03:45:48,113 - Attempting native click...
+2025-08-08 03:45:49,114 - Native click on bbox_id 30 successful and caused a page change.
+2025-08-08 03:45:49,543 - Native click on bbox_id 20 successful and caused a page change.
+2025-08-08 03:45:49,547 - DEBUG: PDF page detected. Extracting text content.
+2025-08-08 03:45:50,992 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:45:52,341 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:45:53,626 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:45:56,567 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:45:56,585 - DEBUG: PDF page detected. Extracting text content.
+2025-08-08 03:45:56,911 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:45:56,979 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:45:56,982 - Attempting to click element with bbox_id: 138
+2025-08-08 03:45:57,013 - Attempting native click...
+2025-08-08 03:45:57,345 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:45:58,067 - Native click on bbox_id 138 successful and caused a page change.
+2025-08-08 03:45:58,499 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:46:01,479 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:46:02,077 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:46:02,793 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:46:03,886 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:46:06,716 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:46:08,418 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:46:08,957 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:46:08,974 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:46:10,494 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:46:13,301 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:46:13,304 - Attempting to click element with bbox_id: 4
+2025-08-08 03:46:13,623 - Attempting native click...
+2025-08-08 03:46:13,912 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 03:46:14,688 - Native click on bbox_id 4 successful and caused a page change.
+2025-08-08 03:46:16,714 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:46:18,149 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:46:18,970 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:46:19,664 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:46:20,450 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:46:20,757 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:46:21,436 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:46:22,017 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:46:22,800 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:46:25,876 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:46:27,248 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:46:28,202 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:46:28,210 - Attempting to type 'Dirks v. SEC 463 U.S. 646 1983 personal benefit material nonpublic information Salman v. United States 581 U.S. 405 2016 opinion' into element with bbox_id: 1
+2025-08-08 03:46:28,258 - Attempting native type...
+2025-08-08 03:46:28,450 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:46:28,454 - Attempting to click element with bbox_id: 20
+2025-08-08 03:46:28,467 - Attempting native click...
+2025-08-08 03:46:29,296 - Native type on bbox_id 1 successful.
+2025-08-08 03:46:29,596 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:46:29,638 - Native click on bbox_id 20 successful and caused a page change.
+2025-08-08 03:46:29,642 - DEBUG: PDF page detected. Extracting text content.
+2025-08-08 03:46:29,646 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:46:29,651 - Attempting to type 'site:sec.gov "insider trading" options "call option" enforcement release' into element with bbox_id: 6
+2025-08-08 03:46:29,672 - Attempting native type...
+2025-08-08 03:46:29,680 - Native type failed for bbox_id 6: Page.fill: Error: Element is not an <input>, <textarea>, <select> or [contenteditable] and does not have a role allowing [aria-readonly]
+Call log:
+  - waiting for locator("[data-ai-label=\"6\"]")
+    - locator resolved to <span jsname="s1VaRe" data-ai-label="6" class="ACRAdd M2vV3"></span>
+    - fill("site:sec.gov "insider trading" options "call option" enforcement release")
+  - attempting fill action
+    - waiting for element to be visible, enabled and editable
+. Falling back.
+2025-08-08 03:46:29,680 - Attempting human-like type...
+2025-08-08 03:46:32,206 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:46:32,210 - Attempting to click element with bbox_id: 26
+2025-08-08 03:46:32,231 - Attempting native click...
+2025-08-08 03:46:33,315 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 03:46:33,546 - Native click on bbox_id 26 successful and caused a page change.
+2025-08-08 03:46:35,445 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:46:35,450 - DEBUG: PDF page detected. Extracting text content.
+2025-08-08 03:46:35,853 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:46:38,624 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:46:39,970 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:46:40,000 - Retrying request to /chat/completions in 0.494247 seconds
+2025-08-08 03:46:40,742 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:46:41,568 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:46:42,165 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:46:42,582 - Human-like fallback type on bbox_id 6 successful.
+2025-08-08 03:46:42,746 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:46:43,555 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:46:47,836 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:46:47,840 - Attempting to click element with bbox_id: 4
+2025-08-08 03:46:47,874 - Attempting native click...
+2025-08-08 03:46:48,950 - Native click on bbox_id 4 successful and caused a page change.
+2025-08-08 03:46:50,947 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:46:51,885 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:46:51,889 - Attempting to click element with bbox_id: 26
+2025-08-08 03:46:51,936 - Attempting native click...
+2025-08-08 03:46:53,168 - Native click on bbox_id 26 successful and caused a page change.
+2025-08-08 03:46:53,173 - DEBUG: PDF page detected. Extracting text content.
+2025-08-08 03:46:53,476 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:46:53,907 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:46:54,747 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:46:55,253 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:46:55,263 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:46:56,621 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:46:57,635 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:46:58,831 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:46:59,332 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:46:59,340 - DEBUG: PDF page detected. Extracting text content.
+2025-08-08 03:46:59,459 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:46:59,496 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:47:05,681 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:47:09,240 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:47:09,612 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:47:09,815 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:47:10,888 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:47:11,116 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:47:13,882 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:47:15,181 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:47:17,017 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:47:17,068 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:47:17,073 - Attempting to click element with bbox_id: 29
+2025-08-08 03:47:17,093 - Attempting native click...
+2025-08-08 03:47:18,173 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:47:18,294 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:47:18,355 - Native click on bbox_id 29 successful and caused a page change.
+2025-08-08 03:47:18,357 - DEBUG: PDF page detected. Extracting text content.
+2025-08-08 03:47:21,382 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:47:21,661 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:47:21,863 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:47:22,607 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:47:24,530 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:47:26,646 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:47:26,664 - DEBUG: PDF page detected. Extracting text content.
+2025-08-08 03:47:29,369 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:47:29,369 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:47:29,376 - Attempting to click element with bbox_id: 19
+2025-08-08 03:47:29,378 - Attempting to click element with bbox_id: 20
+2025-08-08 03:47:29,390 - Attempting native click...
+2025-08-08 03:47:29,395 - Attempting native click...
+2025-08-08 03:47:29,415 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:47:29,746 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:47:30,599 - Native click on bbox_id 20 successful and caused a page change.
+2025-08-08 03:47:30,606 - DEBUG: PDF page detected. Extracting text content.
+2025-08-08 03:47:30,713 - Native click on bbox_id 19 successful and caused a page change.
+2025-08-08 03:47:31,055 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:47:32,169 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:47:33,455 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:47:37,059 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:47:37,075 - DEBUG: PDF page detected. Extracting text content.
+2025-08-08 03:47:37,110 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:47:37,271 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:47:38,145 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:47:38,158 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:47:38,969 - Error opening new tab: Page.goto: net::ERR_TOO_MANY_REDIRECTS at https://www.sec.gov/search/site/%22One%20or%20More%20Unknown%20Purchasers%20of%20Call%20Options%22
+Call log:
+  - navigating to "https://www.sec.gov/search/site/%22One%20or%20More%20Unknown%20Purchasers%20of%20Call%20Options%22", waiting until "load"
+
+2025-08-08 03:47:38,976 - DEBUG: PDF page detected. Extracting text content.
+2025-08-08 03:47:42,113 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:47:42,120 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 03:47:42,128 - Attempting to click element with bbox_id: 20
+2025-08-08 03:47:42,140 - Attempting native click...
+2025-08-08 03:47:42,376 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:47:46,834 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:47:47,142 - Native click failed for bbox_id 20: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"20\"]")
+    - locator resolved to <h3 data-ai-label="20" class="LC20lb MBeuO DKV0Md">Chiarella v. United States, 445 U.S. 222 (1980).</h3>
+  - attempting click action
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - performing click action
+    - click action done
+    - waiting for scheduled navigations to finish
+. Falling back.
+2025-08-08 03:47:47,142 - Attempting human-like click...
+2025-08-08 03:47:48,068 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:47:48,598 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:47:48,607 - DEBUG: PDF page detected. Extracting text content.
+2025-08-08 03:47:48,697 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:47:51,576 - DEBUG: 'networkidle' failed: Timeout 3000ms exceeded.. Trying 'load' state.
+2025-08-08 03:47:51,676 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:47:52,054 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:47:58,010 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:47:58,024 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:47:58,039 - DEBUG: PDF page detected. Extracting text content.
+2025-08-08 03:48:00,918 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:48:00,918 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:48:00,932 - Attempting to click element with bbox_id: 1
+2025-08-08 03:48:00,969 - Attempting native click...
+2025-08-08 03:48:01,241 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:48:02,136 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:48:02,205 - Native click on bbox_id 1 successful and caused a page change.
+2025-08-08 03:48:05,482 - Future exception was never retrieved
+future: <Future finished exception=TargetClosedError('Target page, context or browser has been closed')>
+playwright._impl._errors.TargetClosedError: Target page, context or browser has been closed
+2025-08-08 03:48:05,482 - Future exception was never retrieved
+future: <Future finished exception=TargetClosedError('Target page, context or browser has been closed')>
+playwright._impl._errors.TargetClosedError: Target page, context or browser has been closed
+2025-08-08 03:48:05,482 - Future exception was never retrieved
+future: <Future finished exception=TargetClosedError('Target page, context or browser has been closed')>
+playwright._impl._errors.TargetClosedError: Target page, context or browser has been closed
+2025-08-08 03:54:09,553 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:54:09,751 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:54:10,480 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:54:10,525 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:54:11,719 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:54:25,092 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:54:25,137 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:54:25,140 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:54:25,147 - Delegate tool failed: WebVoyagerV2.create() got an unexpected keyword argument 'enable_summarization'
+2025-08-08 03:54:25,148 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:54:25,150 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:54:25,153 - Delegate tool failed: WebVoyagerV2.create() got an unexpected keyword argument 'enable_summarization'
+2025-08-08 03:54:25,153 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:54:25,154 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:54:25,161 - Delegate tool failed: WebVoyagerV2.create() got an unexpected keyword argument 'enable_summarization'
+2025-08-08 03:54:25,163 - Delegate tool failed: WebVoyagerV2.create() got an unexpected keyword argument 'enable_summarization'
+2025-08-08 03:54:25,165 - Delegate tool failed: WebVoyagerV2.create() got an unexpected keyword argument 'enable_summarization'
+2025-08-08 03:54:25,166 - Delegate tool failed: WebVoyagerV2.create() got an unexpected keyword argument 'enable_summarization'
+2025-08-08 03:54:33,077 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:54:34,223 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:54:38,914 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:54:52,636 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:54:53,746 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:55:45,360 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:55:45,571 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:55:46,235 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:55:46,276 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:55:47,440 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:55:58,828 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:55:58,866 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:55:58,868 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:55:58,869 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:55:58,872 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:55:58,875 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:55:58,878 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:55:58,879 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:55:59,150 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:55:59,157 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:55:59,161 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:55:59,165 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:55:59,169 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:55:59,171 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:55:59,178 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 03:55:59,834 - Processing query: Subquestion 5: Evaluate whether Bob’s large call option purchase is likely tied to an insider tip or could be independent (other MNPI sources, rumors). Provide a framework for linking trades to MNPI.
+2025-08-08 03:55:59,835 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:55:59,846 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:55:59,903 - Processing query: Subquestion 3: Analyze whether Alice owed a duty to keep information confidential (fiduciary duty, company-imposed confidentiality, a duty to the shareholders) and how that duty impacts tipping liability.
+2025-08-08 03:55:59,939 - Processing query: Subquestion 2: Research what constitutes a ‘tip’ and the liability of a tipper and tippee (e.g., Dirks v. SEC; Salman; general insider trading theory). Provide a concise, well-cited overview.
+2025-08-08 03:55:59,939 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:55:59,944 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:55:59,978 - Processing query: Subquestion 1: Research what MNPI (material nonpublic information) is under US securities law, and the standard for insider trading (including Rule 10b-5 and key cases like Dirks v. SEC, Salman v. United States). Provide a concise summary with citations and caveats.
+2025-08-08 03:55:59,978 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:55:59,980 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:56:00,010 - Processing query: Subquestion 6: Outline what evidence the SEC or prosecutors would require to prove tipping (tipping by Alice, receipt by Bob) and the potential charges and burdens of proof.
+2025-08-08 03:56:00,010 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:56:00,014 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:56:00,045 - Processing query: Subquestion 7: Propose an investigative plan and potential defenses for Alice (e.g., lack of duty, lack of MNPI, lack of link between tip and trading, etc.).
+2025-08-08 03:56:00,046 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:56:00,048 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:56:00,076 - Processing query: Subquestion 4: Assess whether acquisition information about TechNova could reasonably be considered material and nonpublic at the relevant time. Outline criteria and how to evaluate.
+2025-08-08 03:56:00,077 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:56:00,079 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:56:00,079 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:56:00,081 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:56:01,428 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:56:01,434 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:56:01,438 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:56:01,441 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:56:01,444 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:56:01,447 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:56:01,449 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:56:06,368 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:56:08,818 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:56:08,822 - Attempting to type 'MNPI material nonpublic information insider trading Rule 10b-5 Dirks Salman' into element with bbox_id: 6
+2025-08-08 03:56:08,830 - Attempting native type...
+2025-08-08 03:56:09,512 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:56:09,609 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:56:09,860 - Native type on bbox_id 6 successful.
+2025-08-08 03:56:11,767 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:56:12,023 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:56:13,290 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:56:15,635 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:56:17,492 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:56:18,583 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:56:19,184 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:56:20,070 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:56:22,648 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:56:22,660 - Attempting to click element with bbox_id: 21
+2025-08-08 03:56:22,691 - Attempting native click...
+2025-08-08 03:56:23,792 - Detected a new tab. Switched to tab index 1.
+2025-08-08 03:56:23,792 - Native click on bbox_id 21 successful and caused a page change.
+2025-08-08 03:56:24,186 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:56:24,195 - Attempting to click element with bbox_id: 35
+2025-08-08 03:56:24,223 - Attempting native click...
+2025-08-08 03:56:24,719 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:56:25,493 - Native click on bbox_id 35 successful and caused a page change.
+2025-08-08 03:56:25,677 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:56:26,052 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:56:26,687 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:56:27,657 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:56:28,473 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:56:28,485 - Attempting to click element with bbox_id: 29
+2025-08-08 03:56:28,516 - Attempting native click...
+2025-08-08 03:56:29,604 - Native click on bbox_id 29 successful and caused a page change.
+2025-08-08 03:56:30,802 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:56:31,184 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:56:31,187 - Attempting to click element with bbox_id: 20
+2025-08-08 03:56:31,199 - Attempting native click...
+2025-08-08 03:56:31,947 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:56:32,272 - Native click on bbox_id 20 successful and caused a page change.
+2025-08-08 03:56:33,477 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:56:34,429 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:56:34,897 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:56:35,244 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:56:36,533 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:56:38,112 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:56:40,318 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:56:40,601 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:56:42,112 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:56:42,978 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:56:47,151 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:56:47,770 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:56:48,761 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:56:49,041 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:56:50,907 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:56:52,397 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:56:54,085 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:56:54,539 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:56:55,249 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:56:58,787 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:56:59,963 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:57:01,634 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:57:02,030 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:57:02,929 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:57:06,896 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:57:09,549 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:57:09,557 - Attempting to click element with bbox_id: 27
+2025-08-08 03:57:09,579 - Attempting native click...
+2025-08-08 03:57:09,775 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:57:12,746 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:57:13,360 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:57:14,085 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:57:14,949 - Native click on bbox_id 27 successful and caused a page change.
+2025-08-08 03:57:16,167 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:57:16,332 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:57:19,759 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:57:20,608 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:57:25,829 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:57:26,704 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:57:27,044 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:57:27,555 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:57:28,741 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:57:29,194 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:57:31,159 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:57:32,080 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:57:34,585 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:57:40,757 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:57:41,558 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:57:45,274 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:57:46,933 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:57:47,360 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:57:49,098 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:57:53,904 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:58:00,892 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:58:09,209 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:58:09,627 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:58:16,197 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:58:23,813 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:58:28,217 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:58:35,727 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:58:41,099 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:58:42,274 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:58:46,486 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:58:54,347 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:58:59,223 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:59:06,565 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:59:09,870 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:59:18,408 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:59:20,571 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:59:22,532 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:59:25,923 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:59:27,093 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:59:33,324 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:59:40,745 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:59:47,047 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 03:59:53,374 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 03:59:57,693 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 04:00:04,189 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 04:00:10,453 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 04:00:12,265 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 04:00:21,153 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 04:00:22,507 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 04:00:28,517 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 04:00:29,651 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 04:00:34,818 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 04:00:35,979 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 04:00:38,314 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 04:00:39,446 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 04:00:41,907 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 04:00:43,054 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 04:00:50,124 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 04:00:56,663 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 04:01:03,232 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 04:01:10,460 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 04:01:17,156 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 04:01:24,893 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 04:01:31,086 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 04:01:32,254 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 04:01:35,167 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 04:01:35,178 - Attempting to click element with bbox_id: 4
+2025-08-08 04:01:35,184 - Attempting native click...
+2025-08-08 04:01:36,237 - Native click on bbox_id 4 successful and caused a page change.
+2025-08-08 04:01:37,408 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 04:02:02,774 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 04:02:03,995 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 04:02:21,216 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"

@@ -23,8 +23,10 @@ async def apply_fingerprint_profile(page: Page, seed=HUMAN_BEHAVIOR_SEED):
     real user's environment.
     """
     if seed is not None:
-        random.seed(seed)
-    profile = random.choice(FINGERPRINT_PROFILES)
+        rng = random.Random(seed)
+        profile = rng.choice(FINGERPRINT_PROFILES)
+    else:
+        profile = random.choice(FINGERPRINT_PROFILES)
     logging.info(f"Using fingerprint profile: {profile.get('name', 'Unnamed Profile')}")
     
     # 1. Set HTTP Headers from the profile
@@ -138,7 +140,8 @@ async def apply_fingerprint_profile(page: Page, seed=HUMAN_BEHAVIOR_SEED):
 def get_random_fingerprint_profile(seed: Optional[int] = HUMAN_BEHAVIOR_SEED) -> Dict[str, Any]:
     """Return a random fingerprint profile (optionally seeded for reproducibility)."""
     if seed is not None:
-        random.seed(seed)
+        rng = random.Random(seed)
+        return rng.choice(FINGERPRINT_PROFILES)
     return random.choice(FINGERPRINT_PROFILES)
 
 

@@ -9,10 +9,10 @@ import hashlib
 import platform
 from typing import Dict, Any, List, Optional, Tuple
 
-from readability.readability import Document
-from html_to_markdown import convert_to_markdown
+from bs4 import BeautifulSoup
+from langchain.chat_models.base import init_chat_model
 from langchain_core.tools import tool
-from langchain_core.messages import HumanMessage, AIMessage, ToolMessage
+from langchain_core.messages import HumanMessage, AIMessage, ToolMessage, SystemMessage
 from playwright.async_api import Page, BrowserContext
 from langgraph.types import Command
 
@@ -27,6 +27,8 @@ from .human_behavior import (
     human_scroll,
 )
 from .fingerprint_evasion import apply_fingerprint_profile
+from .config import LLM_SUMMARIZER_MODEL, LLM_SUMMARIZER_PROVIDER
+from .utils import html_to_markdown
 
 logger = logging.getLogger(__name__)
 
@@ -52,6 +54,14 @@ class WebVoyagerStateManager:
         self._action_count: int = 0
         self.prev_snapshot: Optional[Annotation] = None
         self.current_page_index: int = 0
+        # Lightweight summarizer LLM for cheap text summaries
+        try:
+            self.summarizer_llm = init_chat_model(
+                model=LLM_SUMMARIZER_MODEL,
+                model_provider=LLM_SUMMARIZER_PROVIDER,
+            )
+        except Exception:
+            self.summarizer_llm = None
         
     @classmethod
     async def create(cls, context: BrowserContext):
@@ -513,22 +523,145 @@ class WebVoyagerStateManager:
             return f"Error refreshing page: {str(e)}"
 
     async def extract_page_content(self) -> str:
-        """
-        Extracts the meaningful content of the current page, cleans it, 
-        and returns it as Markdown.
+        """Return full visible page content as Markdown, plus a DOM outline, and an optional LLM-parsed Markdown.
+
+        Designed to preserve content so LLMs can "read" articles and long text without hallucinating.
         """
         try:
             page = self.get_current_page()
+            url = page.url
+            title = await page.title()
             html_content = await page.content()
-            
-            doc = Document(html_content)
-            clean_html = doc.summary(html_partial=True)
-            markdown_content = convert_to_markdown(clean_html)
-            return f"Page Content (Markdown):\n\n{markdown_content}"
+
+            # Build a compact DOM outline using BeautifulSoup
+            dom_outline = self._build_dom_outline(html_content)
+            # Build a full cleaned Markdown representation of the visible HTML
+            cleaned_markdown = html_to_markdown(html_content)
+
+            summary_text = ""
+            if self.summarizer_llm is not None:
+                try:
+                    prompt = (
+                        "You are a faithful HTML-to-Markdown converter. Given the page's cleaned Markdown text, "
+                        "produce a high-fidelity Markdown of the page content. "
+                        "Preserve headings, paragraphs, lists, tables, code blocks, and hyperlinks. Do not invent content. "
+                        "Prefer the provided cleaned Markdown text over the outline when in doubt."
+                    )
+                    # Cap lengths to keep within budget for the cheap model
+                    # max_clean_md = 12000
+                    # max_outline = 6000
+                    cleaned_md_snippet = cleaned_markdown
+                    dom_snippet = dom_outline
+                    messages = [
+                        SystemMessage(content=prompt),
+                        HumanMessage(content=(
+                            f"URL: {url}\nTitle: {title}\n\n"
+                            f"Cleaned Markdown (truncated):\n{cleaned_md_snippet}\n\n"
+                            # f"DOM Outline (truncated):\n{dom_snippet}\n\n"
+                            f"Output the final Markdown only."
+                        )),
+                    ]
+                    summary_response = await self.summarizer_llm.ainvoke(messages)
+                    summary_text = str(getattr(summary_response, "content", "")).strip()
+                except Exception as e:
+                    logger.warning(f"Summarizer failed, returning DOM only: {e}")
+
+            result_parts = [
+                f"URL: {url}",
+                f"Title: {title}",
+                "",
+                "Page Content (Markdown, truncated):",
+                cleaned_markdown[:20000],
+                "",
+                "Page DOM Outline (truncated):",
+                dom_outline[:10000],
+            ]
+            if summary_text:
+                result_parts.extend(["", "LLM Parsed Markdown:", summary_text])
+            return "\n".join(result_parts)
 
         except Exception as e:
             logger.error(f"Error extracting page content: {e}")
             return f"Error extracting page content: {str(e)}"
+
+    def _build_dom_outline(self, html_content: str, max_depth: int = 4, max_nodes: int = 800) -> str:
+        """Create a human-readable DOM outline from raw HTML.
+
+        - Skips non-content tags like script/style/meta/link/svg
+        - Shows tag, id, limited classes, and a short text snippet
+        - Limits depth and total nodes to keep size reasonable
+        """
+        soup = BeautifulSoup(html_content or "", "html.parser")
+        root = soup.body or soup
+
+        ignored_tags = {"script", "style", "meta", "link", "noscript", "svg", "path"}
+        lines: List[str] = []
+        nodes_seen = 0
+
+        def text_snippet(node_text: str, limit: int = 80) -> str:
+            text = (node_text or "").strip()
+            text = " ".join(text.split())
+            return (text[:limit] + "…") if len(text) > limit else text
+
+        def format_tag(node) -> str:
+            tag = node.name
+            id_attr = node.get("id")
+            class_attr = node.get("class") or []
+            class_part = ("." + ".".join(class_attr[:2])) if class_attr else ""
+            id_part = f"#{id_attr}" if id_attr else ""
+            return f"<{tag}{id_part}{class_part}>"
+
+        def walk(node, depth: int) -> None:
+            nonlocal nodes_seen
+            if nodes_seen >= max_nodes or depth > max_depth:
+                return
+            # Skip strings-only nodes here; bs4 exposes text via .strings when needed
+            if getattr(node, "name", None) is None:
+                return
+            if node.name in ignored_tags:
+                return
+
+            indent = "  " * depth
+            # Record the element line
+            lines.append(f"{indent}{format_tag(node)}")
+            nodes_seen += 1
+            if nodes_seen >= max_nodes:
+                return
+
+            # Include a short text snippet for this node (visible text only)
+            direct_texts = [t for t in node.find_all(string=True, recursive=False) if t and t.strip()]
+            if direct_texts:
+                snippet = text_snippet(" ".join(direct_texts))
+                if snippet:
+                    lines.append(f"{indent}  └─ text: {snippet}")
+
+            # Recurse into children
+            for child in getattr(node, "children", []) or []:
+                if nodes_seen >= max_nodes:
+                    break
+                if getattr(child, "name", None) is None:
+                    # For bare strings nested among children, add a short line
+                    snippet = text_snippet(str(child))
+                    if snippet:
+                        lines.append(f"{indent}  └─ text: {snippet}")
+                        nodes_seen += 1
+                        if nodes_seen >= max_nodes:
+                            break
+                    continue
+                walk(child, depth + 1)
+
+        # Start from body or document root children to avoid duplicating the whole soup
+        start_nodes = list(getattr(root, "children", [])) or [root]
+        for child in start_nodes:
+            if nodes_seen >= max_nodes:
+                break
+            if getattr(child, "name", None) is None:
+                continue
+            walk(child, 0)
+
+        if nodes_seen >= max_nodes:
+            lines.append("… (truncated) …")
+        return "\n".join(lines)
 
     async def go_back(self) -> str:
         """Navigate back in browser history."""

@@ -1,6 +1,8 @@
 """Utility functions for WebVoyagerV2 system"""
 from datetime import datetime
 from typing import List, Dict
+import secrets
+import petname
 from langchain_core.messages import BaseMessage, HumanMessage, SystemMessage
 import logging
 import re
@@ -280,3 +282,28 @@ def format_img_context(img_base64: str) -> dict:
         "type": "image_url",
         "image_url": {"url": f"data:image/jpeg;base64,{img_base64}"},
     }
+
+
+# =============================
+# Agent identity helpers
+# =============================
+_ASSIGNED_AGENT_NAMES: set[str] = set()
+
+
+def generate_agent_name() -> str:
+    """Generate a likely-unique, human-friendly agent name.
+
+    Uses petname plus a short random suffix to avoid collisions, and ensures
+    uniqueness within the current process.
+    """
+    for _ in range(100):
+        base = petname.generate(2, separator="-")
+        suffix = secrets.token_hex(2)  # 4 hex chars
+        candidate = f"{base}-{suffix}"
+        if candidate not in _ASSIGNED_AGENT_NAMES:
+            _ASSIGNED_AGENT_NAMES.add(candidate)
+            return candidate
+    # Fallback: extremely unlikely to hit
+    fallback = f"agent-{secrets.token_hex(4)}"
+    _ASSIGNED_AGENT_NAMES.add(fallback)
+    return fallback

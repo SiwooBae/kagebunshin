@@ -10,6 +10,8 @@ from playwright.async_api import async_playwright
 from .config import BROWSER_EXECUTABLE_PATH, USER_DATA_DIR, DEFAULT_PERMISSIONS
 from .webvoyager_v2 import WebVoyagerV2
 from .additional_tools import get_additional_tools
+from .config import GROUPCHAT_ROOM
+from .utils import generate_agent_name
 from .fingerprint_evasion import get_stealth_browser_args, apply_fingerprint_profile_to_context
 
 # enable logger
@@ -121,9 +123,16 @@ class WebVoyagerRunner:
             except Exception:
                 pass
 
-            # Initialize orchestrator with additional tools (including delegate)
-            extra_tools = get_additional_tools(context)
-            self.orchestrator = await WebVoyagerV2.create(context, additional_tools=extra_tools)
+            # Initialize orchestrator with additional tools (including delegate) and group chat identity
+            agent_name = generate_agent_name()
+            extra_tools = get_additional_tools(context, username=agent_name, group_room=GROUPCHAT_ROOM)
+            self.orchestrator = await WebVoyagerV2.create(
+                context,
+                additional_tools=extra_tools,
+                group_room=GROUPCHAT_ROOM,
+                username=agent_name,
+                enable_summarization=False,
+            )
             self._print_step("INIT", "Stateless WebVoyager Orchestrator created successfully!", Colors.OKGREEN)
             self._print_step("INIT", "Starting web automation with stateless ReAct agent...", Colors.OKCYAN)
 
@@ -221,8 +230,15 @@ class WebVoyagerRunner:
             except Exception:
                 pass
 
-            # Initialize orchestrator once for the session (preserves MemorySaver)
-            self.orchestrator = await WebVoyagerV2.create(context)
+            # Initialize orchestrator once for the session (preserves MemorySaver) with group chat identity
+            agent_name = generate_agent_name()
+            extra_tools = get_additional_tools(context, username=agent_name, group_room=GROUPCHAT_ROOM)
+            self.orchestrator = await WebVoyagerV2.create(
+                context,
+                additional_tools=extra_tools,
+                group_room=GROUPCHAT_ROOM,
+                username=agent_name,
+            )
             self._print_step("INIT", "Stateful WebVoyager Orchestrator created successfully!", Colors.OKGREEN)
             self._print_step("INIT", f"Session thread: {thread_id}", Colors.OKCYAN)
 

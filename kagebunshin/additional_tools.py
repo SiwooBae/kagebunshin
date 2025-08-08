@@ -14,18 +14,22 @@ from playwright.async_api import BrowserContext
 
 from .webvoyager_v2 import WebVoyagerV2
 from .fingerprint_evasion import apply_fingerprint_profile, apply_fingerprint_profile_to_context
-from .config import DEFAULT_PERMISSIONS
+from .config import DEFAULT_PERMISSIONS, GROUPCHAT_ROOM, MAX_WEBVOYAGER_INSTANCES
+from .group_chat import GroupChatClient
+from .utils import generate_agent_name
 
 
 logger = logging.getLogger(__name__)
 
 
-def get_additional_tools(context: BrowserContext) -> List[Any]:
+def get_additional_tools(context: BrowserContext, username: Optional[str] = None, group_room: Optional[str] = None) -> List[Any]:
     """
     Construct additional tools bound to a specific BrowserContext.
 
     The returned tools can be passed into `WebVoyagerV2.create(..., additional_tools=...)`.
     """
+
+    chat_client = GroupChatClient()
 
     @tool
     async def delegate(
@@ -49,28 +53,31 @@ def get_additional_tools(context: BrowserContext) -> List[Any]:
         """
         created_context = None
         new_page = None
+        clone: Optional[WebVoyagerV2] = None
         try:
+            # Fast fail if we are at capacity
+            if WebVoyagerV2._INSTANCE_COUNT >= MAX_WEBVOYAGER_INSTANCES:
+                return (
+                    f"Delegation denied: max agents reached ({MAX_WEBVOYAGER_INSTANCES}). "
+                    "Complete the task within current agent."
+                )
+
             if spawn == "context":
-                # Try to obtain the Browser and create a new context from it
                 browser = getattr(context, "browser", None)
                 if browser is None:
-                    # Fallback: cannot create a new context without a Browser handle
-                    # Use a new tab instead
                     spawn = "tab"
                 else:
                     created_context = await browser.new_context(permissions=DEFAULT_PERMISSIONS)
-                    # Apply fingerprint profile and align UA/overrides
                     try:
                         await apply_fingerprint_profile_to_context(created_context)
                     except Exception:
                         pass
-                    # Optionally navigate to a starting URL
                     if url:
                         new_page = await created_context.new_page()
                         if not url.startswith(("http://", "https://")):
                             url = "https://" + url
                         await new_page.goto(url)
-            
+
             if spawn == "tab":
                 new_page = await context.new_page()
                 try:
@@ -86,18 +93,41 @@ def get_additional_tools(context: BrowserContext) -> List[Any]:
                 except Exception:
                     pass
 
-            # Choose which context to give to the clone
             target_context = created_context if created_context else context
-            # Give the clone the same additional toolset so it can delegate further if needed
-            clone_tools = get_additional_tools(target_context)
-            clone = await WebVoyagerV2.create(target_context, additional_tools=clone_tools)
-            result = await clone.ainvoke(task)
 
+            # One more guard at creation time
+            if WebVoyagerV2._INSTANCE_COUNT >= MAX_WEBVOYAGER_INSTANCES:
+                return (
+                    f"Delegation denied: max agents reached ({MAX_WEBVOYAGER_INSTANCES}). "
+                    "Complete the task within current agent."
+                )
+
+            # Generate a unique name for the child clone so identities don't collide
+            child_name = generate_agent_name()
+            clone_tools = get_additional_tools(target_context, username=child_name, group_room=group_room)
+            try:
+                clone = await WebVoyagerV2.create(
+                    target_context,
+                    additional_tools=clone_tools,
+                    group_room=group_room,
+                    username=child_name,
+                    enable_summarization=False,
+                )
+            except RuntimeError as e:
+                return f"Delegation denied: {e}"
+
+            result = await clone.ainvoke(task)
             return f"[DELEGATE RESULT]\n{result}"
         except Exception as e:
             logger.error(f"Delegate tool failed: {e}")
             return f"Error during delegation: {str(e)}"
         finally:
+            # Decrement instance counter for the clone
+            try:
+                if clone is not None:
+                    clone.dispose()
+            except Exception:
+                pass
             if new_page and close_on_finish:
                 try:
                     await new_page.close()
@@ -109,5 +139,22 @@ def get_additional_tools(context: BrowserContext) -> List[Any]:
                 except Exception:
                     pass
 
-    return [delegate]
+    @tool
+    async def post_groupchat(message: str) -> str:
+        """Post a short message to the shared Agent Group Chat for collaboration.
+
+        Args:
+            message: The message to broadcast to other agents.
+        """
+        try:
+            await chat_client.connect()
+            room = group_room or GROUPCHAT_ROOM
+            name = username or "anonymous-agent"
+            await chat_client.post(room=room, sender=name, message=message)
+            return f"Posted to group chat ({room})"
+        except Exception as e:
+            logger.error(f"post_groupchat failed: {e}")
+            return f"Error posting to group chat: {e}"
+
+    return [delegate, post_groupchat]
 

@@ -15,21 +15,37 @@ from playwright.async_api import BrowserContext
 
 from .models import WebVoyagerState, Annotation, TabInfo
 from .state_manager import WebVoyagerStateManager
-from .config import LLM_MODEL, LLM_PROVIDER, LLM_TEMPERATURE, LLM_SUMMARIZER_MODEL, LLM_SUMMARIZER_PROVIDER, SYSTEM_TEMPLATE
-from .utils import format_img_context, format_bbox_context, format_text_context, format_tab_context
+from .config import (
+    LLM_MODEL,
+    LLM_PROVIDER,
+    LLM_TEMPERATURE,
+    LLM_SUMMARIZER_MODEL,
+    LLM_SUMMARIZER_PROVIDER,
+    SYSTEM_TEMPLATE,
+    GROUPCHAT_ROOM,
+    MAX_WEBVOYAGER_INSTANCES,
+    ENABLE_SUMMARIZATION,
+)
+from .utils import format_img_context, format_bbox_context, format_text_context, format_tab_context, generate_agent_name
+from .group_chat import GroupChatClient
+import petname
 
 logger = logging.getLogger(__name__)
 
 
 class WebVoyagerV2:
     """The main orchestrator for WebVoyager's AI-driven web automation."""
+    # Global instance tracking to enforce a hard cap per-process
+    _INSTANCE_COUNT: int = 0
     
     def __init__(self, 
                  context: BrowserContext,
                  state_manager: WebVoyagerStateManager,
                  additional_tools: List[Any] = None, 
                  system_prompt: str = SYSTEM_TEMPLATE,
-                 enable_summarization: bool = True):
+                 enable_summarization: bool = ENABLE_SUMMARIZATION,
+                 group_room: Optional[str] = None,
+                 username: Optional[str] = None):
         """Initializes the orchestrator with browser context and state manager."""
         
         self.initial_context = context
@@ -58,6 +74,11 @@ class WebVoyagerV2:
         self.summarizer_llm_img_message_type = HumanMessage if "gemini" in LLM_SUMMARIZER_MODEL else SystemMessage
         webvoyager_tools = self.state_manager.get_tools_for_llm()
         self.all_tools = webvoyager_tools + (additional_tools or [])
+
+        # Group chat setup
+        self.group_room = group_room or GROUPCHAT_ROOM
+        self.username = username or generate_agent_name()
+        self.group_client = GroupChatClient()
         
         # Bind tools to the LLM so it knows what functions it can call
         self.llm_with_tools = self.llm.bind_tools(self.all_tools)
@@ -89,14 +110,34 @@ class WebVoyagerV2:
         # Compile without external checkpointer (BrowserContext is not serializable)
         self.agent = workflow.compile()
 
+        # Post intro message asynchronously (do not block init)
+        asyncio.create_task(self._post_intro_message())
+
+    def dispose(self) -> None:
+        """Release this orchestrator's slot in the global instance counter."""
+        try:
+            if WebVoyagerV2._INSTANCE_COUNT > 0:
+                WebVoyagerV2._INSTANCE_COUNT -= 1
+        except Exception:
+            pass
+
     @classmethod
     async def create(cls, 
                      context: BrowserContext,
-                     additional_tools: List[Any] = None, 
-                     system_prompt: str = SYSTEM_TEMPLATE):
+                      additional_tools: List[Any] = None, 
+                      system_prompt: str = SYSTEM_TEMPLATE,
+                      enable_summarization: bool = ENABLE_SUMMARIZATION,
+                      group_room: Optional[str] = None,
+                      username: Optional[str] = None):
         """Factory method to create a WebVoyagerV2 with async initialization."""
+        # Enforce a maximum number of instances per-process
+        if cls._INSTANCE_COUNT >= MAX_WEBVOYAGER_INSTANCES:
+            raise RuntimeError(
+                f"Instance limit reached: at most {MAX_WEBVOYAGER_INSTANCES} WebVoyagerV2 instances are allowed."
+            )
         state_manager = await WebVoyagerStateManager.create(context)
-        instance = cls(context, state_manager, additional_tools, system_prompt)
+        instance = cls(context, state_manager, additional_tools, system_prompt, enable_summarization, group_room, username)
+        cls._INSTANCE_COUNT += 1
         return instance
 
     async def call_agent(self, state: WebVoyagerState) -> Dict[str, List[BaseMessage]]:
@@ -128,6 +169,12 @@ class WebVoyagerV2:
         Orchestrates loading, reasoning, and web automation by running the graph.
         """
         logger.info(f"Processing query: {user_query}")
+        # Announce task to group chat
+        try:
+            await self.group_client.connect()
+            await self.group_client.post(self.group_room, self.username, f"Starting task: {user_query}")
+        except Exception:
+            pass
         
         initial_state = WebVoyagerState(
             input=user_query,
@@ -155,6 +202,13 @@ class WebVoyagerV2:
         This method is useful for observing the agent's thought process and actions
         in real-time. It yields the output of each node in the graph as it executes.
         """
+        # Announce task to group chat (streaming entry)
+        try:
+            await self.group_client.connect()
+            await self.group_client.post(self.group_room, self.username, f"Starting task (stream): {user_query}")
+        except Exception:
+            pass
+
         initial_state = WebVoyagerState(
             input=user_query,
             messages=[*self.persistent_messages, HumanMessage(content=user_query)],
@@ -190,14 +244,35 @@ class WebVoyagerV2:
         self.last_page_annotation = page_data
         self.last_page_tabs = await self.state_manager.get_tabs()
         
+        # Inject group chat history as context
+        try:
+            await self.group_client.connect()
+            history = await self.group_client.history(self.group_room, limit=50)
+            chat_block = self.group_client.format_history(history)
+            
+            messages.append(SystemMessage(content=f"Your name is {self.username}.\n\nHere is the group chat history:\n\n{chat_block}"))
+        except Exception:
+            pass
+
         messages.extend(page_context)
         return messages
+
+    async def _post_intro_message(self) -> None:
+        try:
+            await self.group_client.connect()
+            intro = f"Hello, I am {self.username}. I am a WebVoyager agent. I will collaborate here while working on tasks."
+            await self.group_client.post(self.group_room, self.username, intro)
+        except Exception:
+            pass
     
     async def summarize_tool_results(self, state: WebVoyagerState) -> Dict[str, List[BaseMessage]]:
         """
         Analyzes the state before and after a tool call and adds a natural
         language summary to the message history.
         """
+        if not self.enable_summarization:
+            return state
+        
         # Find the last AIMessage and subsequent ToolMessages
         tool_messages = []
         ai_message = None
