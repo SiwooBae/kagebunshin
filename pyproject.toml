@@ -9,6 +9,7 @@ dependencies = [
     "html-to-markdown>=1.9.0",
     "html2text>=2025.4.15",
     "langchain>=0.3.27",
+    "langchain-openai>=0.3.28",
     "langgraph>=0.6.4",
     "playwright>=1.54.0",
     "pypdf>=5.9.0",
