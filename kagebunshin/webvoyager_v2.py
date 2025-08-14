@@ -209,19 +209,48 @@ class WebVoyagerV2:
         except Exception:
             pass
 
+        initial_messages = [*self.persistent_messages, HumanMessage(content=user_query)]
         initial_state = WebVoyagerState(
             input=user_query,
-            messages=[*self.persistent_messages, HumanMessage(content=user_query)],
+            messages=initial_messages,
             context=self.initial_context,
         )
+
+        # Accumulate the full conversation history during streaming updates
+        accumulated_messages: List[BaseMessage] = list(initial_messages)
+
         async for chunk in self.agent.astream(initial_state, stream_mode="updates", config={"recursion_limit": 100}):
+            # Yield upstream for observers/CLI
             yield chunk
-        # After stream completes, persist final messages from state manager if available
+
+            # Merge any new messages from nodes into our accumulated history
+            try:
+                for node_key in ("agent", "action", "summarizer"):
+                    node_update = chunk.get(node_key) or {}
+                    new_msgs = node_update.get("messages", [])
+                    if new_msgs:
+                        # Ensure type correctness; they are BaseMessage instances in updates
+                        accumulated_messages.extend(new_msgs)  # type: ignore[arg-type]
+            except Exception:
+                # Never let streaming observers break accumulation
+                pass
+
+        # After stream completes, persist final messages and update state
         try:
-            if self.state_manager.current_state:
-                self.persistent_messages = self.state_manager.current_state["messages"]
+            final_state: WebVoyagerState = WebVoyagerState(
+                input=user_query,
+                messages=accumulated_messages,
+                context=self.initial_context,
+            )
+            self.state_manager.set_state(final_state)
+            self.persistent_messages = accumulated_messages
         except Exception:
-            pass
+            # If anything goes wrong, keep prior behavior (best-effort)
+            try:
+                if self.state_manager.current_state:
+                    self.persistent_messages = self.state_manager.current_state["messages"]
+            except Exception:
+                pass
             
     async def _build_agent_messages(self, state: WebVoyagerState) -> List[BaseMessage]:
         """

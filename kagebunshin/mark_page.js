@@ -117,42 +117,6 @@ function unmarkPage() {
   globalElementIndex = 0;
   detachUpdateListeners();
   removeOverlay();
-
-  // Also clear any stale data-ai-label attributes from current document, shadow roots, and accessible iframes
-  try {
-    const clearLabelsInRoot = (root) => {
-      if (!root) return;
-      try {
-        // Remove attribute on elements in this root
-        const labeled = root.querySelectorAll('[data-ai-label]');
-        labeled.forEach((el) => {
-          try { el.removeAttribute('data-ai-label'); } catch (e) {}
-        });
-        // Traverse shadow roots
-        if (root.querySelectorAll) {
-          root.querySelectorAll('*').forEach((el) => {
-            try { if (el.shadowRoot) clearLabelsInRoot(el.shadowRoot); } catch (e) {}
-          });
-        }
-      } catch (e) {}
-    };
-
-    // Current document and shadow roots
-    clearLabelsInRoot(document);
-
-    // Accessible iframes (best-effort; cross-origin will be skipped)
-    const iframes = document.querySelectorAll('iframe');
-    iframes.forEach((iframe) => {
-      try {
-        const doc = iframe.contentDocument || (iframe.contentWindow && iframe.contentWindow.document);
-        clearLabelsInRoot(doc);
-      } catch (e) {
-        // Ignore cross-origin
-      }
-    });
-  } catch (e) {
-    // Best-effort cleanup; ignore errors
-  }
 }
 
 /**
@@ -465,6 +429,40 @@ function markPage(options = {}) {
     
     unmarkPage();
     console.log("DEBUG: Unmark page completed");
+
+    // Clear any existing data-ai-label attributes so new labels are fresh
+    try {
+      const clearLabelsInRoot = (root) => {
+        if (!root) return;
+        try {
+          const labeled = root.querySelectorAll('[data-ai-label]');
+          labeled.forEach((el) => {
+            try { el.removeAttribute('data-ai-label'); } catch (e) {}
+          });
+          if (root.querySelectorAll) {
+            root.querySelectorAll('*').forEach((el) => {
+              try { if (el.shadowRoot) clearLabelsInRoot(el.shadowRoot); } catch (e) {}
+            });
+          }
+        } catch (e) {}
+      };
+
+      // Current document and shadow roots
+      clearLabelsInRoot(document);
+
+      // Accessible iframes (best-effort; cross-origin will be skipped)
+      const iframes = document.querySelectorAll('iframe');
+      iframes.forEach((iframe) => {
+        try {
+          const doc = iframe.contentDocument || (iframe.contentWindow && iframe.contentWindow.document);
+          clearLabelsInRoot(doc);
+        } catch (e) {
+          // Ignore cross-origin
+        }
+      });
+    } catch (e) {
+      // Best-effort cleanup; ignore errors
+    }
 
     let allItems = [];
     const rootNodes = [document];

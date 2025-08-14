@@ -53,6 +53,7 @@ async def _annotate_pdf_page(page: Page) -> Annotation:
         markdown = " ".join(words[:5000])
 
         screenshot = await page.screenshot()
+        await page.evaluate("unmarkPage()")
 
         return Annotation(
             img=base64.b64encode(screenshot).decode(),
@@ -120,7 +121,6 @@ async def _annotate_html_page(page: Page) -> Annotation:
 
         markdown = ""
         screenshot = await page.screenshot()
-        await page.evaluate("unmarkPage()")
 
         return Annotation(
             img=base64.b64encode(screenshot).decode(),

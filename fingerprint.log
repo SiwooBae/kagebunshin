@@ -4688,3 +4688,1140 @@ Call log:
 2025-08-08 16:53:29,019 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
 2025-08-08 16:53:30,300 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
 2025-08-08 16:53:51,328 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:46:32,405 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 18:46:32,799 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 18:46:34,053 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:46:34,719 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:46:39,359 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:46:47,048 - Retrying request to /chat/completions in 0.488825 seconds
+2025-08-08 18:46:52,536 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:46:52,740 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:46:52,883 - Retrying request to /chat/completions in 0.462198 seconds
+2025-08-08 18:46:58,839 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:46:58,844 - Attempting to click element with bbox_id: 1
+2025-08-08 18:46:58,853 - Attempting native click...
+2025-08-08 18:47:03,858 - Native click failed for bbox_id 1: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"1\"]")
+. Falling back.
+2025-08-08 18:47:03,858 - Attempting human-like click...
+2025-08-08 18:47:07,036 - All click attempts on bbox_id 1 failed to change the page state.
+2025-08-08 18:47:27,615 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 18:47:27,875 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 18:47:29,094 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:47:29,640 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:47:35,039 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:47:40,199 - Retrying request to /chat/completions in 0.408709 seconds
+2025-08-08 18:47:46,070 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:47:46,273 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:47:52,332 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:47:52,341 - Attempting to type 'desk toys' into element with bbox_id: 1
+2025-08-08 18:47:52,355 - Attempting native type...
+2025-08-08 18:47:57,362 - Native type failed for bbox_id 1: Page.fill: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"1\"]")
+. Falling back.
+2025-08-08 18:47:57,362 - Attempting human-like type...
+2025-08-08 18:48:02,326 - Human-like fallback type on bbox_id 1 successful.
+2025-08-08 18:48:13,037 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:48:16,844 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:48:24,289 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:48:30,198 - Retrying request to /chat/completions in 0.466508 seconds
+2025-08-08 18:48:36,441 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:48:40,483 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:48:46,951 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:48:46,961 - Attempting to click element with bbox_id: 69
+2025-08-08 18:48:47,021 - Attempting native click...
+2025-08-08 18:48:52,026 - Native click failed for bbox_id 69: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"69\"]")
+. Falling back.
+2025-08-08 18:48:52,026 - Attempting human-like click...
+2025-08-08 18:48:54,385 - Human-like fallback click on bbox_id 69 successful.
+2025-08-08 18:49:07,278 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:49:10,964 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:49:19,278 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:49:34,210 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:49:37,962 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:49:43,859 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:49:54,532 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:49:58,188 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:50:04,476 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:50:04,483 - Attempting to click element with bbox_id: 112
+2025-08-08 18:50:04,561 - Attempting native click...
+2025-08-08 18:50:09,567 - Native click failed for bbox_id 112: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"112\"]")
+. Falling back.
+2025-08-08 18:50:09,567 - Attempting human-like click...
+2025-08-08 18:50:11,729 - Human-like fallback click on bbox_id 112 successful.
+2025-08-08 18:50:21,272 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:50:24,971 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:50:33,302 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:50:33,309 - Attempting to type 'kinetic desk toy' into element with bbox_id: 4
+2025-08-08 18:50:33,383 - Attempting native type...
+2025-08-08 18:50:38,388 - Native type failed for bbox_id 4: Page.fill: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"4\"]")
+. Falling back.
+2025-08-08 18:50:38,388 - Attempting human-like type...
+2025-08-08 18:50:44,563 - Human-like fallback type on bbox_id 4 successful.
+2025-08-08 18:51:53,575 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 18:51:53,742 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 18:51:54,480 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:51:55,064 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:52:01,789 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:52:01,803 - Attempting to type 'Amazon desk toys' into element with bbox_id: 6
+2025-08-08 18:52:01,818 - Attempting native type...
+2025-08-08 18:52:06,823 - Native type failed for bbox_id 6: Page.fill: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"6\"]")
+. Falling back.
+2025-08-08 18:52:06,823 - Attempting human-like type...
+2025-08-08 18:52:14,238 - Human-like fallback type on bbox_id 6 successful.
+2025-08-08 18:52:21,737 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:52:22,263 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:52:31,215 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:52:36,306 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:52:36,842 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:52:41,715 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:52:41,723 - Attempting to click element with bbox_id: 53
+2025-08-08 18:52:41,780 - Attempting native click...
+2025-08-08 18:52:46,785 - Native click failed for bbox_id 53: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"53\"]")
+. Falling back.
+2025-08-08 18:52:46,785 - Attempting human-like click...
+2025-08-08 18:52:49,494 - Human-like fallback click on bbox_id 53 successful.
+2025-08-08 18:52:59,696 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:53:03,494 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:53:18,770 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:53:18,796 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 18:53:18,798 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 18:53:18,800 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 18:53:18,803 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 18:53:18,805 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-08 18:53:19,014 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 18:53:19,018 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 18:53:19,020 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 18:53:19,023 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 18:53:19,043 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-08 18:53:19,687 - Processing query: On Amazon, search for "Kinetic Spinning Desk Toy optical illusion spinner ball". Open the product page and return JSON: {"task":"kinetic_spinner","title":...,"price":...,"product_url":...,"image_url":...,"visual_comment":...}.
+2025-08-08 18:53:19,687 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:53:19,688 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:53:19,769 - Processing query: On Amazon, search for "Liquid Motion Sandscape Round Moving Sand Art Sensory Toy". Open the product page and return JSON: {"task":"sandscape","title":...,"price":...,"product_url":...,"image_url":...,"visual_comment":...}.
+2025-08-08 18:53:19,769 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:53:19,770 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:53:19,834 - Processing query: On Amazon, search for "Newton's Cradle Desk Toys Office Decorations with 5 Large Beads Balance Balls and Black Wooden Base". Open the product page and return JSON: {"task":"newton","title":...,"price":...,"product_url":...,"image_url":...,"visual_comment":...}. Keep visual_comment to 1-2 sentences focused on appearance.
+2025-08-08 18:53:19,866 - Processing query: On Amazon, search for "Mini Steel Balance Toy Weightlifter Kinetic Art Balance Toy Balancing". Open the product page and return JSON: {"task":"balance","title":...,"price":...,"product_url":...,"image_url":...,"visual_comment":...}.
+2025-08-08 18:53:19,867 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:53:19,899 - Processing query: On Amazon, search for "3D Printed Crystal Dragon 3pcs 12in" (or closest match). Open the product page and return JSON: {"task":"dragon","title":...,"price":...,"product_url":...,"image_url":...,"visual_comment":...}.
+2025-08-08 18:53:19,900 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:53:19,900 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:53:19,904 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:53:19,905 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:53:19,908 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:53:20,449 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:53:20,517 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:53:20,623 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:53:20,624 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:53:20,630 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:53:25,323 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:53:25,330 - Attempting to type '3D Printed Crystal Dragon 3pcs 12in Amazon' into element with bbox_id: 6
+2025-08-08 18:53:25,345 - Attempting native type...
+2025-08-08 18:53:25,584 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:53:26,341 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:53:26,812 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:53:26,911 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:53:26,914 - Attempting to type 'site:amazon.com "Mini Steel Balance Toy Weightlifter Kinetic Art Balance Toy Balancing"' into element with bbox_id: 6
+2025-08-08 18:53:26,922 - Attempting native type...
+2025-08-08 18:53:27,669 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:53:30,350 - Native type failed for bbox_id 6: Page.fill: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"6\"]")
+. Falling back.
+2025-08-08 18:53:30,350 - Attempting human-like type...
+2025-08-08 18:53:31,925 - Native type failed for bbox_id 6: Page.fill: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"6\"]")
+. Falling back.
+2025-08-08 18:53:31,925 - Attempting human-like type...
+2025-08-08 18:53:32,357 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:53:32,415 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:53:32,419 - Attempting to click element with bbox_id: 1
+2025-08-08 18:53:32,427 - Attempting native click...
+2025-08-08 18:53:37,153 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:53:37,157 - Attempting to click element with bbox_id: 1
+2025-08-08 18:53:37,168 - Attempting native click...
+2025-08-08 18:53:37,428 - Native click failed for bbox_id 1: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"1\"]")
+. Falling back.
+2025-08-08 18:53:37,428 - Attempting human-like click...
+2025-08-08 18:53:38,188 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:53:39,887 - All click attempts on bbox_id 1 failed to change the page state.
+2025-08-08 18:53:40,082 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:53:40,189 - Human-like fallback type on bbox_id 6 successful.
+2025-08-08 18:53:42,171 - Native click failed for bbox_id 1: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"1\"]")
+. Falling back.
+2025-08-08 18:53:42,171 - Attempting human-like click...
+2025-08-08 18:53:43,798 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:53:44,319 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:53:44,330 - Attempting to type 'Newton's Cradle Desk Toys Office Decorations with 5 Large Beads Balance Balls and Black Wooden Base' into element with bbox_id: 4
+2025-08-08 18:53:44,369 - Attempting native type...
+2025-08-08 18:53:45,011 - All click attempts on bbox_id 1 failed to change the page state.
+2025-08-08 18:53:45,250 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:53:45,833 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:53:45,843 - Attempting to type 'Kinetic Spinning Desk Toy optical illusion spinner ball' into element with bbox_id: 1
+2025-08-08 18:53:45,859 - Attempting native type...
+2025-08-08 18:53:47,367 - Human-like fallback type on bbox_id 6 successful.
+2025-08-08 18:53:48,900 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:53:48,910 - Attempting to click element with bbox_id: 44
+2025-08-08 18:53:48,970 - Attempting native click...
+2025-08-08 18:53:49,373 - Native type failed for bbox_id 4: Page.fill: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"4\"]")
+. Falling back.
+2025-08-08 18:53:49,373 - Attempting human-like type...
+2025-08-08 18:53:50,352 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:53:50,358 - Attempting to type 'Liquid Motion Sandscape Round Moving Sand Art Sensory Toy' into element with bbox_id: 1
+2025-08-08 18:53:50,370 - Attempting native type...
+2025-08-08 18:53:50,643 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:53:50,861 - Native type failed for bbox_id 1: Page.fill: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"1\"]")
+. Falling back.
+2025-08-08 18:53:50,862 - Attempting human-like type...
+2025-08-08 18:53:53,973 - Native click failed for bbox_id 44: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"44\"]")
+. Falling back.
+2025-08-08 18:53:53,973 - Attempting human-like click...
+2025-08-08 18:53:55,376 - Native type failed for bbox_id 1: Page.fill: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"1\"]")
+. Falling back.
+2025-08-08 18:53:55,376 - Attempting human-like type...
+2025-08-08 18:53:55,679 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:53:55,688 - Attempting to click element with bbox_id: 20
+2025-08-08 18:53:55,713 - Attempting native click...
+2025-08-08 18:53:56,490 - Human-like fallback click on bbox_id 44 successful.
+2025-08-08 18:53:59,329 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:53:59,938 - Human-like fallback type on bbox_id 1 successful.
+2025-08-08 18:54:00,716 - Native click failed for bbox_id 20: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"20\"]")
+. Falling back.
+2025-08-08 18:54:00,716 - Attempting human-like click...
+2025-08-08 18:54:03,747 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:54:03,988 - Human-like fallback click on bbox_id 20 successful.
+2025-08-08 18:54:04,853 - Human-like fallback type on bbox_id 4 successful.
+2025-08-08 18:54:07,663 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:54:08,305 - Human-like fallback type on bbox_id 1 successful.
+2025-08-08 18:54:08,362 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:54:08,569 - Error extracting page content: 'NoneType' object is not subscriptable
+2025-08-08 18:54:08,762 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:54:09,001 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:54:09,004 - Attempting to click element with bbox_id: 49
+2025-08-08 18:54:09,048 - Attempting native click...
+2025-08-08 18:54:09,527 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:54:11,485 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:54:11,659 - Error extracting page content: 'NoneType' object is not subscriptable
+2025-08-08 18:54:12,342 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:54:12,409 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:54:14,052 - Native click failed for bbox_id 49: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"49\"]")
+. Falling back.
+2025-08-08 18:54:14,052 - Attempting human-like click...
+2025-08-08 18:54:14,315 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:54:14,320 - Attempting to click element with bbox_id: 38
+2025-08-08 18:54:14,378 - Attempting native click...
+2025-08-08 18:54:15,533 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:54:15,539 - Attempting to click element with bbox_id: 93
+2025-08-08 18:54:15,610 - Attempting native click...
+2025-08-08 18:54:16,740 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:54:16,745 - Attempting to click element with bbox_id: 64
+2025-08-08 18:54:16,799 - Attempting native click...
+2025-08-08 18:54:16,860 - Human-like fallback click on bbox_id 49 successful.
+2025-08-08 18:54:19,383 - Native click failed for bbox_id 38: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"38\"]")
+. Falling back.
+2025-08-08 18:54:19,383 - Attempting human-like click...
+2025-08-08 18:54:20,165 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:54:20,169 - Attempting to click element with bbox_id: 101
+2025-08-08 18:54:20,218 - Attempting native click...
+2025-08-08 18:54:20,617 - Native click failed for bbox_id 93: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"93\"]")
+. Falling back.
+2025-08-08 18:54:20,618 - Attempting human-like click...
+2025-08-08 18:54:20,662 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:54:21,802 - Native click failed for bbox_id 64: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"64\"]")
+. Falling back.
+2025-08-08 18:54:21,802 - Attempting human-like click...
+2025-08-08 18:54:21,973 - Human-like fallback click on bbox_id 38 successful.
+2025-08-08 18:54:22,739 - Human-like fallback click on bbox_id 93 successful.
+2025-08-08 18:54:23,223 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:54:23,299 - Retrying request to /chat/completions in 0.444479 seconds
+2025-08-08 18:54:24,962 - Human-like fallback click on bbox_id 64 successful.
+2025-08-08 18:54:25,221 - Native click failed for bbox_id 101: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"101\"]")
+. Falling back.
+2025-08-08 18:54:25,221 - Attempting human-like click...
+2025-08-08 18:54:25,817 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:54:26,301 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:54:26,490 - Error extracting page content: 'NoneType' object is not subscriptable
+2025-08-08 18:54:28,055 - Human-like fallback click on bbox_id 101 successful.
+2025-08-08 18:54:28,706 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:54:28,774 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:54:30,437 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:54:30,482 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:54:30,639 - Error extracting page content: 'NoneType' object is not subscriptable
+2025-08-08 18:54:30,850 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:54:31,303 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:54:34,029 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:54:34,222 - Error extracting page content: 'NoneType' object is not subscriptable
+2025-08-08 18:54:34,506 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:54:34,609 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:54:34,613 - Attempting to click element with bbox_id: 145
+2025-08-08 18:54:34,661 - Attempting native click...
+2025-08-08 18:54:35,840 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:54:35,847 - Attempting to click element with bbox_id: 82
+2025-08-08 18:54:35,936 - Attempting native click...
+2025-08-08 18:54:38,209 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:54:38,446 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:54:38,970 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:54:39,666 - Native click failed for bbox_id 145: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"145\"]")
+. Falling back.
+2025-08-08 18:54:39,666 - Attempting human-like click...
+2025-08-08 18:54:40,262 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:54:40,269 - Attempting to click element with bbox_id: 82
+2025-08-08 18:54:40,347 - Attempting native click...
+2025-08-08 18:54:40,940 - Native click failed for bbox_id 82: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"82\"]")
+. Falling back.
+2025-08-08 18:54:40,940 - Attempting human-like click...
+2025-08-08 18:54:42,595 - Human-like fallback click on bbox_id 145 successful.
+2025-08-08 18:54:43,354 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:54:43,884 - Human-like fallback click on bbox_id 82 successful.
+2025-08-08 18:54:45,350 - Native click failed for bbox_id 82: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"82\"]")
+. Falling back.
+2025-08-08 18:54:45,350 - Attempting human-like click...
+2025-08-08 18:54:45,404 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:54:47,024 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:54:47,516 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:54:47,875 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:54:48,707 - Human-like fallback click on bbox_id 82 successful.
+2025-08-08 18:54:49,415 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:54:50,743 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:54:50,943 - Error extracting page content: 'NoneType' object is not subscriptable
+2025-08-08 18:54:51,560 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:54:52,220 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:54:53,727 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:54:55,764 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:54:55,771 - Attempting to click element with bbox_id: 78
+2025-08-08 18:54:55,856 - Attempting native click...
+2025-08-08 18:54:57,250 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:54:57,258 - Attempting to click element with bbox_id: 110
+2025-08-08 18:54:57,336 - Attempting native click...
+2025-08-08 18:54:58,013 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:54:58,020 - Attempting to click element with bbox_id: 228
+2025-08-08 18:54:58,103 - Attempting native click...
+2025-08-08 18:54:59,750 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:55:00,861 - Native click failed for bbox_id 78: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"78\"]")
+. Falling back.
+2025-08-08 18:55:00,861 - Attempting human-like click...
+2025-08-08 18:55:01,604 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:55:01,611 - Attempting to click element with bbox_id: 113
+2025-08-08 18:55:01,683 - Attempting native click...
+2025-08-08 18:55:02,341 - Native click failed for bbox_id 110: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"110\"]")
+. Falling back.
+2025-08-08 18:55:02,341 - Attempting human-like click...
+2025-08-08 18:55:03,108 - Native click failed for bbox_id 228: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"228\"]")
+. Falling back.
+2025-08-08 18:55:03,109 - Attempting human-like click...
+2025-08-08 18:55:04,034 - Human-like fallback click on bbox_id 78 successful.
+2025-08-08 18:55:04,279 - Human-like fallback click on bbox_id 110 successful.
+2025-08-08 18:55:05,032 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:55:05,424 - Human-like fallback click on bbox_id 228 successful.
+2025-08-08 18:55:05,945 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:55:05,953 - Attempting to click element with bbox_id: 180
+2025-08-08 18:55:06,046 - Attempting native click...
+2025-08-08 18:55:06,689 - Native click failed for bbox_id 113: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"113\"]")
+. Falling back.
+2025-08-08 18:55:06,689 - Attempting human-like click...
+2025-08-08 18:55:07,623 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:55:09,026 - Human-like fallback click on bbox_id 113 successful.
+2025-08-08 18:55:09,067 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:55:09,466 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:55:11,049 - Native click failed for bbox_id 180: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"180\"]")
+. Falling back.
+2025-08-08 18:55:11,049 - Attempting human-like click...
+2025-08-08 18:55:11,460 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:55:11,467 - Attempting to click element with bbox_id: 254
+2025-08-08 18:55:11,538 - Attempting native click...
+2025-08-08 18:55:11,585 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:55:13,338 - Human-like fallback click on bbox_id 180 successful.
+2025-08-08 18:55:13,651 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:55:13,657 - Attempting to click element with bbox_id: 232
+2025-08-08 18:55:13,725 - Attempting native click...
+2025-08-08 18:55:14,334 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:55:15,142 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:55:16,544 - Native click failed for bbox_id 254: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"254\"]")
+. Falling back.
+2025-08-08 18:55:16,544 - Attempting human-like click...
+2025-08-08 18:55:17,187 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:55:17,890 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:55:18,729 - Native click failed for bbox_id 232: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"232\"]")
+. Falling back.
+2025-08-08 18:55:18,729 - Attempting human-like click...
+2025-08-08 18:55:19,078 - Human-like fallback click on bbox_id 254 successful.
+2025-08-08 18:55:19,703 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:55:21,552 - Human-like fallback click on bbox_id 232 successful.
+2025-08-08 18:55:22,305 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:55:22,452 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:55:22,457 - Attempting to click element with bbox_id: 196
+2025-08-08 18:55:22,517 - Attempting native click...
+2025-08-08 18:55:23,438 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:55:23,706 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:55:23,712 - Attempting to click element with bbox_id: 225
+2025-08-08 18:55:23,779 - Attempting native click...
+2025-08-08 18:55:27,185 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:55:27,521 - Native click failed for bbox_id 196: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"196\"]")
+. Falling back.
+2025-08-08 18:55:27,521 - Attempting human-like click...
+2025-08-08 18:55:28,245 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:55:28,908 - Native click failed for bbox_id 225: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"225\"]")
+. Falling back.
+2025-08-08 18:55:28,908 - Attempting human-like click...
+2025-08-08 18:55:28,972 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:55:30,367 - Human-like fallback click on bbox_id 196 successful.
+2025-08-08 18:55:31,106 - Human-like fallback click on bbox_id 225 successful.
+2025-08-08 18:55:32,305 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:55:34,210 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:55:34,730 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:55:34,814 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:55:34,819 - Attempting to click element with bbox_id: 104
+2025-08-08 18:55:34,868 - Attempting native click...
+2025-08-08 18:55:36,395 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:55:36,510 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:55:39,870 - Native click failed for bbox_id 104: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"104\"]")
+. Falling back.
+2025-08-08 18:55:39,870 - Attempting human-like click...
+2025-08-08 18:55:40,170 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:55:40,826 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:55:40,833 - Attempting to click element with bbox_id: 70
+2025-08-08 18:55:40,913 - Attempting native click...
+2025-08-08 18:55:41,179 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:55:42,950 - Human-like fallback click on bbox_id 104 successful.
+2025-08-08 18:55:43,588 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:55:44,976 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:55:45,918 - Native click failed for bbox_id 70: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"70\"]")
+. Falling back.
+2025-08-08 18:55:45,918 - Attempting human-like click...
+2025-08-08 18:55:47,974 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:55:47,978 - Attempting to click element with bbox_id: 280
+2025-08-08 18:55:48,028 - Attempting native click...
+2025-08-08 18:55:48,169 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:55:48,381 - Error extracting page content: 'NoneType' object is not subscriptable
+2025-08-08 18:55:48,672 - Human-like fallback click on bbox_id 70 successful.
+2025-08-08 18:55:48,762 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:55:48,767 - Attempting to click element with bbox_id: 113
+2025-08-08 18:55:48,839 - Attempting native click...
+2025-08-08 18:55:49,805 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:55:49,992 - Error extracting page content: 'NoneType' object is not subscriptable
+2025-08-08 18:55:52,109 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:55:52,561 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:55:53,030 - Native click failed for bbox_id 280: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"280\"]")
+. Falling back.
+2025-08-08 18:55:53,030 - Attempting human-like click...
+2025-08-08 18:55:53,657 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:55:53,842 - Native click failed for bbox_id 113: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"113\"]")
+. Falling back.
+2025-08-08 18:55:53,842 - Attempting human-like click...
+2025-08-08 18:55:55,889 - Human-like fallback click on bbox_id 113 successful.
+2025-08-08 18:55:56,091 - Human-like fallback click on bbox_id 280 successful.
+2025-08-08 18:55:56,756 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:55:59,486 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:56:01,542 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:56:01,547 - Attempting to click element with bbox_id: 81
+2025-08-08 18:56:01,614 - Attempting native click...
+2025-08-08 18:56:02,646 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:56:03,408 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:56:03,417 - Attempting to click element with bbox_id: 81
+2025-08-08 18:56:03,441 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:56:03,506 - Attempting native click...
+2025-08-08 18:56:03,713 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:56:06,616 - Native click failed for bbox_id 81: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"81\"]")
+. Falling back.
+2025-08-08 18:56:06,616 - Attempting human-like click...
+2025-08-08 18:56:07,046 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:56:07,872 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:56:08,511 - Native click failed for bbox_id 81: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"81\"]")
+. Falling back.
+2025-08-08 18:56:08,511 - Attempting human-like click...
+2025-08-08 18:56:09,636 - Human-like fallback click on bbox_id 81 successful.
+2025-08-08 18:56:11,681 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:56:11,906 - Error extracting page content: 'NoneType' object is not subscriptable
+2025-08-08 18:56:11,930 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:56:12,079 - Human-like fallback click on bbox_id 81 successful.
+2025-08-08 18:56:13,168 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:56:15,645 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:56:15,651 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:56:15,726 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:56:16,248 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:56:18,622 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:56:23,373 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:56:24,016 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:56:24,214 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:56:25,207 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:56:25,658 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:56:26,324 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:56:28,512 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:56:28,517 - Attempting to click element with bbox_id: 87
+2025-08-08 18:56:28,580 - Attempting native click...
+2025-08-08 18:56:29,022 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:56:29,507 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:56:33,475 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:56:33,583 - Native click failed for bbox_id 87: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"87\"]")
+. Falling back.
+2025-08-08 18:56:33,583 - Attempting human-like click...
+2025-08-08 18:56:34,119 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:56:35,837 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:56:36,006 - Human-like fallback click on bbox_id 87 successful.
+2025-08-08 18:56:36,457 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:56:37,382 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:56:37,746 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:56:39,673 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:56:40,436 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:56:40,440 - Attempting to click element with bbox_id: 33
+2025-08-08 18:56:40,482 - Attempting native click...
+2025-08-08 18:56:43,751 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:56:43,758 - Attempting to click element with bbox_id: 257
+2025-08-08 18:56:43,852 - Attempting native click...
+2025-08-08 18:56:44,466 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:56:44,651 - Error extracting page content: 'NoneType' object is not subscriptable
+2025-08-08 18:56:45,485 - Native click failed for bbox_id 33: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"33\"]")
+. Falling back.
+2025-08-08 18:56:45,486 - Attempting human-like click...
+2025-08-08 18:56:47,711 - Human-like fallback click on bbox_id 33 successful.
+2025-08-08 18:56:47,888 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:56:47,892 - Attempting to click element with bbox_id: 251
+2025-08-08 18:56:47,961 - Attempting native click...
+2025-08-08 18:56:48,464 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:56:48,857 - Native click failed for bbox_id 257: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"257\"]")
+. Falling back.
+2025-08-08 18:56:48,857 - Attempting human-like click...
+2025-08-08 18:56:50,093 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:56:51,581 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:56:52,224 - All click attempts on bbox_id 257 failed to change the page state.
+2025-08-08 18:56:52,964 - Native click failed for bbox_id 251: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"251\"]")
+. Falling back.
+2025-08-08 18:56:52,964 - Attempting human-like click...
+2025-08-08 18:56:55,384 - All click attempts on bbox_id 251 failed to change the page state.
+2025-08-08 18:56:55,781 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:56:58,914 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:57:01,364 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:57:02,631 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:57:02,639 - Attempting to click element with bbox_id: 114
+2025-08-08 18:57:02,719 - Attempting native click...
+2025-08-08 18:57:03,752 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:57:03,759 - Attempting to click element with bbox_id: 255
+2025-08-08 18:57:03,818 - Attempting native click...
+2025-08-08 18:57:04,506 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:57:05,627 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:57:06,863 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:57:06,870 - Attempting to click element with bbox_id: 253
+2025-08-08 18:57:06,937 - Attempting native click...
+2025-08-08 18:57:07,374 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:57:07,722 - Native click failed for bbox_id 114: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"114\"]")
+. Falling back.
+2025-08-08 18:57:07,722 - Attempting human-like click...
+2025-08-08 18:57:08,820 - Native click failed for bbox_id 255: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"255\"]")
+. Falling back.
+2025-08-08 18:57:08,820 - Attempting human-like click...
+2025-08-08 18:57:10,465 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:57:10,902 - Human-like fallback click on bbox_id 114 successful.
+2025-08-08 18:57:11,941 - Native click failed for bbox_id 253: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"253\"]")
+. Falling back.
+2025-08-08 18:57:11,941 - Attempting human-like click...
+2025-08-08 18:57:11,976 - Human-like fallback click on bbox_id 255 successful.
+2025-08-08 18:57:14,184 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:57:14,704 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:57:14,720 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:57:15,236 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:57:15,809 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:57:15,876 - All click attempts on bbox_id 253 failed to change the page state.
+2025-08-08 18:57:19,377 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:57:20,610 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:57:20,849 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:57:26,116 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:57:26,122 - Attempting to click element with bbox_id: 20
+2025-08-08 18:57:26,133 - Attempting native click...
+2025-08-08 18:57:27,310 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:57:28,898 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:57:29,293 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:57:29,298 - Attempting to click element with bbox_id: 79
+2025-08-08 18:57:29,362 - Attempting native click...
+2025-08-08 18:57:31,045 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:57:31,136 - Native click failed for bbox_id 20: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"20\"]")
+. Falling back.
+2025-08-08 18:57:31,137 - Attempting human-like click...
+2025-08-08 18:57:32,077 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:57:33,461 - Human-like fallback click on bbox_id 20 successful.
+2025-08-08 18:57:34,364 - Native click failed for bbox_id 79: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"79\"]")
+. Falling back.
+2025-08-08 18:57:34,364 - Attempting human-like click...
+2025-08-08 18:57:35,105 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:57:35,111 - Attempting to click element with bbox_id: 113
+2025-08-08 18:57:35,178 - Attempting native click...
+2025-08-08 18:57:36,820 - Human-like fallback click on bbox_id 79 successful.
+2025-08-08 18:57:37,457 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:57:40,182 - Native click failed for bbox_id 113: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"113\"]")
+. Falling back.
+2025-08-08 18:57:40,183 - Attempting human-like click...
+2025-08-08 18:57:40,411 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:57:41,727 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:57:41,732 - Attempting to click element with bbox_id: 249
+2025-08-08 18:57:41,735 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:57:41,740 - Attempting to click element with bbox_id: 89
+2025-08-08 18:57:41,809 - Attempting native click...
+2025-08-08 18:57:41,829 - Attempting native click...
+2025-08-08 18:57:42,640 - Human-like fallback click on bbox_id 113 successful.
+2025-08-08 18:57:45,154 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:57:45,327 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:57:45,331 - Attempting to click element with bbox_id: 269
+2025-08-08 18:57:45,394 - Attempting native click...
+2025-08-08 18:57:46,193 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:57:46,812 - Native click failed for bbox_id 249: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"249\"]")
+. Falling back.
+2025-08-08 18:57:46,812 - Attempting human-like click...
+2025-08-08 18:57:46,831 - Native click failed for bbox_id 89: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"89\"]")
+. Falling back.
+2025-08-08 18:57:46,831 - Attempting human-like click...
+2025-08-08 18:57:49,295 - Human-like fallback click on bbox_id 89 successful.
+2025-08-08 18:57:49,324 - Human-like fallback click on bbox_id 249 successful.
+2025-08-08 18:57:49,434 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:57:50,092 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:57:50,397 - Native click failed for bbox_id 269: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"269\"]")
+. Falling back.
+2025-08-08 18:57:50,397 - Attempting human-like click...
+2025-08-08 18:57:52,555 - Human-like fallback click on bbox_id 269 successful.
+2025-08-08 18:57:53,238 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:57:55,128 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:57:55,346 - Error extracting page content: 'NoneType' object is not subscriptable
+2025-08-08 18:57:56,373 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:57:57,371 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:57:57,379 - Attempting to click element with bbox_id: 81
+2025-08-08 18:57:57,457 - Attempting native click...
+2025-08-08 18:57:57,565 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:57:57,572 - Attempting to click element with bbox_id: 234
+2025-08-08 18:57:57,628 - Attempting native click...
+2025-08-08 18:57:58,869 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:57:59,366 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:57:59,372 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:58:02,459 - Native click failed for bbox_id 81: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"81\"]")
+. Falling back.
+2025-08-08 18:58:02,459 - Attempting human-like click...
+2025-08-08 18:58:02,631 - Native click failed for bbox_id 234: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"234\"]")
+. Falling back.
+2025-08-08 18:58:02,631 - Attempting human-like click...
+2025-08-08 18:58:03,167 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:58:05,540 - Human-like fallback click on bbox_id 81 successful.
+2025-08-08 18:58:05,790 - Human-like fallback click on bbox_id 234 successful.
+2025-08-08 18:58:06,476 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:58:08,377 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:58:08,673 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:58:09,054 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:58:13,470 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:58:14,814 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:58:17,936 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:58:18,438 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:58:19,773 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:58:20,009 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:58:21,804 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:58:25,080 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:58:25,827 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:58:30,690 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:58:36,457 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:58:38,586 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:58:41,662 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:58:43,571 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:58:49,145 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:58:50,786 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:58:50,796 - Attempting to click element with bbox_id: 20
+2025-08-08 18:58:50,834 - Attempting native click...
+2025-08-08 18:58:55,839 - Native click failed for bbox_id 20: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"20\"]")
+. Falling back.
+2025-08-08 18:58:55,839 - Attempting human-like click...
+2025-08-08 18:58:57,603 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:58:58,639 - Human-like fallback click on bbox_id 20 successful.
+2025-08-08 18:58:59,720 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:59:02,293 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:59:06,695 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:59:09,997 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:59:10,496 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:59:15,207 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:59:17,966 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:59:18,322 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:59:24,445 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:59:24,451 - Attempting to click element with bbox_id: 20
+2025-08-08 18:59:24,463 - Attempting native click...
+2025-08-08 18:59:28,031 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:59:29,465 - Native click failed for bbox_id 20: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"20\"]")
+. Falling back.
+2025-08-08 18:59:29,465 - Attempting human-like click...
+2025-08-08 18:59:32,333 - Human-like fallback click on bbox_id 20 successful.
+2025-08-08 18:59:36,141 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:59:48,306 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:59:50,795 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 18:59:57,103 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 18:59:57,110 - Attempting to click element with bbox_id: 20
+2025-08-08 18:59:57,149 - Attempting native click...
+2025-08-08 19:00:02,150 - Native click failed for bbox_id 20: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"20\"]")
+. Falling back.
+2025-08-08 19:00:02,150 - Attempting human-like click...
+2025-08-08 19:00:03,966 - Human-like fallback click on bbox_id 20 successful.
+2025-08-08 19:00:08,032 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 19:00:16,839 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 19:00:22,472 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 19:00:37,263 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 19:00:41,216 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 19:00:52,139 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 19:00:52,148 - Attempting to click element with bbox_id: 108
+2025-08-08 19:00:52,245 - Attempting native click...
+2025-08-08 19:00:57,251 - Native click failed for bbox_id 108: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"108\"]")
+. Falling back.
+2025-08-08 19:00:57,252 - Attempting human-like click...
+2025-08-08 19:00:59,737 - Human-like fallback click on bbox_id 108 successful.
+2025-08-08 19:01:03,368 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 19:01:15,749 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 19:01:15,761 - Attempting to click element with bbox_id: 104
+2025-08-08 19:01:15,847 - Attempting native click...
+2025-08-08 19:01:20,854 - Native click failed for bbox_id 104: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"104\"]")
+. Falling back.
+2025-08-08 19:01:20,854 - Attempting human-like click...
+2025-08-08 19:01:22,995 - Human-like fallback click on bbox_id 104 successful.
+2025-08-08 19:01:26,596 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 19:01:40,214 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 19:01:40,223 - Attempting to click element with bbox_id: 287
+2025-08-08 19:01:40,313 - Attempting native click...
+2025-08-08 19:01:45,318 - Native click failed for bbox_id 287: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"287\"]")
+. Falling back.
+2025-08-08 19:01:45,318 - Attempting human-like click...
+2025-08-08 19:01:47,419 - Human-like fallback click on bbox_id 287 successful.
+2025-08-08 19:01:51,339 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 19:02:04,046 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 19:02:05,854 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 19:02:13,644 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 19:02:16,725 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 19:02:24,546 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 19:02:24,555 - Attempting to click element with bbox_id: 37
+2025-08-08 19:02:24,594 - Attempting native click...
+2025-08-08 19:02:29,599 - Native click failed for bbox_id 37: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"37\"]")
+. Falling back.
+2025-08-08 19:02:29,599 - Attempting human-like click...
+2025-08-08 19:02:32,948 - Human-like fallback click on bbox_id 37 successful.
+2025-08-08 19:02:36,878 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 19:02:47,664 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 19:02:49,571 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 19:02:57,579 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 19:02:57,592 - Attempting to click element with bbox_id: 26
+2025-08-08 19:02:57,632 - Attempting native click...
+2025-08-08 19:03:02,637 - Native click failed for bbox_id 26: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"26\"]")
+. Falling back.
+2025-08-08 19:03:02,637 - Attempting human-like click...
+2025-08-08 19:03:05,287 - Human-like fallback click on bbox_id 26 successful.
+2025-08-08 19:03:05,681 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 19:03:13,385 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 19:03:19,203 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 19:03:28,072 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 19:03:28,425 - Error extracting page content: 'NoneType' object is not subscriptable
+2025-08-08 19:03:32,269 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 19:03:38,191 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 19:03:42,089 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 19:03:54,781 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 19:03:54,791 - Attempting to click element with bbox_id: 81
+2025-08-08 19:03:54,883 - Attempting native click...
+2025-08-08 19:03:59,887 - Native click failed for bbox_id 81: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"81\"]")
+. Falling back.
+2025-08-08 19:03:59,887 - Attempting human-like click...
+2025-08-08 19:04:02,939 - Human-like fallback click on bbox_id 81 successful.
+2025-08-08 19:04:06,546 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 19:04:07,769 - Retrying request to /chat/completions in 0.467975 seconds
+2025-08-08 19:04:27,508 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 19:04:28,133 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 19:04:39,302 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 19:04:39,311 - Attempting to click element with bbox_id: 26
+2025-08-08 19:04:39,349 - Attempting native click...
+2025-08-08 19:04:44,353 - Native click failed for bbox_id 26: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"26\"]")
+. Falling back.
+2025-08-08 19:04:44,353 - Attempting human-like click...
+2025-08-08 19:04:46,544 - All click attempts on bbox_id 26 failed to change the page state.
+2025-08-08 19:04:46,972 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 19:04:58,818 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 19:05:02,486 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 19:05:12,956 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 19:05:12,966 - Attempting to click element with bbox_id: 144
+2025-08-08 19:05:13,063 - Attempting native click...
+2025-08-08 19:05:18,069 - Native click failed for bbox_id 144: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"144\"]")
+. Falling back.
+2025-08-08 19:05:18,069 - Attempting human-like click...
+2025-08-08 19:05:20,211 - Human-like fallback click on bbox_id 144 successful.
+2025-08-08 19:05:23,844 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 19:05:24,043 - Retrying request to /chat/completions in 0.492929 seconds
+2025-08-08 19:05:32,238 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 19:05:36,049 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 19:05:47,954 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 19:05:50,963 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 19:05:57,181 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 19:05:57,192 - Attempting to click element with bbox_id: 40
+2025-08-08 19:05:57,226 - Attempting native click...
+2025-08-08 19:06:02,230 - Native click failed for bbox_id 40: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"40\"]")
+. Falling back.
+2025-08-08 19:06:02,231 - Attempting human-like click...
+2025-08-08 19:06:05,053 - Human-like fallback click on bbox_id 40 successful.
+2025-08-08 19:06:05,058 - Delegate task failed: Recursion limit of 100 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.
+For troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/GRAPH_RECURSION_LIMIT
+2025-08-08 19:06:20,837 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 19:06:24,774 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 19:06:35,173 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 19:06:35,181 - Attempting to type 'Liquid Motion Sandscape' into element with bbox_id: 4
+2025-08-08 19:06:35,240 - Attempting native type...
+2025-08-08 19:06:40,243 - Native type failed for bbox_id 4: Page.fill: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"4\"]")
+. Falling back.
+2025-08-08 19:06:40,244 - Attempting human-like type...
+2025-08-08 19:06:47,670 - Human-like fallback type on bbox_id 4 successful.
+2025-08-08 19:06:57,063 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 19:07:01,098 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-08 19:07:09,966 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 19:07:09,977 - Attempting to click element with bbox_id: 49
+2025-08-08 19:07:10,038 - Attempting native click...
+2025-08-08 19:07:15,043 - Native click failed for bbox_id 49: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"49\"]")
+. Falling back.
+2025-08-08 19:07:15,043 - Attempting human-like click...
+2025-08-08 19:07:17,971 - Human-like fallback click on bbox_id 49 successful.
+2025-08-08 19:07:30,163 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-08 19:07:34,036 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 14:37:05,028 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-14 14:37:05,922 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-14 14:37:06,861 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 14:37:08,166 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 14:37:23,339 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 14:38:05,539 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 14:38:05,648 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 14:38:27,165 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 14:49:44,612 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-14 14:49:44,873 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-14 14:49:45,676 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 14:49:46,184 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 14:49:57,111 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 14:49:57,124 - Attempting to type 'Siwoo Bae Hoboken NJ' into element with bbox_id: 6
+2025-08-14 14:49:57,137 - Attempting native type...
+2025-08-14 14:50:02,140 - Native type failed for bbox_id 6: Page.fill: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"6\"]")
+. Falling back.
+2025-08-14 14:50:02,140 - Attempting human-like type...
+2025-08-14 14:50:10,825 - Human-like fallback type on bbox_id 6 successful.
+2025-08-14 14:50:23,415 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 14:50:23,801 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 14:50:30,801 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 14:50:41,391 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 14:50:41,875 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 14:50:51,050 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 14:51:02,030 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 14:51:02,411 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 14:51:13,050 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 14:51:13,057 - Attempting to click element with bbox_id: 72
+2025-08-14 14:51:13,091 - Attempting native click...
+2025-08-14 14:51:18,097 - Native click failed for bbox_id 72: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"72\"]")
+. Falling back.
+2025-08-14 14:51:18,098 - Attempting human-like click...
+2025-08-14 14:51:21,493 - Human-like fallback click on bbox_id 72 successful.
+2025-08-14 14:51:30,954 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 14:51:33,507 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 14:51:40,415 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 14:51:51,796 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 14:51:54,356 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 14:52:03,618 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 14:52:12,174 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 14:52:12,338 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 14:52:18,525 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 14:52:25,653 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 14:52:25,806 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 14:52:28,458 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 14:52:37,624 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 14:52:40,202 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 14:52:49,858 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 14:52:59,280 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 14:53:01,886 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 14:53:09,620 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 14:53:17,402 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 14:53:17,554 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 15:02:19,862 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-14 15:02:20,162 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-14 15:02:21,161 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 15:02:21,569 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 15:02:28,653 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:02:40,858 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:02:40,971 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 15:02:47,884 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:02:52,113 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:02:52,216 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 15:03:22,655 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:03:50,174 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 15:03:50,269 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 15:03:56,679 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:04:04,183 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:04:04,305 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 15:04:12,813 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:04:21,902 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:04:22,017 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 15:04:31,483 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:04:31,492 - Attempting to type 'Albus' into element with bbox_id: 0
+2025-08-14 15:04:31,504 - Attempting native type...
+2025-08-14 15:04:36,511 - Native type failed for bbox_id 0: Page.fill: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"0\"]")
+. Falling back.
+2025-08-14 15:04:36,511 - Attempting human-like type...
+2025-08-14 15:04:40,730 - Human-like fallback type on bbox_id 0 successful.
+2025-08-14 15:04:47,869 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:04:47,991 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 15:05:03,509 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:05:03,515 - Attempting to type 'Dumbledore' into element with bbox_id: 1
+2025-08-14 15:05:03,525 - Attempting native type...
+2025-08-14 15:05:08,529 - Native type failed for bbox_id 1: Page.fill: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"1\"]")
+. Falling back.
+2025-08-14 15:05:08,529 - Attempting human-like type...
+2025-08-14 15:05:13,942 - Human-like fallback type on bbox_id 1 successful.
+2025-08-14 15:05:21,754 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:05:21,849 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 15:05:32,476 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:05:32,481 - Attempting to type 'albus.dumbledore@hogwarts.edu' into element with bbox_id: 2
+2025-08-14 15:05:32,489 - Attempting native type...
+2025-08-14 15:05:37,495 - Native type failed for bbox_id 2: Page.fill: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"2\"]")
+. Falling back.
+2025-08-14 15:05:37,496 - Attempting human-like type...
+2025-08-14 15:05:44,044 - Human-like fallback type on bbox_id 2 successful.
+2025-08-14 15:05:51,690 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:05:51,798 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 15:06:11,952 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:06:11,960 - Attempting to type 'Hogwarts Castle' into element with bbox_id: 5
+2025-08-14 15:06:11,970 - Attempting native type...
+2025-08-14 15:06:16,974 - Native type failed for bbox_id 5: Page.fill: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"5\"]")
+. Falling back.
+2025-08-14 15:06:16,975 - Attempting human-like type...
+2025-08-14 15:06:22,334 - Human-like fallback type on bbox_id 5 successful.
+2025-08-14 15:06:45,647 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:06:45,732 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 15:06:51,780 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:06:51,789 - Attempting to type 'Hogsmeade' into element with bbox_id: 6
+2025-08-14 15:06:51,800 - Attempting native type...
+2025-08-14 15:06:56,803 - Native type failed for bbox_id 6: Page.fill: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"6\"]")
+. Falling back.
+2025-08-14 15:06:56,803 - Attempting human-like type...
+2025-08-14 15:07:00,812 - Human-like fallback type on bbox_id 6 successful.
+2025-08-14 15:07:05,887 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:07:05,997 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 15:07:11,087 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:07:11,098 - Attempting to click element with bbox_id: 0
+2025-08-14 15:07:11,112 - Attempting native click...
+2025-08-14 15:07:16,116 - Native click failed for bbox_id 0: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"0\"]")
+. Falling back.
+2025-08-14 15:07:16,117 - Attempting human-like click...
+2025-08-14 15:07:19,385 - Human-like fallback click on bbox_id 0 successful.
+2025-08-14 15:07:24,842 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:07:24,957 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 15:07:31,316 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:07:31,328 - Attempting to type 'Albus' into element with bbox_id: 0
+2025-08-14 15:07:31,342 - Attempting native type...
+2025-08-14 15:07:36,346 - Native type failed for bbox_id 0: Page.fill: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"0\"]")
+. Falling back.
+2025-08-14 15:07:36,346 - Attempting human-like type...
+2025-08-14 15:07:41,566 - All type attempts on bbox_id 0 failed to change the page state.
+2025-08-14 15:07:59,062 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:07:59,156 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 15:08:05,061 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:08:14,229 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:08:14,331 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 15:08:22,592 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:08:33,499 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:08:33,602 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 15:08:38,957 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:08:38,967 - Attempting to select ['New York'] in element with bbox_id: 7
+2025-08-14 15:08:38,979 - Attempting native select...
+2025-08-14 15:08:43,983 - Native select failed for bbox_id 7: Page.select_option: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"7\"]")
+. Falling back.
+2025-08-14 15:08:43,983 - Attempting human-like select...
+2025-08-14 15:09:15,421 - Human-like fallback select also failed for bbox_id 7: Page.select_option: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"7\"]")
+
+2025-08-14 15:09:21,317 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:09:21,408 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 15:09:34,453 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:09:43,571 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:09:43,681 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 15:09:48,336 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:09:48,349 - Attempting to click element with bbox_id: 14
+2025-08-14 15:09:48,365 - Attempting native click...
+2025-08-14 15:09:53,368 - Native click failed for bbox_id 14: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"14\"]")
+. Falling back.
+2025-08-14 15:09:53,368 - Attempting human-like click...
+2025-08-14 15:09:55,184 - Human-like fallback click on bbox_id 14 successful.
+2025-08-14 15:10:01,961 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:10:02,047 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 15:10:09,756 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:10:09,769 - Attempting to click element with bbox_id: 16
+2025-08-14 15:10:09,778 - Attempting native click...
+2025-08-14 15:10:14,782 - Native click failed for bbox_id 16: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"16\"]")
+. Falling back.
+2025-08-14 15:10:14,783 - Attempting human-like click...
+2025-08-14 15:10:16,975 - Human-like fallback click on bbox_id 16 successful.
+2025-08-14 15:10:22,364 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:10:22,463 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 15:10:33,132 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:10:33,144 - Attempting to click element with bbox_id: 7
+2025-08-14 15:10:33,154 - Attempting native click...
+2025-08-14 15:10:38,158 - Native click failed for bbox_id 7: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"7\"]")
+. Falling back.
+2025-08-14 15:10:38,158 - Attempting human-like click...
+2025-08-14 15:10:41,563 - All click attempts on bbox_id 7 failed to change the page state.
+2025-08-14 15:10:45,982 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:10:46,073 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 15:11:02,010 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:11:02,022 - Attempting to click element with bbox_id: 6
+2025-08-14 15:11:02,031 - Attempting native click...
+2025-08-14 15:11:07,035 - Native click failed for bbox_id 6: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"6\"]")
+. Falling back.
+2025-08-14 15:11:07,035 - Attempting human-like click...
+2025-08-14 15:11:10,206 - Human-like fallback click on bbox_id 6 successful.
+2025-08-14 15:11:17,270 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-14 15:11:17,374 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-14 15:11:23,056 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"

@@ -39,16 +39,11 @@ MAX_ITERATIONS = 100
 TIMEOUT = 60  # 1 minute
 
 # System Prompts
-# DESIGN PHILOSOPHY:
-# - System prompt focuses on reasoning workflow and decision-making process
-# - Tool descriptions are removed since tools have their own comprehensive documentation  
-# - Emphasizes OBSERVE → REASON → ACT cycle to ensure thoughtful actions
-# - Encourages systematic problem-solving over reactive responses
 SYSTEM_TEMPLATE = """You are an expert web browsing AI assistant that systematically solves user queries through careful observation, reasoning, and strategic action.
 
 ## Context
 - You are utilising a Chrome Browser with internet access. It is already open and running. Google will be your default search engine. 
-- You can only see the screenshot of current page, which is visually annotated with bounding boxes and indices. To supplement this, text annotation of each bounding box is also provided.
+- You can only see the screenshot of current page, which is visually annotated with bounding boxes and indices. To supplement this, text annotation of each bounding box is also provided. Also, this implies that the information of the current page will be forever lost unless you extract page content or take a note of it.
 - Your dimensions are that of the viewport of the page. You can open new tabs, navigate to different websites, and use the tools to interact with them.
 - Before deciding something isn't available, make sure you scroll down to see everything.
 - For long running tasks, it can be helpful to take note so you can refer back to it later. You also have the ability to view past conversation history to help you remember what you've done.

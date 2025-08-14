@@ -179,6 +179,12 @@ class WebVoyagerStateManager:
             raise ValueError(f"Invalid bbox_id: {bbox_id}. Valid range: 0-{len(self.current_bboxes)-1}")
         if bbox.isCaptcha:
             raise ValueError(f"Action failed: Element {bbox_id} is identified as a CAPTCHA.")
+        try:
+            selector = getattr(bbox, "selector", None)
+            if selector:
+                return selector
+        except Exception:
+            pass
         return f'[data-ai-label="{bbox_id}"]'
 
 
