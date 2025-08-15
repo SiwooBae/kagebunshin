@@ -1,15 +1,17 @@
-### Kagebunshin
+## Kagebunshin🍥
 
-Introducing Kagebunshin 🍥: a web-browsing, research focused agent swarm. With the recent release of GPT-5, GPT-5-mini, GPT-5-nano, this system has finally become economically viable.
+Introducing Kagebunshin: a web-browsing, research focused agent swarm. With the recent release of GPT-5, GPT-5-mini, GPT-5-nano, this system has finally become economically viable.
 
 ### Q&A
 
 Q: What does it do?
+
 It works very similar to how ChatGPT agent functions. On top of it, it comes with additional features:
 - cloning itself and navigate multiple branches simultaneously
 - ⁠communicating with each other with the group chat feature: agents can “post” what they are working on their internal group chat, so that there is no working on the same thing, and encourage emergent behaviors.
 
 Q: Why now?
+
 While everyone is focusing on GPT-5’s performance, I looked at GPT-5-nano’s. It matches or even outperforms previous gpt-4.1-mini, at the x5-10 less cost. This means we can use 5 parallel agents with nano with the same cost of running 1 agent with 4.1 mini. As far as I know, GPT agent runs on gpt-4.1-mini (now they must have updated it, right?). This implies, this can be extremely useful when you need quantity over quality, such as data collection, scraping, etc.
 
 Q: Limitations?
