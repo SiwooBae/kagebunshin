@@ -28,7 +28,7 @@ from ..config.settings import (
     MAX_KAGEBUNSHIN_INSTANCES,
     ENABLE_SUMMARIZATION,
 )
-from ..utils import format_img_context, format_bbox_context, format_text_context, format_tab_context, generate_agent_name
+from ..utils import format_img_context, format_bbox_context, format_text_context, format_tab_context, generate_agent_name, normalize_chat_content
 from ..communication.group_chat import GroupChatClient
 
 logger = logging.getLogger(__name__)
@@ -338,16 +338,19 @@ class KageBunshinAgent:
             summary_prompt_messages.extend(before_context_messages)
         
         tool_calls_str = ", ".join([f"{tc['name']}({tc['args']})" for tc in ai_message.tool_calls])
-        tool_results_str = ", ".join([str(msg.content) for msg in tool_messages])
-        action_str = (f"The action taken was: {tool_calls_str}\n\n",
-                      f"The result of the action was: {tool_results_str}\n\n",
-                      "Here is the state of the page after the action: ")
-        summary_prompt_messages.append(HumanMessage(content=action_str))
+        tool_results_str = ", ".join([normalize_chat_content(getattr(msg, "content", "")) for msg in tool_messages])
+        action_text = (
+            f"The action taken was: {tool_calls_str}\n\n"
+            f"The result of the action was: {tool_results_str}\n\n"
+            "Here is the state of the page after the action: "
+        )
+        summary_prompt_messages.append(HumanMessage(content=action_text))
         summary_prompt_messages.extend(after_context_messages)
 
         try:
             summary_response = await self.summarizer_llm.ainvoke(summary_prompt_messages)
-            summary_message = SystemMessage(content=f"Summary of last action: {summary_response.content}")
+            summary_text = normalize_chat_content(getattr(summary_response, "content", ""))
+            summary_message = SystemMessage(content=f"Summary of last action: {summary_text}")
             
             return {"messages": [summary_message]}
         except Exception as e:
@@ -375,6 +378,10 @@ class KageBunshinAgent:
         if page_data.img and page_data.bboxes:
             context_parts.append("Current state of the page:")
         
+        # current url
+        current_url = await self.get_current_url()
+        context_parts.append(f"Current URL: {current_url}")
+
         # Bounding boxes information
         if page_data.bboxes:
             bbox_context = format_bbox_context(page_data.bboxes)
@@ -419,14 +426,14 @@ class KageBunshinAgent:
         # 1) Prefer explicit final markers produced by the agent (AI messages only)
         for msg in reversed(messages):
             if isinstance(msg, AIMessage) and getattr(msg, "content", None):
-                content_text = str(msg.content)
+                content_text = normalize_chat_content(msg.content)
                 if "[FINAL ANSWER]" in content_text:
                     return content_text.replace("[FINAL ANSWER]", "").strip()
 
         # 2) Otherwise, pick the most recent AI message with substantive content
         for msg in reversed(messages):
             if isinstance(msg, AIMessage) and getattr(msg, "content", None):
-                content_text = str(msg.content).strip()
+                content_text = normalize_chat_content(msg.content).strip()
                 return content_text
 
         # 3) If nothing suitable is found, return a safe default

@@ -12,6 +12,7 @@ from .formatting import (
     format_img_context,
     format_enhanced_page_context,
     annotate_page,
+    normalize_chat_content,
 )
 
 from .naming import generate_agent_name
@@ -26,6 +27,7 @@ __all__ = [
     "format_img_context",
     "format_enhanced_page_context",
     "annotate_page",
+    "normalize_chat_content",
     "generate_agent_name",
     "log_with_timestamp",
 ]

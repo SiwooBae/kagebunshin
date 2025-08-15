@@ -30,7 +30,7 @@ from ..config.settings import (
     LLM_TEMPERATURE
 )
 from ..communication.group_chat import GroupChatClient
-from ..utils import generate_agent_name
+from ..utils import generate_agent_name, normalize_chat_content
 
 
 logger = logging.getLogger(__name__)
@@ -56,7 +56,7 @@ async def _summarize_conversation_history(messages: List[BaseMessage], parent_na
     # Keep the very first user request if present for goal context
     first_user = next((m for m in messages if isinstance(m, HumanMessage) and getattr(m, "content", None)), None)
     if first_user and getattr(first_user, "content", None):
-        condensed_lines.append(f"Initial request: {first_user.content}")
+        condensed_lines.append(f"Initial request: {normalize_chat_content(first_user.content)}")
 
     for msg in messages[-200:]:  # limit history for token efficiency
         try:
@@ -76,11 +76,13 @@ async def _summarize_conversation_history(messages: List[BaseMessage], parent_na
                         calls_formatted.append(f"{name}({_shorten(args_str, 120)})")
                     condensed_lines.append(f"AI called: {', '.join(calls_formatted)}")
                 elif getattr(msg, "content", None):
-                    condensed_lines.append(f"AI: {_shorten(msg.content, 400)}")
+                    condensed_lines.append(f"AI: {_shorten(normalize_chat_content(msg.content), 400)}")
                 continue
             if isinstance(msg, ToolMessage):
                 tool_name = getattr(msg, "name", None) or getattr(msg, "tool_name", "tool")
-                condensed_lines.append(f"Tool[{tool_name}] → {_shorten(getattr(msg, 'content', ''), 400)}")
+                condensed_lines.append(
+                    f"Tool[{tool_name}] → {_shorten(normalize_chat_content(getattr(msg, 'content', '')), 400)}"
+                )
                 continue
             if isinstance(msg, HumanMessage):
                 condensed_lines.append(f"User: {_shorten(getattr(msg, 'content', ''), 400)}")
@@ -88,7 +90,7 @@ async def _summarize_conversation_history(messages: List[BaseMessage], parent_na
             # Fallback for any other message types
             content = getattr(msg, "content", None)
             if content:
-                condensed_lines.append(_shorten(content, 400))
+                condensed_lines.append(_shorten(normalize_chat_content(content), 400))
         except Exception:
             # Never let a single bad message break summarization
             continue
@@ -98,7 +100,7 @@ async def _summarize_conversation_history(messages: List[BaseMessage], parent_na
 
     # Further trim to recent context while preserving the initial request if present
     initial_line = condensed_lines[0] if condensed_lines and condensed_lines[0].startswith("Initial request:") else None
-    tail_lines = condensed_lines[-60:]
+    tail_lines = condensed_lines
     if initial_line and tail_lines[0] != initial_line:
         condensed_for_llm = "\n".join([initial_line] + tail_lines)
     else:
@@ -128,7 +130,8 @@ async def _summarize_conversation_history(messages: List[BaseMessage], parent_na
             SystemMessage(content=system_prompt),
             HumanMessage(content=human_prompt),
         ])
-        return response.content.strip()
+        
+        return normalize_chat_content(response.content)
 
     except Exception as e:
         logger.warning(f"Failed to summarize conversation history: {e}")

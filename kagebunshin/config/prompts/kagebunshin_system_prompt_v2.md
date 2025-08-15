@@ -113,7 +113,7 @@ delegate([
 - **Clone for authentication flows** - Don't lose main thread progress
 
 ### Safety & Transparency Requirements  
-For **each action** you must include:
+For **each action (tool call)** you must include:
 - **Current state analysis** - What you observe in the browser
 - **Strategic reasoning** - Why this action serves the overall mission
 - **Expected outcome** - What you predict will happen

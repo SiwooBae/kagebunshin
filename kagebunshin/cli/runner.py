@@ -11,7 +11,7 @@ from ..config.settings import BROWSER_EXECUTABLE_PATH, USER_DATA_DIR, DEFAULT_PE
 from ..core.agent import KageBunshinAgent
 from ..tools.delegation import get_additional_tools
 from ..config.settings import GROUPCHAT_ROOM
-from ..utils import generate_agent_name
+from ..utils import generate_agent_name, normalize_chat_content
 from ..automation.fingerprinting import get_stealth_browser_args, apply_fingerprint_profile_to_context
 
 # enable logger
@@ -145,7 +145,7 @@ class KageBunshinRunner:
                     if 'agent' in chunk:
                         for msg in chunk['agent'].get('messages', []):
                             if hasattr(msg, 'content') and msg.content:
-                                content = str(msg.content)
+                                content = normalize_chat_content(msg.content)
                                 last_agent_message = content
                                 self._print_step('MESSAGE', f"Agent: {content}", Colors.OKBLUE)
                             if hasattr(msg, 'tool_calls') and msg.tool_calls:
@@ -157,7 +157,7 @@ class KageBunshinRunner:
                     if 'summarizer' in chunk:
                         for msg in chunk['summarizer'].get('messages', []):
                             if hasattr(msg, 'content') and msg.content:
-                                self._print_step('MESSAGE', str(msg.content), Colors.OKBLUE)
+                                self._print_step('MESSAGE', normalize_chat_content(msg.content), Colors.OKBLUE)
 
                 # Final output
                 if last_agent_message:
@@ -251,7 +251,7 @@ class KageBunshinRunner:
                         if 'agent' in chunk:
                             for msg in chunk['agent'].get('messages', []):
                                 if hasattr(msg, 'content') and msg.content:
-                                    content = str(msg.content)
+                                    content = normalize_chat_content(msg.content)
                                     last_agent_message = content
                                     self._print_step('MESSAGE', f"Agent: {content}", Colors.OKBLUE)
                                 if hasattr(msg, 'tool_calls') and msg.tool_calls:
@@ -262,7 +262,7 @@ class KageBunshinRunner:
                         if 'summarizer' in chunk:
                             for msg in chunk['summarizer'].get('messages', []):
                                 if hasattr(msg, 'content') and msg.content:
-                                    self._print_step('MESSAGE', str(msg.content), Colors.OKBLUE)
+                                    self._print_step('MESSAGE', normalize_chat_content(msg.content), Colors.OKBLUE)
 
                     if last_agent_message:
                         self._print_final_answer(last_agent_message)

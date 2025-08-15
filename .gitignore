@@ -137,3 +137,5 @@ dump.rdb
 *.tmp
 *.temp
 .DS_Store
+test.md
+fingerprint.log

@@ -9,7 +9,7 @@ import base64
 import asyncio
 import logging
 from io import BytesIO
-from typing import List, Dict
+from typing import List, Dict, Any
 
 import html2text
 import pypdf
@@ -56,6 +56,68 @@ def html_to_markdown(html_content: str) -> str:
     h.ignore_images = True
     h.body_width = 0  # Prevent line wrapping
     return h.handle(str(soup))
+
+
+def normalize_chat_content(content: Any, include_placeholders: bool = False) -> str:
+    """Normalize chat message `content` into a plain string.
+
+    Handles both legacy string content and the newer list-of-parts format
+    (e.g., [{"type": "text", "text": "..."}, {"type": "image_url", ...}]).
+
+    - Text parts are concatenated with newlines.
+    - Non-text parts (images) are omitted by default, or replaced with
+      placeholders when `include_placeholders=True`.
+    """
+    try:
+        if content is None:
+            return ""
+        if isinstance(content, str):
+            return content.strip()
+        if isinstance(content, list):
+            parts: List[str] = []
+            for part in content:
+                try:
+                    if isinstance(part, dict):
+                        part_type = part.get("type")
+                        if part_type == "text":
+                            text_val = part.get("text", "")
+                            parts.append(str(text_val))
+                        elif part_type in {"image_url", "input_image", "image"}:
+                            if include_placeholders:
+                                url = ""
+                                image_url_val = part.get("image_url")
+                                if isinstance(image_url_val, dict):
+                                    url = image_url_val.get("url", "")
+                                elif isinstance(image_url_val, str):
+                                    url = image_url_val
+                                url = url or part.get("url", "")
+                                placeholder = f"[image:{url}]" if url else "[image]"
+                                parts.append(placeholder)
+                            # else: skip image parts
+                        else:
+                            # Fallback: try common text-like keys or stringify
+                            text_like = part.get("text") or part.get("content")
+                            if text_like is not None:
+                                parts.append(str(text_like))
+                    else:
+                        parts.append(str(part))
+                except Exception:
+                    # Never let a malformed part break normalization
+                    continue
+            joined = "\n".join(p.strip() for p in parts if str(p).strip())
+            return joined.strip()
+        if isinstance(content, dict):
+            part_type = content.get("type")
+            if part_type == "text":
+                return str(content.get("text", "")).strip()
+            # Fallback to any text-like fields
+            text_like = content.get("text") or content.get("content")
+            if text_like is not None:
+                return str(text_like).strip()
+            return str(content).strip()
+        return str(content).strip()
+    except Exception:
+        return str(content)
 
 
 def format_text_context(markdown_content: str) -> str:
