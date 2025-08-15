@@ -102,12 +102,12 @@ async def main():
 
 ## Configuration
 
-Edit `kagebunshin/config.py` to customize:
+Edit `kagebunshin/config/settings.py` to customize:
 
 - **LLM Settings**: Model/provider, temperature, reasoning effort
 - **Browser Settings**: Executable path, user data directory, permissions
 - **Stealth Features**: Fingerprint profiles, human behavior simulation
-- **Group Chat**: Redis connection settings for agent communication
+- **Group Chat**: Redis connection settings for agent coordination
 - **Performance**: Concurrency limits, timeouts, delays
 
 ## Development
@@ -143,13 +143,57 @@ uv run mypy kagebunshin/
 uv run pytest
 ```
 
-## Architecture
+## Project Structure
 
-- **KageBunshinAgent**: Main orchestrator handling web automation tasks
-- **StateManager**: Manages browser state and provides tools for LLM
-- **GroupChat**: Redis-based communication system for agent coordination
-- **HumanBehavior**: Simulates human-like interactions to avoid detection
-- **FingerprintEvasion**: Randomizes browser fingerprints for stealth
+Kagebunshin features a clean, modular architecture optimized for readability and extensibility:
+
+```
+kagebunshin/
+├── core/                    # 🧠 Core agent functionality
+│   ├── agent.py            # Main KageBunshinAgent orchestrator
+│   ├── state.py            # State models and data structures
+│   └── state_manager.py    # Browser state operations
+│
+├── automation/             # 🤖 Browser automation & stealth
+│   ├── behavior.py         # Human behavior simulation
+│   ├── fingerprinting.py   # Browser fingerprint evasion
+│   └── browser/            # Browser-specific utilities
+│
+├── tools/                  # 🔧 Agent tools & capabilities
+│   └── delegation.py       # Agent cloning and delegation
+│
+├── communication/          # 💬 Agent coordination
+│   └── group_chat.py       # Redis-based group chat
+│
+├── cli/                    # 🖥️ Command-line interface
+│   ├── runner.py          # CLI runner and REPL
+│   └── ui/                # Future UI components
+│
+├── config/                 # ⚙️ Configuration management
+│   ├── settings.py        # All configuration settings
+│   └── prompts/           # System prompts
+│
+└── utils/                  # 🛠️ Shared utilities
+    ├── formatting.py      # HTML/text formatting for LLM
+    ├── logging.py         # Logging utilities
+    └── naming.py          # Agent name generation
+```
+
+### Key Components
+
+- **🧠 Core Agent**: Orchestrates web automation tasks using LangGraph
+- **🤖 Automation**: Human-like behavior simulation and stealth browsing
+- **🔧 Tools**: Agent delegation system for parallel task execution
+- **💬 Communication**: Redis-based group chat for agent coordination
+- **🖥️ CLI**: Interactive command-line interface with streaming updates
+
+### Architecture Benefits
+
+- **🎯 Clear Separation**: Each module has a focused, single responsibility
+- **📈 Scalable Design**: Easy to extend with new tools, behaviors, and UI components
+- **🔍 Better Organization**: Related functionality is logically grouped together
+- **🧩 Modular Components**: Large monolithic files decomposed into focused modules
+- **🌳 Hierarchical Structure**: Nested organization for complex subsystems
 
 ## Contributing
 
