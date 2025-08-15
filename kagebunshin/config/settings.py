@@ -45,7 +45,7 @@ TIMEOUT = 60  # 1 minute
 
 # System Prompts
 _current_dir = Path(__file__).parent
-_prompt_path = _current_dir / "prompts" / "kagebunshin_system_prompt.md"
+_prompt_path = _current_dir / "prompts" / "kagebunshin_system_prompt_v2.md"
 
 with open(_prompt_path, "r") as f:
     SYSTEM_TEMPLATE = f.read()

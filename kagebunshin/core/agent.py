@@ -176,7 +176,7 @@ class KageBunshinAgent:
         try:
             await self.group_client.connect()
             await self._post_intro_message()
-            await self.group_client.post(self.group_room, self.username, f"Starting task: {user_query}")
+            # await self.group_client.post(self.group_room, self.username, f"Starting task: {user_query}")
         except Exception:
             pass
         
@@ -209,7 +209,7 @@ class KageBunshinAgent:
         # Announce task to group chat (streaming entry)
         try:
             await self.group_client.connect()
-            await self.group_client.post(self.group_room, self.username, f"Starting task (stream): {user_query}")
+            # await self.group_client.post(self.group_room, self.username, f"Starting task (stream): {user_query}")
         except Exception:
             pass
 

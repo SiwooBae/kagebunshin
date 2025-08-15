@@ -341,22 +341,29 @@ async def _annotate_pdf_page(page: Page) -> Annotation:
 async def _annotate_html_page(page: Page) -> Annotation:
     """Annotate an HTML page with bounding boxes and take a screenshot."""
     # await asyncio.sleep(0.5)  # wait for half second
-
+    markdown = ""
     try:
         await page.wait_for_load_state("networkidle", timeout=3000)
+        markdown = f"Page currently in 'networkidle' state. Stable."
     except Exception as e:
         logger.warning(f"DEBUG: 'networkidle' failed: {e}. Trying 'load' state.")
         try:
-            await page.wait_for_load_state("load", timeout=5000)
+            await page.wait_for_load_state("load", timeout=3000)
+            markdown = f"INFO: Waited for 'networkidle' for 3 seconds, but it failed. However, 'load' state succeeded. It should be stable for most cases."
         except Exception as e2:
             logger.warning(f"DEBUG: Both 'networkidle' and 'load' failed: {e2}")
-            return Annotation(
-                img="",
-                bboxes=[],
-                markdown=f"Failed to stabilize page load. Error: {e2}",
-                viewportCategories={},
-                frameStats={"totalFrames": 0, "accessibleFrames": 0, "maxDepth": 0},
-                totalElements=0
+            try:
+                await page.wait_for_load_state("domcontentloaded", timeout=3000)
+                markdown = f"WARNING: both 'networkidle' and 'load' state failed after waiting 6 seconds total. However, 'domcontentloaded' state succeeded. There may be some elements that are not fully loaded."
+            except Exception as e3:
+                logger.warning(f"DEBUG: All load states (networkidle, load, domcontentloaded) failed: {e3}")
+                return Annotation(
+                    img="",
+                    bboxes=[],
+                    markdown=f"Failed to stabilize page load. Error: {e2}",
+                    viewportCategories={},
+                    frameStats={"totalFrames": 0, "accessibleFrames": 0, "maxDepth": 0},
+                    totalElements=0
             )
     
     try:
@@ -382,7 +389,7 @@ async def _annotate_html_page(page: Page) -> Annotation:
             position: len(elements) for position, elements in viewport_categories_raw.items()
         } if viewport_categories_raw else {}
 
-        markdown = ""
+        
         screenshot = await page.screenshot()
 
         return Annotation(
