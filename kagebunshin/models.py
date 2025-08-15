@@ -1,4 +1,4 @@
-"""Data models and state definitions for WebVoyagerV2 system"""
+"""Data models and state definitions for KageBunshinV2 system"""
 from typing import Annotated, List, Optional, Dict, Any
 from typing_extensions import TypedDict
 from langgraph.graph.message import add_messages
@@ -78,8 +78,8 @@ class TabInfo(TypedDict):
     is_active: bool
 
 
-class WebVoyagerState(TypedDict):
-    """The optimized state of the WebVoyager agent.
+class KageBunshinState(TypedDict):
+    """The optimized state of the KageBunshin agent.
     
     Contains only the truly essential data that cannot be derived:
     - User's query and conversation history (core agent state)
@@ -113,7 +113,7 @@ class Annotation(BaseModel):
 
 
 # class ResponseFormat(BaseModel):
-#     """Response format for WebVoyagerV2"""
+#     """Response format for KageBunshinV2"""
 #     thinking: str = Field(description="Your detailed, step-by-step reasoning goes here. First, evaluate your last action's result from the agent history. Second, analyze the current browser state and screenshot. Finally, formulate a clear goal for this turn.")
 #     evaluation_previous_goal: str = Field(description="One-sentence analysis of your last action. Clearly state success, failure, or uncertain.")
 #     memory: str = Field(description="1-3 sentences of specific memory of this step and overall progress. You should put here everything that will help you track progress in future steps. Like counting pages visited, items found, etc.")

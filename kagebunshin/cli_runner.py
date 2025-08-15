@@ -8,7 +8,7 @@ import argparse
 from playwright.async_api import async_playwright
 
 from .config import BROWSER_EXECUTABLE_PATH, USER_DATA_DIR, DEFAULT_PERMISSIONS
-from .webvoyager_v2 import WebVoyagerV2
+from .kagebunshin_agent import KageBunshinAgent
 from .additional_tools import get_additional_tools
 from .config import GROUPCHAT_ROOM
 from .utils import generate_agent_name
@@ -33,11 +33,11 @@ class Colors:
     UNDERLINE = '\033[4m'
 
 
-class WebVoyagerRunner:
-    """Simplified WebVoyager runner using the stateless orchestrator pattern"""
+class KageBunshinRunner:
+    """Simplified KageBunshin runner using the stateless orchestrator pattern"""
 
     def __init__(self):
-        self.orchestrator: Optional[WebVoyagerV2] = None
+        self.orchestrator: Optional[KageBunshinAgent] = None
         self.step_count = 0
 
     def _get_timestamp(self) -> str:
@@ -84,8 +84,8 @@ class WebVoyagerRunner:
         self._print_banner("🏁 MISSION COMPLETED", Colors.OKGREEN)
 
     async def run(self, user_query: str):
-        """Run WebVoyager using the simplified stateless orchestrator approach"""
-        self._print_banner("🌐 WebVoyager V2 (Stateless Orchestrator)", Colors.HEADER)
+        """Run KageBunshin using the simplified stateless orchestrator approach"""
+        self._print_banner("🌐 KageBunshin (Stateless Orchestrator)", Colors.HEADER)
         print(f"{Colors.OKCYAN}Query: {Colors.BOLD}{user_query}{Colors.ENDC}\n")
 
         async with async_playwright() as p:
@@ -126,14 +126,14 @@ class WebVoyagerRunner:
             # Initialize orchestrator with additional tools (including delegate) and group chat identity
             agent_name = generate_agent_name()
             extra_tools = get_additional_tools(context, username=agent_name, group_room=GROUPCHAT_ROOM)
-            self.orchestrator = await WebVoyagerV2.create(
+            self.orchestrator = await KageBunshinAgent.create(
                 context,
                 additional_tools=extra_tools,
                 group_room=GROUPCHAT_ROOM,
                 username=agent_name,
                 enable_summarization=False,
             )
-            self._print_step("INIT", "Stateless WebVoyager Orchestrator created successfully!", Colors.OKGREEN)
+            self._print_step("INIT", "Stateless KageBunshin Orchestrator created successfully!", Colors.OKGREEN)
             self._print_step("INIT", "Starting web automation with stateless ReAct agent...", Colors.OKCYAN)
 
             try:
@@ -192,7 +192,7 @@ class WebVoyagerRunner:
         thread_id so the LangGraph MemorySaver preserves message history across turns.
         Type an empty line or /exit to quit.
         """
-        self._print_banner("🌐 WebVoyager V2 (Stateful Session)", Colors.HEADER)
+        self._print_banner("🌐 KageBunshin (Stateful Session)", Colors.HEADER)
         if first_query:
             print(f"{Colors.OKCYAN}First Query: {Colors.BOLD}{first_query}{Colors.ENDC}\n")
 
@@ -233,13 +233,13 @@ class WebVoyagerRunner:
             # Initialize orchestrator once for the session (preserves MemorySaver) with group chat identity
             agent_name = generate_agent_name()
             extra_tools = get_additional_tools(context, username=agent_name, group_room=GROUPCHAT_ROOM)
-            self.orchestrator = await WebVoyagerV2.create(
+            self.orchestrator = await KageBunshinAgent.create(
                 context,
                 additional_tools=extra_tools,
                 group_room=GROUPCHAT_ROOM,
                 username=agent_name,
             )
-            self._print_step("INIT", "Stateful WebVoyager Orchestrator created successfully!", Colors.OKGREEN)
+            self._print_step("INIT", "Stateful KageBunshin Orchestrator created successfully!", Colors.OKGREEN)
             self._print_step("INIT", f"Session thread: {thread_id}", Colors.OKCYAN)
 
             try:
@@ -307,7 +307,7 @@ async def main(user_query:str) -> None:
     # One-shot mode (classic colored stream)
     if not user_query:
         user_query = "Open google.com and summarize the page"
-    runner = WebVoyagerRunner()
+    runner = KageBunshinRunner()
     await runner.run(user_query)
 
 def run() -> None:
@@ -318,6 +318,6 @@ def run() -> None:
     args = parser.parse_args()
     if args.repl:
         # Classic colored stream with persistent memory
-        asyncio.run(WebVoyagerRunner().run_loop(args.query or None, thread_id="cli-session"))
+        asyncio.run(KageBunshinRunner().run_loop(args.query or None, thread_id="cli-session"))
     else:
         asyncio.run(main(args.query))

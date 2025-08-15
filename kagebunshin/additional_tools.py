@@ -14,9 +14,9 @@ import json
 from langchain_core.tools import tool
 from playwright.async_api import BrowserContext
 
-from .webvoyager_v2 import WebVoyagerV2
+from .kagebunshin_agent import KageBunshinAgent
 from .fingerprint_evasion import apply_fingerprint_profile_to_context
-from .config import DEFAULT_PERMISSIONS, GROUPCHAT_ROOM, MAX_WEBVOYAGER_INSTANCES
+from .config import DEFAULT_PERMISSIONS, GROUPCHAT_ROOM, MAX_KageBunshin_INSTANCES
 from .group_chat import GroupChatClient
 from .utils import generate_agent_name
 
@@ -28,7 +28,7 @@ def get_additional_tools(context: BrowserContext, username: Optional[str] = None
     """
     Construct additional tools bound to a specific BrowserContext.
 
-    The returned tools can be passed into `WebVoyagerV2.create(..., additional_tools=...)`.
+    The returned tools can be passed into `KageBunshinV2.create(..., additional_tools=...)`.
     """
 
     chat_client = GroupChatClient()
@@ -52,14 +52,14 @@ def get_additional_tools(context: BrowserContext, username: Optional[str] = None
 
         async def run_single_task(task_str: str) -> dict:
             created_context = None
-            clone: Optional[WebVoyagerV2] = None
+            clone: Optional[KageBunshinAgent] = None
             try:
                 # Capacity check (best-effort; create() also enforces)
-                if WebVoyagerV2._INSTANCE_COUNT >= MAX_WEBVOYAGER_INSTANCES:
+                if KageBunshinAgent._INSTANCE_COUNT >= MAX_KageBunshin_INSTANCES:
                     return {
                         "task": task_str,
                         "status": "denied",
-                        "error": f"Delegation denied: max agents reached ({MAX_WEBVOYAGER_INSTANCES}).",
+                        "error": f"Delegation denied: max agents reached ({MAX_KageBunshin_INSTANCES}).",
                     }
 
                 browser = getattr(context, "browser", None)
@@ -79,7 +79,7 @@ def get_additional_tools(context: BrowserContext, username: Optional[str] = None
                 child_name = generate_agent_name()
                 clone_tools = get_additional_tools(created_context, username=child_name, group_room=group_room)
                 try:
-                    clone = await WebVoyagerV2.create(
+                    clone = await KageBunshinAgent.create(
                         created_context,
                         additional_tools=clone_tools,
                         group_room=group_room,

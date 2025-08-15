@@ -66,10 +66,10 @@ Edit `src/config.py` for:
 
 ### Programmatic use
 ```
-from kagebunshin import WebVoyagerV2
+from kagebunshin import KageBunshinAgent
 # Create a Playwright context, then:
-# orchestrator = await WebVoyagerV2.create(context)
-# async for chunk in orchestrator.astream("Your task"):
+orchestrator = await KageBunshinAgent.create(context)
+async for chunk in orchestrator.astream("Your task"):
 #     ...
 ```
 

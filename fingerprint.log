@@ -834,16 +834,16 @@ playwright._impl._errors.TargetClosedError: Target page, context or browser has 
 2025-08-08 03:54:25,092 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
 2025-08-08 03:54:25,137 - Using context fingerprint profile: Win_Chrome_1080p
 2025-08-08 03:54:25,140 - Using context fingerprint profile: Win_Chrome_1080p
-2025-08-08 03:54:25,147 - Delegate tool failed: WebVoyagerV2.create() got an unexpected keyword argument 'enable_summarization'
+2025-08-08 03:54:25,147 - Delegate tool failed: KageBunshinV2.create() got an unexpected keyword argument 'enable_summarization'
 2025-08-08 03:54:25,148 - Using context fingerprint profile: Win_Chrome_1080p
 2025-08-08 03:54:25,150 - Using context fingerprint profile: Win_Chrome_1080p
-2025-08-08 03:54:25,153 - Delegate tool failed: WebVoyagerV2.create() got an unexpected keyword argument 'enable_summarization'
+2025-08-08 03:54:25,153 - Delegate tool failed: KageBunshinV2.create() got an unexpected keyword argument 'enable_summarization'
 2025-08-08 03:54:25,153 - Using context fingerprint profile: Win_Chrome_1080p
 2025-08-08 03:54:25,154 - Using context fingerprint profile: Win_Chrome_1080p
-2025-08-08 03:54:25,161 - Delegate tool failed: WebVoyagerV2.create() got an unexpected keyword argument 'enable_summarization'
-2025-08-08 03:54:25,163 - Delegate tool failed: WebVoyagerV2.create() got an unexpected keyword argument 'enable_summarization'
-2025-08-08 03:54:25,165 - Delegate tool failed: WebVoyagerV2.create() got an unexpected keyword argument 'enable_summarization'
-2025-08-08 03:54:25,166 - Delegate tool failed: WebVoyagerV2.create() got an unexpected keyword argument 'enable_summarization'
+2025-08-08 03:54:25,161 - Delegate tool failed: KageBunshinV2.create() got an unexpected keyword argument 'enable_summarization'
+2025-08-08 03:54:25,163 - Delegate tool failed: KageBunshinV2.create() got an unexpected keyword argument 'enable_summarization'
+2025-08-08 03:54:25,165 - Delegate tool failed: KageBunshinV2.create() got an unexpected keyword argument 'enable_summarization'
+2025-08-08 03:54:25,166 - Delegate tool failed: KageBunshinV2.create() got an unexpected keyword argument 'enable_summarization'
 2025-08-08 03:54:33,077 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
 2025-08-08 03:54:34,223 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
 2025-08-08 03:54:38,914 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"

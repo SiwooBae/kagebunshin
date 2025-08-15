@@ -1,5 +1,5 @@
 """
-Configuration settings for WebVoyagerV2.
+Configuration settings for KageBunshinV2.
 """
 import os
 import dotenv
@@ -282,4 +282,4 @@ GROUPCHAT_MAX_MESSAGES = int(os.environ.get("KAGE_GROUPCHAT_MAX_MESSAGES", "200"
 # ============================
 # Concurrency / Limits
 # ============================
-MAX_WEBVOYAGER_INSTANCES = int(os.environ.get("KAGE_MAX_WEBVOYAGER_INSTANCES", "5"))
+MAX_KAGEBUNSHIN_INSTANCES = int(os.environ.get("KAGE_MAX_KAGEBUNSHIN_INSTANCES", "5"))

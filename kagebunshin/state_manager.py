@@ -1,5 +1,5 @@
 """
-WebVoyager State Manager - Stateless manager that operates on WebVoyagerState.
+KageBunshin State Manager - Stateless manager that operates on KageBunshinState.
 """
 import asyncio
 import base64
@@ -14,7 +14,7 @@ from langchain.chat_models.base import init_chat_model
 from langchain_core.tools import tool
 from playwright.async_api import Page, BrowserContext
 
-from .models import WebVoyagerState, BBox, TabInfo, Annotation
+from .models import KageBunshinState, BBox, TabInfo, Annotation
 from .utils import html_to_markdown, annotate_page
 from .human_behavior import (
     smart_delay_between_actions,
@@ -29,18 +29,18 @@ from .config import SUMMARIZER_MODEL, SUMMARIZER_PROVIDER
 logger = logging.getLogger(__name__)
 
 
-class WebVoyagerStateManager:
+class KageBunshinStateManager:
     """
-    Stateless state manager that operates on WebVoyagerState.
+    Stateless state manager that operates on KageBunshinState.
     
     This class provides tools and operations but doesn't maintain any state itself.
-    All browser state comes from the WebVoyagerState passed to methods.
+    All browser state comes from the KageBunshinState passed to methods.
     All derived data (screenshots, bboxes, etc.) is computed fresh on-demand.
     """
 
     def __init__(self, context: BrowserContext): 
         """Initialize the stateless state manager."""
-        self.current_state = WebVoyagerState(
+        self.current_state = KageBunshinState(
             input="",
             messages=[],
             context=context
@@ -61,7 +61,7 @@ class WebVoyagerStateManager:
         
     @classmethod
     async def create(cls, context: BrowserContext):
-        """Factory method to create a WebVoyagerStateManager with async initialization."""
+        """Factory method to create a KageBunshinStateManager with async initialization."""
         # if there is no page in the context, create a new one
         if len(context.pages) == 0:
             page = await context.new_page()
@@ -76,7 +76,7 @@ class WebVoyagerStateManager:
     # STATE MANAGEMENT METHODS
     # ===========================================
 
-    def set_state(self, state: WebVoyagerState) -> None: 
+    def set_state(self, state: KageBunshinState) -> None: 
         """Set the current state to operate on."""
         self.current_state = state
         self.current_bboxes = []  # Reset derived data

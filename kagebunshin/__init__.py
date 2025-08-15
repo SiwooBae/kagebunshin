@@ -1,11 +1,11 @@
 """
-Kagebunshin: AI web automation agent (formerly webvoyager_v2).
+Kagebunshin: AI web automation agent.
 
-Public API exports the `WebVoyagerV2` orchestrator.
+Public API exports the `KageBunshinAgent` orchestrator.
 """
 
-from .webvoyager_v2 import WebVoyagerV2
-from .cli_runner import WebVoyagerRunner
-__all__ = ["WebVoyagerV2"]
+from .kagebunshin_agent import KageBunshinAgent
+from .cli_runner import KageBunshinRunner
+__all__ = ["KageBunshinAgent"]
 __version__ = "0.1.0"
 

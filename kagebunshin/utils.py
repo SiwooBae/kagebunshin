@@ -1,4 +1,4 @@
-"""Utility functions for WebVoyagerV2 system"""
+"""Utility functions for KageBunshinV2 system"""
 from datetime import datetime
 from typing import List, Dict
 import secrets

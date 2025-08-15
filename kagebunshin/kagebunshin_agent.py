@@ -1,6 +1,6 @@
 """
-WebVoyager Orchestrator - The main brain that coordinates web automation tasks.
-This module is responsible for processing user queries and updating WebVoyager's state
+Kagebunshin Agent - The main brain that coordinates web automation tasks.
+This module is responsible for processing user queries and updating Kagebunshin's state
 by coordinating with the stateless state manager.
 """
 import logging
@@ -13,8 +13,8 @@ from langgraph.graph import StateGraph, END
 from langgraph.prebuilt import ToolNode
 from playwright.async_api import BrowserContext
 
-from .models import WebVoyagerState, Annotation, TabInfo
-from .state_manager import WebVoyagerStateManager
+from .models import KageBunshinState, Annotation, TabInfo
+from .state_manager import KageBunshinStateManager
 from .config import (
     LLM_MODEL,
     LLM_PROVIDER,
@@ -25,7 +25,7 @@ from .config import (
     SUMMARIZER_REASONING_EFFORT,
     SYSTEM_TEMPLATE,
     GROUPCHAT_ROOM,
-    MAX_WEBVOYAGER_INSTANCES,
+    MAX_KAGEBUNSHIN_INSTANCES,
     ENABLE_SUMMARIZATION,
 )
 from .utils import format_img_context, format_bbox_context, format_text_context, format_tab_context, generate_agent_name
@@ -34,14 +34,14 @@ from .group_chat import GroupChatClient
 logger = logging.getLogger(__name__)
 
 
-class WebVoyagerV2:
-    """The main orchestrator for WebVoyager's AI-driven web automation."""
+class KageBunshinAgent:
+    """The main orchestrator for KageBunshin's AI-driven web automation."""
     # Global instance tracking to enforce a hard cap per-process
     _INSTANCE_COUNT: int = 0
     
     def __init__(self, 
                  context: BrowserContext,
-                 state_manager: WebVoyagerStateManager,
+                 state_manager: KageBunshinStateManager,
                  additional_tools: List[Any] = None, 
                  system_prompt: str = SYSTEM_TEMPLATE,
                  enable_summarization: bool = ENABLE_SUMMARIZATION,
@@ -75,8 +75,8 @@ class WebVoyagerV2:
         self.last_page_tabs: Optional[List[TabInfo]] = None
         self.main_llm_img_message_type = HumanMessage if "gemini" in LLM_MODEL or LLM_REASONING_EFFORT is not None else SystemMessage
         self.summarizer_llm_img_message_type = HumanMessage if "gemini" in SUMMARIZER_MODEL or SUMMARIZER_REASONING_EFFORT is not None else SystemMessage
-        webvoyager_tools = self.state_manager.get_tools_for_llm()
-        self.all_tools = webvoyager_tools + (additional_tools or [])
+        web_browsing_tools = self.state_manager.get_tools_for_llm()
+        self.all_tools = web_browsing_tools + (additional_tools or [])
 
         # Group chat setup
         self.group_room = group_room or GROUPCHAT_ROOM
@@ -87,7 +87,7 @@ class WebVoyagerV2:
         self.llm_with_tools = self.llm.bind_tools(self.all_tools)
         
         # Define the graph
-        workflow = StateGraph(WebVoyagerState)
+        workflow = StateGraph(KageBunshinState)
 
         workflow.add_node("agent", self.call_agent)
         workflow.add_node("action", ToolNode(self.all_tools))
@@ -119,8 +119,8 @@ class WebVoyagerV2:
     def dispose(self) -> None:
         """Release this orchestrator's slot in the global instance counter."""
         try:
-            if WebVoyagerV2._INSTANCE_COUNT > 0:
-                WebVoyagerV2._INSTANCE_COUNT -= 1
+            if KageBunshinAgent._INSTANCE_COUNT > 0:
+                KageBunshinAgent._INSTANCE_COUNT -= 1
         except Exception:
             pass
 
@@ -132,18 +132,18 @@ class WebVoyagerV2:
                       enable_summarization: bool = ENABLE_SUMMARIZATION,
                       group_room: Optional[str] = None,
                       username: Optional[str] = None):
-        """Factory method to create a WebVoyagerV2 with async initialization."""
+        """Factory method to create a KageBunshinAgent with async initialization."""
         # Enforce a maximum number of instances per-process
-        if cls._INSTANCE_COUNT >= MAX_WEBVOYAGER_INSTANCES:
+        if cls._INSTANCE_COUNT >= MAX_KAGEBUNSHIN_INSTANCES:
             raise RuntimeError(
-                f"Instance limit reached: at most {MAX_WEBVOYAGER_INSTANCES} WebVoyagerV2 instances are allowed."
+                f"Instance limit reached: at most {MAX_KAGEBUNSHIN_INSTANCES} KageBunshinAgent instances are allowed."
             )
-        state_manager = await WebVoyagerStateManager.create(context)
+        state_manager = await KageBunshinStateManager.create(context)
         instance = cls(context, state_manager, additional_tools, system_prompt, enable_summarization, group_room, username)
         cls._INSTANCE_COUNT += 1
         return instance
 
-    async def call_agent(self, state: WebVoyagerState) -> Dict[str, List[BaseMessage]]:
+    async def call_agent(self, state: KageBunshinState) -> Dict[str, List[BaseMessage]]:
         """
         Calls the LLM with the current state to decide the next action.
         
@@ -154,7 +154,7 @@ class WebVoyagerV2:
         response = await self.llm_with_tools.ainvoke(messages)
         return {"messages": [response]}
 
-    def should_continue(self, state: WebVoyagerState) -> str:
+    def should_continue(self, state: KageBunshinState) -> str:
         """
         Determines whether the agent should continue or end the process.
         
@@ -180,7 +180,7 @@ class WebVoyagerV2:
         except Exception:
             pass
         
-        initial_state = WebVoyagerState(
+        initial_state = KageBunshinState(
             input=user_query,
             messages=[*self.persistent_messages, HumanMessage(content=user_query)],
             context=self.initial_context,
@@ -214,7 +214,7 @@ class WebVoyagerV2:
             pass
 
         initial_messages = [*self.persistent_messages, HumanMessage(content=user_query)]
-        initial_state = WebVoyagerState(
+        initial_state = KageBunshinState(
             input=user_query,
             messages=initial_messages,
             context=self.initial_context,
@@ -241,7 +241,7 @@ class WebVoyagerV2:
 
         # After stream completes, persist final messages and update state
         try:
-            final_state: WebVoyagerState = WebVoyagerState(
+            final_state: KageBunshinState = KageBunshinState(
                 input=user_query,
                 messages=accumulated_messages,
                 context=self.initial_context,
@@ -256,7 +256,7 @@ class WebVoyagerV2:
             except Exception:
                 pass
             
-    async def _build_agent_messages(self, state: WebVoyagerState) -> List[BaseMessage]:
+    async def _build_agent_messages(self, state: KageBunshinState) -> List[BaseMessage]:
         """
         Builds the list of messages to be sent to the LLM.
         
@@ -298,7 +298,7 @@ class WebVoyagerV2:
         except Exception:
             pass
     
-    async def summarize_tool_results(self, state: WebVoyagerState) -> Dict[str, List[BaseMessage]]:
+    async def summarize_tool_results(self, state: KageBunshinState) -> Dict[str, List[BaseMessage]]:
         """
         Analyzes the state before and after a tool call and adds a natural
         language summary to the message history.
