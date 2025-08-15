@@ -18,9 +18,11 @@ from .state_manager import WebVoyagerStateManager
 from .config import (
     LLM_MODEL,
     LLM_PROVIDER,
+    LLM_REASONING_EFFORT,
     LLM_TEMPERATURE,
-    LLM_SUMMARIZER_MODEL,
-    LLM_SUMMARIZER_PROVIDER,
+    SUMMARIZER_MODEL,
+    SUMMARIZER_PROVIDER,
+    SUMMARIZER_REASONING_EFFORT,
     SYSTEM_TEMPLATE,
     GROUPCHAT_ROOM,
     MAX_WEBVOYAGER_INSTANCES,
@@ -58,19 +60,21 @@ class WebVoyagerV2:
             model=LLM_MODEL,
             model_provider=LLM_PROVIDER,
             temperature=LLM_TEMPERATURE,
+            reasoning={"effort": LLM_REASONING_EFFORT} if "gpt-5" in LLM_MODEL else None
         )
         
         # Cheaper model for summarization
         self.summarizer_llm = init_chat_model(
-            model=LLM_SUMMARIZER_MODEL, 
-            model_provider=LLM_SUMMARIZER_PROVIDER,
+            model=SUMMARIZER_MODEL, 
+            model_provider=SUMMARIZER_PROVIDER,
             temperature=LLM_TEMPERATURE,
+            reasoning={"effort": SUMMARIZER_REASONING_EFFORT} if "gpt-5" in SUMMARIZER_MODEL else None
         )
         
         self.last_page_annotation: Optional[Annotation] = None
         self.last_page_tabs: Optional[List[TabInfo]] = None
-        self.main_llm_img_message_type = HumanMessage if "gemini" in LLM_MODEL else SystemMessage
-        self.summarizer_llm_img_message_type = HumanMessage if "gemini" in LLM_SUMMARIZER_MODEL else SystemMessage
+        self.main_llm_img_message_type = HumanMessage if "gemini" in LLM_MODEL or LLM_REASONING_EFFORT is not None else SystemMessage
+        self.summarizer_llm_img_message_type = HumanMessage if "gemini" in SUMMARIZER_MODEL or SUMMARIZER_REASONING_EFFORT is not None else SystemMessage
         webvoyager_tools = self.state_manager.get_tools_for_llm()
         self.all_tools = webvoyager_tools + (additional_tools or [])
 
@@ -407,18 +411,25 @@ class WebVoyagerV2:
     
     def _extract_final_answer(self) -> str:
         """Extract the final answer from the conversation."""
-        for msg in reversed(self.state_manager.current_state["messages"]):
-            if hasattr(msg, 'content') and msg.content:
-                content = str(msg.content)
-                if '[FINAL ANSWER]' in content:
-                    return content.replace('[FINAL ANSWER]', '').strip()
-        
-        for msg in reversed(self.state_manager.current_state["messages"]):
-            if hasattr(msg, 'content') and msg.content:
-                content = str(msg.content).strip()
-                if content and not content.startswith('[') and len(content) > 10:
-                    return content
-        
+        try:
+            messages = self.state_manager.current_state["messages"]
+        except Exception:
+            return "Task completed, but no specific answer was provided."
+
+        # 1) Prefer explicit final markers produced by the agent (AI messages only)
+        for msg in reversed(messages):
+            if isinstance(msg, AIMessage) and getattr(msg, "content", None):
+                content_text = str(msg.content)
+                if "[FINAL ANSWER]" in content_text:
+                    return content_text.replace("[FINAL ANSWER]", "").strip()
+
+        # 2) Otherwise, pick the most recent AI message with substantive content
+        for msg in reversed(messages):
+            if isinstance(msg, AIMessage) and getattr(msg, "content", None):
+                content_text = str(msg.content).strip()
+                return content_text
+
+        # 3) If nothing suitable is found, return a safe default
         return "Task completed, but no specific answer was provided."
     
     async def get_current_url(self) -> str:

@@ -15,7 +15,7 @@ from langchain_core.tools import tool
 from playwright.async_api import BrowserContext
 
 from .webvoyager_v2 import WebVoyagerV2
-from .fingerprint_evasion import apply_fingerprint_profile, apply_fingerprint_profile_to_context
+from .fingerprint_evasion import apply_fingerprint_profile_to_context
 from .config import DEFAULT_PERMISSIONS, GROUPCHAT_ROOM, MAX_WEBVOYAGER_INSTANCES
 from .group_chat import GroupChatClient
 from .utils import generate_agent_name
@@ -43,7 +43,7 @@ def get_additional_tools(context: BrowserContext, username: Optional[str] = None
         Behavior:
             - Always creates a fresh incognito BrowserContext per task (best isolation).
             - No initial URL is opened automatically.
-            - Returns a JSON array of {"task", "status", "result"|"error"}.
+            - Returns a JSON array of {"task", "status", "result"|"error"} as a string.
             - Resources are closed automatically after each clone finishes.
         """
 
@@ -108,7 +108,8 @@ def get_additional_tools(context: BrowserContext, username: Optional[str] = None
 
         # Run all tasks concurrently, respecting any runtime caps in create()
         results = await asyncio.gather(*(run_single_task(t) for t in tasks), return_exceptions=False)
-        return "[DELEGATE RESULTS]\n" + json.dumps(results)
+        # Return pure JSON per docstring for easy downstream parsing/consumption
+        return json.dumps(results)
 
     @tool
     async def post_groupchat(message: str) -> str:

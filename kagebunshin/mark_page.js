@@ -25,6 +25,7 @@ let overlayLayer = null;
 let redrawTimeoutId = null;
 let autoUpdateHandlersAttached = false;
 let lastMarkPageOptions = null;
+let attachedIframeWindows = [];
 
 // Color-blind friendly palette (Okabe & Ito)
 const TYPE_COLORS = {
@@ -58,12 +59,29 @@ function removeOverlay() {
   } catch (_) {}
   overlaySvg = null;
   overlayLayer = null;
+  // Fallback: remove any stray overlays by id in this document and accessible iframes
+  try {
+    function removeByIdInDoc(doc) {
+      try {
+        const nodes = doc.querySelectorAll('#ai-annotation-overlay');
+        nodes.forEach((n) => { try { n.parentElement && n.parentElement.removeChild(n); } catch (_) {} });
+        const iframes = doc.querySelectorAll('iframe');
+        iframes.forEach((iframe) => {
+          try {
+            const childDoc = iframe.contentDocument || (iframe.contentWindow && iframe.contentWindow.document);
+            if (childDoc) removeByIdInDoc(childDoc);
+          } catch (_) {}
+        });
+      } catch (_) {}
+    }
+    removeByIdInDoc(document);
+  } catch (_) {}
 }
 
 function ensureOverlay() {
   removeOverlay();
-  const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-  const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+    const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+    const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
   overlaySvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   overlaySvg.setAttribute("id", "ai-annotation-overlay");
   overlaySvg.setAttribute("width", String(vw));
@@ -88,6 +106,18 @@ function detachUpdateListeners() {
     window.removeEventListener("resize", handleWindowUpdate);
     window.removeEventListener("scroll", handleWindowUpdate, true);
   } catch (_) {}
+  // Detach listeners from any iframe windows we attached to
+  try {
+    for (const w of attachedIframeWindows) {
+      try {
+        w.removeEventListener("resize", handleWindowUpdate);
+      } catch (_) {}
+      try {
+        w.removeEventListener("scroll", handleWindowUpdate, true);
+      } catch (_) {}
+    }
+  } catch (_) {}
+  attachedIframeWindows = [];
   autoUpdateHandlersAttached = false;
 }
 
@@ -103,20 +133,79 @@ function attachUpdateListeners() {
   window.addEventListener("resize", handleWindowUpdate);
   // capture scrolls from nested containers/iframes
   window.addEventListener("scroll", handleWindowUpdate, true);
+  // Best-effort: also listen inside accessible iframes so inner scrolls trigger updates
+  try {
+    attachedIframeWindows = [];
+    const iframeWindows = [];
+    collectAccessibleIframeWindows(document, iframeWindows);
+    for (const win of iframeWindows) {
+      try {
+        win.addEventListener("resize", handleWindowUpdate);
+        win.addEventListener("scroll", handleWindowUpdate, true);
+        attachedIframeWindows.push(win);
+      } catch (_) {}
+    }
+  } catch (_) {}
   autoUpdateHandlersAttached = true;
 }
 
 function unmarkPage() {
   // Unmark page logic
-  for (const label of labels) {
-    if (label.parentElement) {
-      label.parentElement.removeChild(label);
-    }
-  }
+  // Remove only the rendering overlay(s); keep data-ai-label attributes for reuse
+  try { removeOverlay(); } catch (_) {}
   labels = [];
-  globalElementIndex = 0;
   detachUpdateListeners();
   removeOverlay();
+}
+
+/**
+ * Determines the viewport width/height for a given document or shadow root context.
+ * @param {Document|ShadowRoot} context
+ * @returns {{vw:number, vh:number}}
+ */
+function getViewportForContext(context) {
+  try {
+    // Document node
+    if (context && context.nodeType === 9) {
+      const doc = context;
+      const win = doc.defaultView || window;
+      const vw = Math.max(doc.documentElement.clientWidth || 0, win.innerWidth || 0);
+      const vh = Math.max(doc.documentElement.clientHeight || 0, win.innerHeight || 0);
+      return { vw, vh };
+    }
+    // ShadowRoot node
+    if (context && context.host && context.host.ownerDocument) {
+      const doc = context.host.ownerDocument;
+      const win = doc.defaultView || window;
+      const vw = Math.max(doc.documentElement.clientWidth || 0, win.innerWidth || 0);
+      const vh = Math.max(doc.documentElement.clientHeight || 0, win.innerHeight || 0);
+      return { vw, vh };
+    }
+  } catch (_) {}
+  const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+  const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+  return { vw, vh };
+}
+
+/**
+ * Recursively collect contentWindow objects for all accessible iframes within a given document.
+ * @param {Document} doc
+ * @param {Array<Window>} out
+ */
+function collectAccessibleIframeWindows(doc, out) {
+  try {
+    const iframes = doc.querySelectorAll('iframe');
+    iframes.forEach((iframe) => {
+      try {
+        const win = iframe.contentWindow;
+        const childDoc = iframe.contentDocument || (win && win.document);
+        if (win && childDoc) {
+          out.push(win);
+          collectAccessibleIframeWindows(childDoc, out);
+        }
+      } catch (_) {}
+    });
+  } catch (_) {}
 }
 
 /**
@@ -132,9 +221,8 @@ function isEffectivelyVisible(element, contextDocument, bb, includeOutOfViewport
     if (style.display === 'none' || style.visibility === 'hidden' || parseFloat(style.opacity) === 0) {
         return { visible: false, viewportPosition: 'hidden' };
     }
-
-    const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-    const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+    // Use the correct viewport for the element's context (iframe/shadow root/main)
+    const { vw, vh } = getViewportForContext(contextDocument);
     
     // Determine viewport position
     let viewportPosition = 'in-viewport';
@@ -259,14 +347,31 @@ function processIframesRecursively(contextDocument, documentOffset = { x: 0, y: 
                     `${frameContext}.iframe[${index}]` : 
                     `iframe[${index}]`;
                 
-                // Get items from this iframe
-                const iframeItems = getInteractiveElements(
-                    iframeDocument, 
-                    iframeOffset, 
-                    true, // includeOutOfViewport 
-                    newFrameContext
-                );
-                allIframeItems.push(...iframeItems);
+                // Get items from this iframe document and any nested shadow roots
+                const frameRoots = [iframeDocument];
+                (function collect(root) {
+                    try {
+                        const qsa = root && root.querySelectorAll ? root.querySelectorAll('*') : [];
+                        qsa.forEach((el) => {
+                            try {
+                                if (el.shadowRoot) {
+                                    frameRoots.push(el.shadowRoot);
+                                    collect(el.shadowRoot);
+                                }
+                            } catch (_) {}
+                        });
+                    } catch (_) {}
+                })(iframeDocument);
+
+                for (const frameRoot of frameRoots) {
+                    const iframeItems = getInteractiveElements(
+                        frameRoot,
+                        iframeOffset,
+                        true, // includeOutOfViewport
+                        newFrameContext
+                    );
+                    allIframeItems.push(...iframeItems);
+                }
                 
                 // Recursively process nested iframes
                 const nestedItems = processIframesRecursively(
@@ -324,7 +429,8 @@ function getInteractiveElements(contextDocument, documentOffset = { x: 0, y: 0 }
 
       var area = rects.reduce((acc, rect) => acc + rect.width * rect.height, 0);
 
-      const style = window.getComputedStyle(element);
+      const viewForStyle = (element.ownerDocument && element.ownerDocument.defaultView) || window;
+      const style = viewForStyle.getComputedStyle(element);
 
       // Enhanced CAPTCHA detection
       const isCaptchaElement = 
@@ -348,6 +454,9 @@ function getInteractiveElements(contextDocument, documentOffset = { x: 0, y: 0 }
         (elementType === "span" && className && className.includes("checkmark"));
 
       // Enhanced clickable detection
+      const roleAttr = element.getAttribute("role") || "";
+      const tabIndexAttr = element.getAttribute("tabindex");
+      const tabIndex = tabIndexAttr != null ? parseInt(tabIndexAttr, 10) : NaN;
       const isClickable = 
         element.tagName === "INPUT" ||
         element.tagName === "TEXTAREA" ||
@@ -355,10 +464,19 @@ function getInteractiveElements(contextDocument, documentOffset = { x: 0, y: 0 }
         element.tagName === "BUTTON" ||
         element.tagName === "A" ||
         element.onclick != null ||
-        style.cursor == "pointer" ||
+        style.cursor === "pointer" ||
         element.tagName === "IFRAME" ||
         element.tagName === "VIDEO" ||
         element.tagName === "LABEL" ||
+        roleAttr === "button" ||
+        roleAttr === "link" ||
+        roleAttr === "menuitem" ||
+        roleAttr === "tab" ||
+        roleAttr === "checkbox" ||
+        roleAttr === "radio" ||
+        roleAttr === "switch" ||
+        (!Number.isNaN(tabIndex) && tabIndex >= 0) ||
+        element.isContentEditable === true ||
         (element.tagName === "DIV" && (
           style.cursor === "pointer" ||
           element.onclick != null ||
@@ -467,12 +585,20 @@ function markPage(options = {}) {
     let allItems = [];
     const rootNodes = [document];
     
-    // Add all shadow roots to the list of nodes to search
-    document.querySelectorAll('*').forEach(el => {
-        if (el.shadowRoot) {
-            rootNodes.push(el.shadowRoot);
-        }
-    });
+    // Add all open shadow roots (recursively) to the list of nodes to search
+    (function collect(root) {
+        try {
+            const qsa = root && root.querySelectorAll ? root.querySelectorAll('*') : [];
+            qsa.forEach((el) => {
+                try {
+                    if (el.shadowRoot) {
+                        rootNodes.push(el.shadowRoot);
+                        collect(el.shadowRoot);
+                    }
+                } catch (_) {}
+            });
+        } catch (_) {}
+    })(document);
 
     console.log(`DEBUG: Found ${rootNodes.length} root nodes (including shadow DOMs)`);
 

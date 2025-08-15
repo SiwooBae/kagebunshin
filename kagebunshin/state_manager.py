@@ -25,7 +25,7 @@ from .human_behavior import (
     human_scroll,
 )
 from .fingerprint_evasion import apply_fingerprint_profile
-from .config import LLM_SUMMARIZER_MODEL, LLM_SUMMARIZER_PROVIDER
+from .config import SUMMARIZER_MODEL, SUMMARIZER_PROVIDER
 logger = logging.getLogger(__name__)
 
 
@@ -53,8 +53,8 @@ class WebVoyagerStateManager:
         # Lightweight summarizer LLM for cheap text summaries
         try:
             self.summarizer_llm = init_chat_model(
-                model=LLM_SUMMARIZER_MODEL,
-                model_provider=LLM_SUMMARIZER_PROVIDER,
+                model=SUMMARIZER_MODEL,
+                model_provider=SUMMARIZER_PROVIDER,
             )
         except Exception:
             self.summarizer_llm = None
