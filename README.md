@@ -1,6 +1,6 @@
 ### Kagebunshin
 
-Introducing Kagebunshin: a web-browsing, research focused agent swarm. With the recent release of GPT-5, GPT-5-mini, GPT-5-nano, this system has finally become economically viable.
+Introducing Kagebunshin 🍥: a web-browsing, research focused agent swarm. With the recent release of GPT-5, GPT-5-mini, GPT-5-nano, this system has finally become economically viable.
 
 ### Q&A
 
