@@ -13,9 +13,9 @@ from langgraph.graph import StateGraph, END
 from langgraph.prebuilt import ToolNode
 from playwright.async_api import BrowserContext
 
-from .models import KageBunshinState, Annotation, TabInfo
+from .state import KageBunshinState, Annotation, TabInfo
 from .state_manager import KageBunshinStateManager
-from .config import (
+from ..config.settings import (
     LLM_MODEL,
     LLM_PROVIDER,
     LLM_REASONING_EFFORT,
@@ -28,8 +28,8 @@ from .config import (
     MAX_KAGEBUNSHIN_INSTANCES,
     ENABLE_SUMMARIZATION,
 )
-from .utils import format_img_context, format_bbox_context, format_text_context, format_tab_context, generate_agent_name
-from .group_chat import GroupChatClient
+from ..utils import format_img_context, format_bbox_context, format_text_context, format_tab_context, generate_agent_name
+from ..communication.group_chat import GroupChatClient
 
 logger = logging.getLogger(__name__)
 

@@ -9,7 +9,7 @@ import logging
 import random
 from playwright.async_api import Page, BrowserContext
 from typing import Dict, Any, Optional
-from .config import FINGERPRINT_PROFILES, FINGERPRINT_CUSTOMIZATION, STEALTH_ARGS, HUMAN_BEHAVIOR_SEED
+from ..config.settings import FINGERPRINT_PROFILES, FINGERPRINT_CUSTOMIZATION, STEALTH_ARGS, HUMAN_BEHAVIOR_SEED
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s', filename='fingerprint.log')

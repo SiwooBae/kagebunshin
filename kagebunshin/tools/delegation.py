@@ -14,11 +14,11 @@ import json
 from langchain_core.tools import tool
 from playwright.async_api import BrowserContext
 
-from .kagebunshin_agent import KageBunshinAgent
-from .fingerprint_evasion import apply_fingerprint_profile_to_context
-from .config import DEFAULT_PERMISSIONS, GROUPCHAT_ROOM, MAX_KageBunshin_INSTANCES
-from .group_chat import GroupChatClient
-from .utils import generate_agent_name
+from ..core.agent import KageBunshinAgent
+from ..automation.fingerprinting import apply_fingerprint_profile_to_context
+from ..config.settings import DEFAULT_PERMISSIONS, GROUPCHAT_ROOM, MAX_KAGEBUNSHIN_INSTANCES
+from ..communication.group_chat import GroupChatClient
+from ..utils import generate_agent_name
 
 
 logger = logging.getLogger(__name__)
@@ -55,11 +55,11 @@ def get_additional_tools(context: BrowserContext, username: Optional[str] = None
             clone: Optional[KageBunshinAgent] = None
             try:
                 # Capacity check (best-effort; create() also enforces)
-                if KageBunshinAgent._INSTANCE_COUNT >= MAX_KageBunshin_INSTANCES:
+                if KageBunshinAgent._INSTANCE_COUNT >= MAX_KAGEBUNSHIN_INSTANCES:
                     return {
                         "task": task_str,
                         "status": "denied",
-                        "error": f"Delegation denied: max agents reached ({MAX_KageBunshin_INSTANCES}).",
+                        "error": f"Delegation denied: max agents reached ({MAX_KAGEBUNSHIN_INSTANCES}).",
                     }
 
                 browser = getattr(context, "browser", None)

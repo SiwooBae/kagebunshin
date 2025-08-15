@@ -1,4 +1,4 @@
-from .cli_runner import run
+from .cli.runner import run
 import logging
 
 logging.basicConfig(level=logging.WARNING)

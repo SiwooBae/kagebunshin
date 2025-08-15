@@ -16,7 +16,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Deque, Dict, List, Optional, Any
 
-from .config import (
+from ..config.settings import (
     REDIS_HOST,
     REDIS_PORT,
     REDIS_DB,

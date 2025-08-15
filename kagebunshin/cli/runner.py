@@ -7,12 +7,12 @@ import logging
 import argparse
 from playwright.async_api import async_playwright
 
-from .config import BROWSER_EXECUTABLE_PATH, USER_DATA_DIR, DEFAULT_PERMISSIONS
-from .kagebunshin_agent import KageBunshinAgent
-from .additional_tools import get_additional_tools
-from .config import GROUPCHAT_ROOM
-from .utils import generate_agent_name
-from .fingerprint_evasion import get_stealth_browser_args, apply_fingerprint_profile_to_context
+from ..config.settings import BROWSER_EXECUTABLE_PATH, USER_DATA_DIR, DEFAULT_PERMISSIONS
+from ..core.agent import KageBunshinAgent
+from ..tools.delegation import get_additional_tools
+from ..config.settings import GROUPCHAT_ROOM
+from ..utils import generate_agent_name
+from ..automation.fingerprinting import get_stealth_browser_args, apply_fingerprint_profile_to_context
 
 # enable logger
 logging.basicConfig(level=logging.INFO)

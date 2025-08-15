@@ -10,7 +10,7 @@ import asyncio
 from playwright.async_api import Page
 
 
-from .config import ACTIVATE_HUMAN_BEHAVIOR
+from ..config.settings import ACTIVATE_HUMAN_BEHAVIOR
 
 
 async def human_delay(min_ms: int = 100, max_ms: int = 500):

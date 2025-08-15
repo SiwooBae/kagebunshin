@@ -14,9 +14,9 @@ from langchain.chat_models.base import init_chat_model
 from langchain_core.tools import tool
 from playwright.async_api import Page, BrowserContext
 
-from .models import KageBunshinState, BBox, TabInfo, Annotation
-from .utils import html_to_markdown, annotate_page
-from .human_behavior import (
+from .state import KageBunshinState, BBox, TabInfo, Annotation
+from ..utils import html_to_markdown, annotate_page
+from ..automation.behavior import (
     smart_delay_between_actions,
     human_delay,
     get_random_offset_in_bbox,
@@ -24,8 +24,8 @@ from .human_behavior import (
     human_type_text,
     human_scroll,
 )
-from .fingerprint_evasion import apply_fingerprint_profile
-from .config import SUMMARIZER_MODEL, SUMMARIZER_PROVIDER
+from ..automation.fingerprinting import apply_fingerprint_profile
+from ..config.settings import SUMMARIZER_MODEL, SUMMARIZER_PROVIDER
 logger = logging.getLogger(__name__)
 
 

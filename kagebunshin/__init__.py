@@ -14,8 +14,8 @@ and navigate multiple branches simultaneously. It features:
 Public API exports the `KageBunshinAgent` orchestrator and `KageBunshinRunner` CLI interface.
 """
 
-from .kagebunshin_agent import KageBunshinAgent
-from .cli_runner import KageBunshinRunner
+from .core.agent import KageBunshinAgent
+from .cli.runner import KageBunshinRunner
 
 __all__ = ["KageBunshinAgent", "KageBunshinRunner"]
 __version__ = "0.1.0"
