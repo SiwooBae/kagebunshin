@@ -1,6 +1,9 @@
-## Kagebunshin🍥
+## Kagebunshin 🍥
 
-Introducing Kagebunshin: a web-browsing, research focused agent swarm. With the recent release of GPT-5, GPT-5-mini, GPT-5-nano, this system has finally become economically viable.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.13+](https://img.shields.io/badge/python-3.13+-blue.svg)](https://www.python.org/downloads/)
+
+**Kagebunshin** is a web-browsing, research-focused agent swarm with self-cloning capabilities. Built on the foundation of advanced language models, this system enables economically viable parallel web automation.
 
 ### Q&A
 
@@ -29,65 +32,136 @@ Please let me know if you have any questions or comments. Thank you!
 - Tab management and PDF handling
 
 
-### Quickstart (uv)
-Kagebunshin now uses `uv` for dependency and runtime management.
+## Installation
 
-1) Create a virtual environment with Python 3.13 and install dependencies:
-```
+### Using uv (Recommended)
+
+Kagebunshin uses `uv` for dependency and runtime management.
+
+```bash
+git clone https://github.com/SiwooBae/kagebunshin.git
 cd kagebunshin
 uv python install 3.13
 uv venv -p 3.13
-source .venv/bin/activate
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 uv sync
 uv run playwright install chromium
 ```
 
-2) Run the agent:
+### Using pip
+
+```bash
+git clone https://github.com/SiwooBae/kagebunshin.git
+cd kagebunshin
+pip install -e .
+playwright install chromium
 ```
+
+### Environment Setup
+
+Set your API key in your environment:
+```bash
+export OPENAI_API_KEY="your-openai-api-key"
+# or for Anthropic (if configured)
+export ANTHROPIC_API_KEY="your-anthropic-api-key"
+```
+
+## Usage
+
+### Command Line Interface
+
+```bash
+# Run the agent (using uv)
 uv run -m kagebunshin
-```
 
-2b) Launch the interactive chat UI (Textual):
-```
+# Launch the interactive chat UI
 uv run -m kagebunshin --chat
+
+# Or if installed with pip
+kagebunshin
+kagebunshin --chat
 ```
 
-3) Run with a custom query (without adding an entry point):
-```
-uv run python -c 'import asyncio; from kagebunshin.cli import main; asyncio.run(main("Open google.com and summarize the page"))'
-```
+### Programmatic Usage
 
-Set `OPENAI_API_KEY` in your environment to use the default LLM provider. If you switch the agent to Anthropic in `src/config.py`, also set `ANTHROPIC_API_KEY`.
-
-### Configuration
-Edit `src/config.py` for:
-- LLM model/provider and temperature
-- Browser executable or channel, user data dir, default permissions
-- Stealth and fingerprint profiles
-- Human behavior tuning
-
-### Programmatic use
-```
+```python
 from kagebunshin import KageBunshinAgent
-# Create a Playwright context, then:
-orchestrator = await KageBunshinAgent.create(context)
-async for chunk in orchestrator.astream("Your task"):
-#     ...
+from playwright.async_api import async_playwright
+
+async def main():
+    async with async_playwright() as p:
+        browser = await p.chromium.launch()
+        context = await browser.new_context()
+        
+        orchestrator = await KageBunshinAgent.create(context)
+        async for chunk in orchestrator.astream("Your task"):
+            print(chunk)
+            
+        await browser.close()
 ```
 
-### Chat UI
-- The chat UI is built with Textual and supports back-and-forth messaging with streaming updates.
-- Your previous few lines are prepended to each turn to provide lightweight context across turns.
-- Exit with Ctrl-C or by closing the terminal window.
+## Configuration
 
-If you don't have browsers installed for Playwright, run:
-```
+Edit `kagebunshin/config.py` to customize:
+
+- **LLM Settings**: Model/provider, temperature, reasoning effort
+- **Browser Settings**: Executable path, user data directory, permissions
+- **Stealth Features**: Fingerprint profiles, human behavior simulation
+- **Group Chat**: Redis connection settings for agent communication
+- **Performance**: Concurrency limits, timeouts, delays
+
+## Development
+
+### Setting up for development
+
+```bash
+git clone https://github.com/SiwooBae/kagebunshin.git
+cd kagebunshin
+uv sync --all-extras
 uv run playwright install chromium
 ```
 
-### Notes
-- `mark_page.js` is injected to annotate interactive elements and capture metadata.
-- For headless environments, adjust `headless` in `src/cli.py` and ensure proper sandboxing flags.
-- To change the Chrome binary or user data dir, edit `BROWSER_EXECUTABLE_PATH` and `USER_DATA_DIR` in `src/config.py`.
-- To update dependencies, use `uv add <package>` / `uv remove <package>` and commit `pyproject.toml` and `uv.lock`.
+### Code Quality
+
+The project includes tools for maintaining code quality:
+
+```bash
+# Format code
+uv run black .
+uv run isort .
+
+# Lint code  
+uv run flake8 kagebunshin/
+
+# Type checking
+uv run mypy kagebunshin/
+```
+
+### Testing
+
+```bash
+uv run pytest
+```
+
+## Architecture
+
+- **KageBunshinAgent**: Main orchestrator handling web automation tasks
+- **StateManager**: Manages browser state and provides tools for LLM
+- **GroupChat**: Redis-based communication system for agent coordination
+- **HumanBehavior**: Simulates human-like interactions to avoid detection
+- **FingerprintEvasion**: Randomizes browser fingerprints for stealth
+
+## Contributing
+
+We welcome contributions! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to contribute to this project.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+- Built with [LangGraph](https://github.com/langchain-ai/langgraph) for agent orchestration
+- Uses [Playwright](https://playwright.dev/) for browser automation
+- Inspired by the need for cost-effective parallel web automation
 

@@ -1,7 +1,8 @@
 """
-Configuration settings for KageBunshinV2.
+Configuration settings for KageBunshin.
 """
 import os
+from pathlib import Path
 import dotenv
 
 dotenv.load_dotenv()
@@ -43,7 +44,10 @@ MAX_ITERATIONS = 100
 TIMEOUT = 60  # 1 minute
 
 # System Prompts
-with open("kagebunshin/prompts/kagebunshin_system_prompt.md", "r") as f:
+_current_dir = Path(__file__).parent
+_prompt_path = _current_dir / "prompts" / "kagebunshin_system_prompt.md"
+
+with open(_prompt_path, "r") as f:
     SYSTEM_TEMPLATE = f.read()
 
 # Simplified system template for tool-calling chatbot approach
