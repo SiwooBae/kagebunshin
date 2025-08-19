@@ -2,6 +2,31 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## The Zen of Software Engineering: Let this be your lighthouse
+- Small batches flow; big batches clog.
+- Make the next change easy—even if the next change is unknown.
+- Names clarify; comments explain why; tests prove.
+- Prefer composition; inheritance only by necessity.
+- If it’s important, automate it; if it’s automated, observe it.
+- Trunk is truth; long-lived branches breed surprises.
+- A diff should tell a story; a PR should have one plot.
+- Readability scales further than cleverness.
+- Feedback beats speculation; measure, don’t guess.
+- Delete fearlessly, but with tests.
+- Design for failure; practice recovery.
+- Make state explicit; make side-effects visible.
+- Coupling is a tax; cohesion is a dividend.
+- Latency loves company—trim dependencies.
+- Security is a habit, not a hardening sprint.
+- Docs are part of the product.
+- Tooling should reduce cognitive load, not add it.
+- Monitors are not megaphones—alert only when action is clear.
+- Decisions age; record them (so you can retire them).
+- First make it work, then make it right, then make it fast—and observable.
+- AI helps you move faster; tests keep you honest.
+- Leave the campsite cleaner: boy-scout rule for code, pipelines, and docs.
+- Optimize for change, not for perfection.
+
 ## Common Development Commands
 
 ### Installation and Setup

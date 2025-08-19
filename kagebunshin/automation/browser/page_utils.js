@@ -209,6 +209,55 @@ function collectAccessibleIframeWindows(doc, out) {
 }
 
 /**
+ * Enhanced element filtering to skip non-interactive elements early.
+ * @param {Element} element The element to check.
+ * @param {CSSStyleDeclaration} computedStyle Pre-computed style for performance.
+ * @returns {Object} Filtering result with reasons.
+ */
+function shouldSkipElement(element, computedStyle) {
+    // Skip non-element nodes early
+    if (element.nodeType !== 1) {
+        return { skip: true, reason: 'not-element-node' };
+    }
+
+    // Early visibility checks
+    if (computedStyle.display === 'none' || 
+        computedStyle.visibility === 'hidden' || 
+        parseFloat(computedStyle.opacity) === 0) {
+        return { skip: true, reason: 'hidden-by-css' };
+    }
+
+    // Skip elements with pointer events disabled
+    if (computedStyle.pointerEvents === 'none') {
+        return { skip: true, reason: 'pointer-events-none' };
+    }
+
+    // Check for ARIA hidden
+    if (element.getAttribute('aria-hidden') === 'true') {
+        return { skip: true, reason: 'aria-hidden' };
+    }
+
+    // Check for disabled state
+    if (element.hasAttribute('disabled') || 
+        element.getAttribute('aria-disabled') === 'true') {
+        // Skip unless it's explicitly interactive (some disabled elements are still clickable)
+        const hasClickHandler = element.onclick != null || 
+                               element.getAttribute('onclick') != null;
+        if (!hasClickHandler) {
+            return { skip: true, reason: 'disabled' };
+        }
+    }
+
+    // Size threshold - skip elements that are too small to interact with
+    const rect = element.getBoundingClientRect();
+    if (rect.width < 1 || rect.height < 1) {
+        return { skip: true, reason: 'too-small' };
+    }
+
+    return { skip: false };
+}
+
+/**
  * Checks if an element is effectively visible to a user and categorizes viewport position.
  * @param {Element} element The element to check.
  * @param {Node} contextDocument The document or shadow root the element is in.
@@ -217,10 +266,7 @@ function collectAccessibleIframeWindows(doc, out) {
  * @returns {Object} Object with visibility info and viewport position.
  */
 function isEffectivelyVisible(element, contextDocument, bb, includeOutOfViewport = false) {
-    const style = window.getComputedStyle(element);
-    if (style.display === 'none' || style.visibility === 'hidden' || parseFloat(style.opacity) === 0) {
-        return { visible: false, viewportPosition: 'hidden' };
-    }
+    // Note: Basic visibility is now checked earlier in shouldSkipElement for performance
     // Use the correct viewport for the element's context (iframe/shadow root/main)
     const { vw, vh } = getViewportForContext(contextDocument);
     
@@ -398,6 +444,31 @@ function getInteractiveElements(contextDocument, documentOffset = { x: 0, y: 0 }
       .call(allElements)
       .map(function (element, index) {
       try {
+        // Cache computed style for performance
+        const viewForStyle = (element.ownerDocument && element.ownerDocument.defaultView) || window;
+        const style = viewForStyle.getComputedStyle(element);
+        
+        // Early filtering - skip elements that shouldn't be processed
+        const filterResult = shouldSkipElement(element, style);
+        if (filterResult.skip) {
+          return {
+            element: element,
+            include: false,
+            skipReason: filterResult.reason,
+            area: 0,
+            rects: [],
+            text: "",
+            type: "",
+            ariaLabel: "",
+            isCaptcha: false,
+            className: "",
+            elementId: "",
+            hierarchy: {},
+            frameContext: frameContext,
+            globalIndex: globalElementIndex++
+          };
+        }
+
         var textualContent = element.textContent ? element.textContent.trim().replace(/\s{2,}/g, " ") : "";
         var elementType = element.tagName ? element.tagName.toLowerCase() : "";
         var ariaLabel = element.getAttribute("aria-label") || "";
@@ -428,9 +499,6 @@ function getInteractiveElements(contextDocument, documentOffset = { x: 0, y: 0 }
             .filter(rect => rect !== null);
 
       var area = rects.reduce((acc, rect) => acc + rect.width * rect.height, 0);
-
-      const viewForStyle = (element.ownerDocument && element.ownerDocument.defaultView) || window;
-      const style = viewForStyle.getComputedStyle(element);
 
       // Enhanced CAPTCHA detection
       const isCaptchaElement = 
@@ -494,9 +562,19 @@ function getInteractiveElements(contextDocument, documentOffset = { x: 0, y: 0 }
         )) ||
         isCaptchaElement;
 
+      // Enhanced area filtering: skip very small elements unless they're likely icons or have special significance
+      const minInteractionSize = 10; // Minimum 10x10px for interaction
+      const isLargeEnough = area >= (minInteractionSize * minInteractionSize);
+      const isIconSized = area >= 100 && area <= 2500; // 10x10 to 50x50px (likely icons)
+      const hasSpecialSignificance = isCaptchaElement || 
+                                   (ariaLabel && ariaLabel.trim().length > 0) ||
+                                   elementType === 'button' || elementType === 'a';
+
+      const shouldInclude = isClickable && (isLargeEnough || isIconSized || hasSpecialSignificance || includeOutOfViewport);
+
       return {
         element: element,
-        include: isClickable && (area >= 20 || includeOutOfViewport),
+        include: shouldInclude,
         area,
         rects,
         text: textualContent,
@@ -704,26 +782,15 @@ function markPage(options = {}) {
         // Only render in-viewport boxes; keep others in data only
         if (bbox.viewportPosition !== 'in-viewport') return;
 
-        // High-contrast rectangle: black halo + bright colored stroke + stronger fill
-        const rectShadow = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-        rectShadow.setAttribute("x", String(bbox.left));
-        rectShadow.setAttribute("y", String(bbox.top));
-        rectShadow.setAttribute("width", String(bbox.width));
-        rectShadow.setAttribute("height", String(bbox.height));
-        rectShadow.setAttribute("fill", "none");
-        rectShadow.setAttribute("stroke", "#000000");
-        rectShadow.setAttribute("stroke-width", "5");
-        rectShadow.setAttribute("opacity", "0.75");
-
+        // Clean rectangle with solid stroke and subtle fill for VLM clarity
         const rectEl = document.createElementNS("http://www.w3.org/2000/svg", "rect");
         rectEl.setAttribute("x", String(bbox.left));
         rectEl.setAttribute("y", String(bbox.top));
         rectEl.setAttribute("width", String(bbox.width));
         rectEl.setAttribute("height", String(bbox.height));
-        rectEl.setAttribute("fill", color + "66"); // ~40% alpha for strong contrast
+        rectEl.setAttribute("fill", color + "40"); // 25% alpha for subtle overlay
         rectEl.setAttribute("stroke", color);
-        rectEl.setAttribute("stroke-width", "3");
-        rectEl.setAttribute("stroke-dasharray", "6 4");
+        rectEl.setAttribute("stroke-width", "2"); // Thinner stroke for cleaner lines
 
         // Create label as SVG (background rect + text)
         const labelText = String(index);
@@ -771,11 +838,8 @@ function markPage(options = {}) {
         textEl.setAttribute("fill", "#ffffff");
         textEl.setAttribute("font-size", "12");
         textEl.setAttribute("font-family", "system-ui, -apple-system, Segoe UI, Roboto, sans-serif");
-        // Halo for readability on any background
-        textEl.setAttribute("stroke", "#000000");
-        textEl.setAttribute("stroke-width", "2");
-        textEl.setAttribute("paint-order", "stroke fill");
-        textEl.setAttribute("stroke-linejoin", "round");
+        // Clean text without stroke for better VLM parsing
+        textEl.setAttribute("font-weight", "bold");
         textEl.textContent = labelText;
 
         // Tooltip for context
@@ -784,7 +848,6 @@ function markPage(options = {}) {
         title.textContent = `type: ${item.type} role: ${(item.hierarchy && item.hierarchy.semanticRole) || ''}\naria: ${item.ariaLabel || ''}\ntext: ${shortText}${item.text && item.text.length > 80 ? '…' : ''}\nframe: ${item.frameContext || 'main'}`;
         rectEl.appendChild(title);
 
-        overlayLayer.appendChild(rectShadow);
         overlayLayer.appendChild(rectEl);
         overlayLayer.appendChild(labelBg);
         overlayLayer.appendChild(textEl);
