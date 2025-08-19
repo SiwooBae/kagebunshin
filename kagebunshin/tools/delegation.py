@@ -158,6 +158,7 @@ def get_additional_tools(context: BrowserContext, username: Optional[str] = None
         Behavior:
             - Always creates a fresh incognito BrowserContext per task (best isolation).
             - Clones inherit summarized conversation history from parent for context.
+            - Clones have full delegation capabilities and can create their own sub-clones.
             - No initial URL is opened automatically.
             - Returns a JSON array of {"task", "status", "result"|"error"} as a string.
             - Resources are closed automatically after each clone finishes.
@@ -169,6 +170,11 @@ def get_additional_tools(context: BrowserContext, username: Optional[str] = None
         # Get current conversation history from injected state
         current_messages = state.get("messages", [])
         parent_name = username or "parent-agent"
+        
+        # Track clone depth to prevent infinite recursion
+        current_depth = state.get("clone_depth", 0)
+        if current_depth >= 3:  # Limit clone depth to 3 levels
+            return json.dumps({"error": f"Maximum clone depth ({current_depth}) reached. Consider alternative approaches."})
         
         # Summarize conversation history for clone context
         try:
@@ -212,18 +218,21 @@ def get_additional_tools(context: BrowserContext, username: Optional[str] = None
                         group_room=group_room,
                         username=child_name,
                         enable_summarization=False,
+                        clone_depth=current_depth + 1,
                     )
                 except RuntimeError as e:
                     return {"task": task_str, "status": "denied", "error": f"Delegation denied: {e}"}
 
                 # Create context-aware task message for the clone
-                clone_context_message = f"""🧬 CLONE BRIEFING: You are a shadow clone of {parent_name}! 
+                clone_context_message = f"""🧬 CLONE BRIEFING: You are a shadow clone of {parent_name} (Depth: {current_depth + 1})! 
 
 PARENT CONTEXT: {conversation_summary}
 
 YOUR MISSION: {task_str}
 
-Remember: You're working as part of a coordinated swarm. Use the group chat to coordinate with your parent and other agents. Stay focused on your specific task while being aware of the broader mission context."""
+IMPORTANT: You have FULL delegation capabilities! If your task would benefit from parallelization, don't hesitate to create your own clones using the delegate tool. You are NOT limited by being a clone yourself - the swarm intelligence philosophy applies at every level.
+
+Coordination: Use the group chat to coordinate with your parent and other agents. Think strategically about when to parallelize vs. when to work sequentially."""
 
                 result = await clone.ainvoke(clone_context_message)
                 return {"task": task_str, "status": "ok", "result": result}

@@ -84,6 +84,7 @@ class KageBunshinState(TypedDict):
     Contains only the truly essential data that cannot be derived:
     - User's query and conversation history (core agent state)
     - Browser context and current page index (essential browser state)
+    - Clone depth for delegation hierarchy tracking
     
     All other data (screenshots, bboxes, markdown, etc.) is derived on-demand.
     """
@@ -94,6 +95,8 @@ class KageBunshinState(TypedDict):
     # Essential browser state  
     context: BrowserContext                 # Browser context with all tabs
     # current_page_index: int                 # Which tab is currently active (0-based)
+    # Clone hierarchy tracking
+    clone_depth: int                        # Current depth in delegation hierarchy (0 = root agent)
 
 class Annotation(BaseModel):
     img: str = Field(description="Base64 encoded image of the current page")

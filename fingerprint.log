@@ -5291,3 +5291,447 @@ Remember: You're working as part of a coordinated swarm. Use the group chat to c
 2025-08-19 12:42:38,865 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
 2025-08-19 12:42:38,990 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
 2025-08-19 12:42:55,862 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:10:25,086 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-19 15:10:25,389 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-19 15:10:26,185 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:26,634 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:36,010 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:10:39,022 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:10:39,056 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-19 15:10:39,059 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-19 15:10:39,060 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-19 15:10:39,062 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-19 15:10:39,064 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-19 15:10:39,068 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-19 15:10:39,070 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-19 15:10:39,073 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-19 15:10:39,079 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-19 15:10:39,080 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-19 15:10:39,081 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-19 15:10:39,082 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-19 15:10:39,087 - Using context fingerprint profile: Win_Chrome_1080p
+2025-08-19 15:10:39,607 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-19 15:10:39,619 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-19 15:10:39,626 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-19 15:10:39,628 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-19 15:10:39,631 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-19 15:10:39,634 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-19 15:10:39,635 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-19 15:10:39,637 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-19 15:10:39,639 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-19 15:10:39,640 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-19 15:10:39,642 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-19 15:10:39,643 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-19 15:10:39,644 - Using fingerprint profile: Win_Chrome_1080p
+2025-08-19 15:10:41,687 - Processing query: 🧬 CLONE BRIEFING: You are a shadow clone of Game-Pigeon! 
+
+PARENT CONTEXT: The main objective is to assess superscript.nyc with VC rigor, focusing on credibility, business model, and risks. Key actions have included verifying the official website, domain ownership, SSL, and contact information, plus planning corroboration of claims and potential red flags; preliminary results indicate a need for stronger substantiation of traction, team background, and monetization strategy. Current status: an initial surface-level signal review is complete; blockers include lack of verifiable customer logos/AB testing data and opaque revenue details, with next focus on deeper due diligence (team, advisors, unit economics, legal/compliance, and reference calls) and any formal traction evidence.
+
+YOUR MISSION: Prepare a VC-style risk/opportunity memo: strengths, weaknesses, red flags, questions to ask founders, recommended next steps for due diligence
+
+Remember: You're working as part of a coordinated swarm. Use the group chat to coordinate with your parent and other agents. Stay focused on your specific task while being aware of the broader mission context.
+2025-08-19 15:10:41,688 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:41,692 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:41,805 - Processing query: 🧬 CLONE BRIEFING: You are a shadow clone of Game-Pigeon! 
+
+PARENT CONTEXT: The main objective is to assess superscript.nyc with VC rigor, focusing on credibility, business model, and risks. Key actions have included verifying the official website, domain ownership, SSL, and contact information, plus planning corroboration of claims and potential red flags; preliminary results indicate a need for stronger substantiation of traction, team background, and monetization strategy. Current status: an initial surface-level signal review is complete; blockers include lack of verifiable customer logos/AB testing data and opaque revenue details, with next focus on deeper due diligence (team, advisors, unit economics, legal/compliance, and reference calls) and any formal traction evidence.
+
+YOUR MISSION: Estimate addressable market, business model plausibility, and potential monetization strategies based on demo and copy
+
+Remember: You're working as part of a coordinated swarm. Use the group chat to coordinate with your parent and other agents. Stay focused on your specific task while being aware of the broader mission context.
+2025-08-19 15:10:41,806 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:41,910 - Processing query: 🧬 CLONE BRIEFING: You are a shadow clone of Game-Pigeon! 
+
+PARENT CONTEXT: The main objective is to assess superscript.nyc with VC rigor, focusing on credibility, business model, and risks. Key actions have included verifying the official website, domain ownership, SSL, and contact information, plus planning corroboration of claims and potential red flags; preliminary results indicate a need for stronger substantiation of traction, team background, and monetization strategy. Current status: an initial surface-level signal review is complete; blockers include lack of verifiable customer logos/AB testing data and opaque revenue details, with next focus on deeper due diligence (team, advisors, unit economics, legal/compliance, and reference calls) and any formal traction evidence.
+
+YOUR MISSION: Search for funding history: investors, AngelList, Crunchbase, PitchBook, or similar entries for superscript.nyc
+
+Remember: You're working as part of a coordinated swarm. Use the group chat to coordinate with your parent and other agents. Stay focused on your specific task while being aware of the broader mission context.
+2025-08-19 15:10:41,911 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:41,917 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:41,917 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:42,112 - Processing query: 🧬 CLONE BRIEFING: You are a shadow clone of Game-Pigeon! 
+
+PARENT CONTEXT: The main objective is to assess superscript.nyc with VC rigor, focusing on credibility, business model, and risks. Key actions have included verifying the official website, domain ownership, SSL, and contact information, plus planning corroboration of claims and potential red flags; preliminary results indicate a need for stronger substantiation of traction, team background, and monetization strategy. Current status: an initial surface-level signal review is complete; blockers include lack of verifiable customer logos/AB testing data and opaque revenue details, with next focus on deeper due diligence (team, advisors, unit economics, legal/compliance, and reference calls) and any formal traction evidence.
+
+YOUR MISSION: Search for legal issues, complaints, BBB listing, or scam reports associated with superscript.nyc
+
+Remember: You're working as part of a coordinated swarm. Use the group chat to coordinate with your parent and other agents. Stay focused on your specific task while being aware of the broader mission context.
+2025-08-19 15:10:42,113 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:42,200 - Processing query: 🧬 CLONE BRIEFING: You are a shadow clone of Game-Pigeon! 
+
+PARENT CONTEXT: The main objective is to assess superscript.nyc with VC rigor, focusing on credibility, business model, and risks. Key actions have included verifying the official website, domain ownership, SSL, and contact information, plus planning corroboration of claims and potential red flags; preliminary results indicate a need for stronger substantiation of traction, team background, and monetization strategy. Current status: an initial surface-level signal review is complete; blockers include lack of verifiable customer logos/AB testing data and opaque revenue details, with next focus on deeper due diligence (team, advisors, unit economics, legal/compliance, and reference calls) and any formal traction evidence.
+
+YOUR MISSION: Look for product demos, archived versions, or recorded videos (YouTube, Vimeo) demonstrating the website/product
+
+Remember: You're working as part of a coordinated swarm. Use the group chat to coordinate with your parent and other agents. Stay focused on your specific task while being aware of the broader mission context.
+2025-08-19 15:10:42,200 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:42,206 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:42,206 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:42,255 - Processing query: 🧬 CLONE BRIEFING: You are a shadow clone of Game-Pigeon! 
+
+PARENT CONTEXT: The main objective is to assess superscript.nyc with VC rigor, focusing on credibility, business model, and risks. Key actions have included verifying the official website, domain ownership, SSL, and contact information, plus planning corroboration of claims and potential red flags; preliminary results indicate a need for stronger substantiation of traction, team background, and monetization strategy. Current status: an initial surface-level signal review is complete; blockers include lack of verifiable customer logos/AB testing data and opaque revenue details, with next focus on deeper due diligence (team, advisors, unit economics, legal/compliance, and reference calls) and any formal traction evidence.
+
+YOUR MISSION: Find official website and confirm domain ownership, SSL, contact info for superscript.nyc; capture homepage screenshots and key copy
+
+Remember: You're working as part of a coordinated swarm. Use the group chat to coordinate with your parent and other agents. Stay focused on your specific task while being aware of the broader mission context.
+2025-08-19 15:10:42,284 - Processing query: 🧬 CLONE BRIEFING: You are a shadow clone of Game-Pigeon! 
+
+PARENT CONTEXT: The main objective is to assess superscript.nyc with VC rigor, focusing on credibility, business model, and risks. Key actions have included verifying the official website, domain ownership, SSL, and contact information, plus planning corroboration of claims and potential red flags; preliminary results indicate a need for stronger substantiation of traction, team background, and monetization strategy. Current status: an initial surface-level signal review is complete; blockers include lack of verifiable customer logos/AB testing data and opaque revenue details, with next focus on deeper due diligence (team, advisors, unit economics, legal/compliance, and reference calls) and any formal traction evidence.
+
+YOUR MISSION: Identify founders and team: LinkedIn profiles, bios, prior startups/experience for people associated with superscript.nyc
+
+Remember: You're working as part of a coordinated swarm. Use the group chat to coordinate with your parent and other agents. Stay focused on your specific task while being aware of the broader mission context.
+2025-08-19 15:10:42,285 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:42,313 - Processing query: 🧬 CLONE BRIEFING: You are a shadow clone of Game-Pigeon! 
+
+PARENT CONTEXT: The main objective is to assess superscript.nyc with VC rigor, focusing on credibility, business model, and risks. Key actions have included verifying the official website, domain ownership, SSL, and contact information, plus planning corroboration of claims and potential red flags; preliminary results indicate a need for stronger substantiation of traction, team background, and monetization strategy. Current status: an initial surface-level signal review is complete; blockers include lack of verifiable customer logos/AB testing data and opaque revenue details, with next focus on deeper due diligence (team, advisors, unit economics, legal/compliance, and reference calls) and any formal traction evidence.
+
+YOUR MISSION: Run domain history and WHOIS lookup for superscript.nyc and related domains (creation date, registrar, nameservers)
+
+Remember: You're working as part of a coordinated swarm. Use the group chat to coordinate with your parent and other agents. Stay focused on your specific task while being aware of the broader mission context.
+2025-08-19 15:10:42,313 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:42,314 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:42,319 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:42,320 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:42,323 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:42,427 - Processing query: 🧬 CLONE BRIEFING: You are a shadow clone of Game-Pigeon! 
+
+PARENT CONTEXT: The main objective is to assess superscript.nyc with VC rigor, focusing on credibility, business model, and risks. Key actions have included verifying the official website, domain ownership, SSL, and contact information, plus planning corroboration of claims and potential red flags; preliminary results indicate a need for stronger substantiation of traction, team background, and monetization strategy. Current status: an initial surface-level signal review is complete; blockers include lack of verifiable customer logos/AB testing data and opaque revenue details, with next focus on deeper due diligence (team, advisors, unit economics, legal/compliance, and reference calls) and any formal traction evidence.
+
+YOUR MISSION: Search for company registration, business filings, or incorporation info for Superscript.nyc (NY state or US databases)
+
+Remember: You're working as part of a coordinated swarm. Use the group chat to coordinate with your parent and other agents. Stay focused on your specific task while being aware of the broader mission context.
+2025-08-19 15:10:42,428 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:42,429 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:42,507 - Processing query: 🧬 CLONE BRIEFING: You are a shadow clone of Game-Pigeon! 
+
+PARENT CONTEXT: The main objective is to assess superscript.nyc with VC rigor, focusing on credibility, business model, and risks. Key actions have included verifying the official website, domain ownership, SSL, and contact information, plus planning corroboration of claims and potential red flags; preliminary results indicate a need for stronger substantiation of traction, team background, and monetization strategy. Current status: an initial surface-level signal review is complete; blockers include lack of verifiable customer logos/AB testing data and opaque revenue details, with next focus on deeper due diligence (team, advisors, unit economics, legal/compliance, and reference calls) and any formal traction evidence.
+
+YOUR MISSION: Scan for user feedback, reviews, or forum discussions (Reddit, Hacker News, Twitter/X) mentioning superscript.nyc and summarize sentiment
+
+Remember: You're working as part of a coordinated swarm. Use the group chat to coordinate with your parent and other agents. Stay focused on your specific task while being aware of the broader mission context.
+2025-08-19 15:10:42,508 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:42,509 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:42,692 - Processing query: 🧬 CLONE BRIEFING: You are a shadow clone of Game-Pigeon! 
+
+PARENT CONTEXT: The main objective is to assess superscript.nyc with VC rigor, focusing on credibility, business model, and risks. Key actions have included verifying the official website, domain ownership, SSL, and contact information, plus planning corroboration of claims and potential red flags; preliminary results indicate a need for stronger substantiation of traction, team background, and monetization strategy. Current status: an initial surface-level signal review is complete; blockers include lack of verifiable customer logos/AB testing data and opaque revenue details, with next focus on deeper due diligence (team, advisors, unit economics, legal/compliance, and reference calls) and any formal traction evidence.
+
+YOUR MISSION: Look for press coverage, articles, blog posts, or mentions of superscript.nyc in tech media or local NYC outlets
+
+Remember: You're working as part of a coordinated swarm. Use the group chat to coordinate with your parent and other agents. Stay focused on your specific task while being aware of the broader mission context.
+2025-08-19 15:10:42,692 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:42,692 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:42,739 - Processing query: 🧬 CLONE BRIEFING: You are a shadow clone of Game-Pigeon! 
+
+PARENT CONTEXT: The main objective is to assess superscript.nyc with VC rigor, focusing on credibility, business model, and risks. Key actions have included verifying the official website, domain ownership, SSL, and contact information, plus planning corroboration of claims and potential red flags; preliminary results indicate a need for stronger substantiation of traction, team background, and monetization strategy. Current status: an initial surface-level signal review is complete; blockers include lack of verifiable customer logos/AB testing data and opaque revenue details, with next focus on deeper due diligence (team, advisors, unit economics, legal/compliance, and reference calls) and any formal traction evidence.
+
+YOUR MISSION: Assess technical signals: site metadata, tracking technologies, external scripts, and third-party integrations (e.g., analytics, payment processors)
+
+Remember: You're working as part of a coordinated swarm. Use the group chat to coordinate with your parent and other agents. Stay focused on your specific task while being aware of the broader mission context.
+2025-08-19 15:10:42,740 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:42,740 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:42,750 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:42,801 - Processing query: 🧬 CLONE BRIEFING: You are a shadow clone of Game-Pigeon! 
+
+PARENT CONTEXT: The main objective is to assess superscript.nyc with VC rigor, focusing on credibility, business model, and risks. Key actions have included verifying the official website, domain ownership, SSL, and contact information, plus planning corroboration of claims and potential red flags; preliminary results indicate a need for stronger substantiation of traction, team background, and monetization strategy. Current status: an initial surface-level signal review is complete; blockers include lack of verifiable customer logos/AB testing data and opaque revenue details, with next focus on deeper due diligence (team, advisors, unit economics, legal/compliance, and reference calls) and any formal traction evidence.
+
+YOUR MISSION: Check GitHub or other code repositories linked to superscript.nyc, and evaluate code activity if present
+
+Remember: You're working as part of a coordinated swarm. Use the group chat to coordinate with your parent and other agents. Stay focused on your specific task while being aware of the broader mission context.
+2025-08-19 15:10:42,802 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:42,802 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:42,923 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:42,990 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:42,997 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:43,134 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:43,223 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:43,298 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:43,305 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:43,338 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:43,369 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:43,570 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:43,604 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:43,719 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:47,623 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:10:47,687 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:10:48,323 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:10:48,351 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:10:48,381 - Attempting to click element with bbox_id: 6
+2025-08-19 15:10:48,390 - Attempting native click...
+2025-08-19 15:10:48,414 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:10:48,415 - Attempting to click element with bbox_id: 6
+2025-08-19 15:10:48,419 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:48,423 - Attempting native click...
+2025-08-19 15:10:48,519 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:48,644 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:10:49,057 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:10:49,058 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:10:49,494 - Native click on bbox_id 6 successful and caused a page change.
+2025-08-19 15:10:49,507 - Native click on bbox_id 6 successful and caused a page change.
+2025-08-19 15:10:49,618 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:49,624 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:50,681 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:10:51,387 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:10:51,462 - Attempting to type 'superscript.nyc complaints BBB scam superscript nyc' into element with bbox_id: 6
+2025-08-19 15:10:51,471 - Attempting native type...
+2025-08-19 15:10:52,511 - Native type on bbox_id 6 successful.
+2025-08-19 15:10:52,534 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:10:52,601 - Attempting to click element with bbox_id: 6
+2025-08-19 15:10:52,613 - Attempting native click...
+2025-08-19 15:10:53,681 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:53,707 - Native click on bbox_id 6 successful and caused a page change.
+2025-08-19 15:10:53,851 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:54,059 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:54,398 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:10:55,970 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:56,290 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:56,614 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:56,981 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:57,349 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:10:57,430 - Attempting to type 'superscript.nyc funding investors Crunchbase AngelList PitchBook' into element with bbox_id: 6
+2025-08-19 15:10:57,442 - Attempting native type...
+2025-08-19 15:10:57,599 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:10:57,764 - Attempting to type 'superscript.nyc press OR "superscript nyc" OR "superscript.nyc"' into element with bbox_id: 6
+2025-08-19 15:10:57,795 - Attempting native type...
+2025-08-19 15:10:57,881 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:58,391 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:10:58,412 - Error navigating to https://web.archive.org/web/*/superscript.nyc: Page.goto: net::ERR_ABORTED at https://web.archive.org/web/*/superscript.nyc
+Call log:
+  - navigating to "https://web.archive.org/web/*/superscript.nyc", waiting until "load"
+
+2025-08-19 15:10:58,487 - Attempting to click element with bbox_id: 27
+2025-08-19 15:10:58,511 - Attempting native click...
+2025-08-19 15:10:58,875 - Native type on bbox_id 6 successful.
+2025-08-19 15:10:58,890 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:10:58,896 - Native type on bbox_id 6 successful.
+2025-08-19 15:10:59,051 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:10:59,079 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:00,817 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:01,470 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:01,498 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:01,625 - Attempting to click element with bbox_id: 24
+2025-08-19 15:11:01,630 - Attempting to type 'superscript.nyc' into element with bbox_id: 9
+2025-08-19 15:11:01,641 - Attempting native type...
+2025-08-19 15:11:01,653 - Attempting native click...
+2025-08-19 15:11:01,828 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:02,659 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:02,691 - Native type on bbox_id 9 successful.
+2025-08-19 15:11:02,891 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:03,003 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:03,045 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:03,270 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:03,281 - Native click on bbox_id 24 successful and caused a page change.
+2025-08-19 15:11:03,347 - Attempting to click element with bbox_id: 21
+2025-08-19 15:11:03,367 - Attempting native click...
+2025-08-19 15:11:03,519 - Native click failed for bbox_id 27: Page.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("[data-ai-label=\"27\"]")
+    - locator resolved to <a class="KEVENd" data-ai-label="27" data-hveid="CCwQCA" aria-label="Leadership team | Superscript" href="https://gosuperscript.com/leadership-team/" ping="/url?sa=t&source=web&rct=j&opi=89978449&url=https://gosuperscript.com/leadership-team/&ved=2ahUKEwiHu7LqyZePAxUmLVkFHVExKHsQ-NANegQILBAI">…</a>
+  - attempting click action
+    2 × waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div aria-hidden="true" jsaction="trigger.OiPALb" class="RDmXvc Jzkafd LrrQLb"></div> intercepts pointer events
+    - retrying click action
+    - waiting 20ms
+    2 × waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div aria-hidden="true" jsaction="trigger.OiPALb" class="RDmXvc Jzkafd LrrQLb"></div> intercepts pointer events
+    - retrying click action
+      - waiting 100ms
+    10 × waiting for element to be visible, enabled and stable
+       - element is visible, enabled and stable
+       - scrolling into view if needed
+       - done scrolling
+       - <div aria-hidden="true" jsaction="trigger.OiPALb" class="RDmXvc Jzkafd LrrQLb"></div> intercepts pointer events
+     - retrying click action
+       - waiting 500ms
+. Falling back.
+2025-08-19 15:11:03,519 - Attempting human-like click...
+2025-08-19 15:11:04,200 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:04,396 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:04,484 - Detected a new tab. Switched to tab index 1.
+2025-08-19 15:11:04,484 - Native click on bbox_id 21 successful and caused a page change.
+2025-08-19 15:11:05,539 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:05,609 - Attempting to click element with bbox_id: 30
+2025-08-19 15:11:05,628 - Attempting native click...
+2025-08-19 15:11:06,301 - Human-like fallback click on bbox_id 27 successful.
+2025-08-19 15:11:06,681 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:08,001 - Native click on bbox_id 30 successful and caused a page change.
+2025-08-19 15:11:08,005 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:08,215 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:08,983 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:09,058 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:09,130 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:09,754 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:09,818 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:10,310 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:10,385 - Attempting to click element with bbox_id: 10
+2025-08-19 15:11:10,393 - Attempting native click...
+2025-08-19 15:11:11,072 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:11,121 - Attempting to click element with bbox_id: 10
+2025-08-19 15:11:11,132 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:11,147 - Attempting native click...
+2025-08-19 15:11:11,451 - Native click on bbox_id 10 successful and caused a page change.
+2025-08-19 15:11:11,596 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:11,787 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:11,886 - Attempting to click element with bbox_id: 33
+2025-08-19 15:11:11,944 - Attempting native click...
+2025-08-19 15:11:12,487 - Native click on bbox_id 10 successful and caused a page change.
+2025-08-19 15:11:12,592 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:12,942 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:13,121 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:13,127 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:13,140 - Native click on bbox_id 33 successful and caused a page change.
+2025-08-19 15:11:13,281 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:13,813 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:14,666 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:14,896 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:14,988 - Attempting to click element with bbox_id: 0
+2025-08-19 15:11:14,992 - Attempting native click...
+2025-08-19 15:11:15,890 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:16,028 - Error extracting page content: 'NoneType' object is not subscriptable
+2025-08-19 15:11:16,030 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:16,037 - Native click on bbox_id 0 successful and caused a page change.
+2025-08-19 15:11:16,356 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:16,404 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:16,438 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:17,417 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:17,481 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:17,601 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:18,323 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:18,381 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:18,729 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:18,821 - Attempting to click element with bbox_id: 36
+2025-08-19 15:11:18,835 - Attempting native click...
+2025-08-19 15:11:19,501 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:19,507 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:19,590 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:20,008 - Native click on bbox_id 36 successful and caused a page change.
+2025-08-19 15:11:20,078 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:20,885 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:21,633 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:22,268 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:22,728 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:25,649 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:26,977 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:27,054 - Attempting to click element with bbox_id: 42
+2025-08-19 15:11:27,131 - Attempting native click...
+2025-08-19 15:11:27,987 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:28,054 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:28,070 - Attempting to type 'superscript.nyc' into element with bbox_id: 9
+2025-08-19 15:11:28,074 - Attempting native type...
+2025-08-19 15:11:28,223 - Native click on bbox_id 42 successful and caused a page change.
+2025-08-19 15:11:28,852 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:29,125 - Native type on bbox_id 9 successful.
+2025-08-19 15:11:29,217 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:30,011 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:30,987 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:31,067 - Attempting to click element with bbox_id: 0
+2025-08-19 15:11:31,084 - Attempting native click...
+2025-08-19 15:11:31,729 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:31,771 - Attempting to type 'Superscript' into element with bbox_id: 17
+2025-08-19 15:11:31,776 - Attempting native type...
+2025-08-19 15:11:32,161 - Native click on bbox_id 0 successful and caused a page change.
+2025-08-19 15:11:32,272 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:32,803 - Native type on bbox_id 17 had no effect. Falling back.
+2025-08-19 15:11:32,803 - Attempting human-like type...
+2025-08-19 15:11:33,395 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:33,599 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:33,645 - Attempting to click element with bbox_id: 10
+2025-08-19 15:11:33,651 - Attempting native click...
+2025-08-19 15:11:34,672 - Native click on bbox_id 10 successful and caused a page change.
+2025-08-19 15:11:34,761 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:35,606 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:36,430 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:38,956 - All type attempts on bbox_id 17 failed to change the page state.
+2025-08-19 15:11:39,082 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:40,096 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:40,252 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:42,141 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:42,202 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:42,259 - Attempting to click element with bbox_id: 13
+2025-08-19 15:11:42,268 - Attempting native click...
+2025-08-19 15:11:42,773 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:43,264 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:43,294 - Native click on bbox_id 13 successful and caused a page change.
+2025-08-19 15:11:43,347 - Attempting to click element with bbox_id: 10
+2025-08-19 15:11:43,352 - Attempting native click...
+2025-08-19 15:11:43,386 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:43,437 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:43,537 - Attempting to type 'Superscript' into element with bbox_id: 17
+2025-08-19 15:11:43,540 - Attempting native type...
+2025-08-19 15:11:43,552 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:43,856 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:44,391 - Native click on bbox_id 10 successful and caused a page change.
+2025-08-19 15:11:44,479 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:44,550 - Native type on bbox_id 17 had no effect. Falling back.
+2025-08-19 15:11:44,550 - Attempting human-like type...
+2025-08-19 15:11:47,346 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:49,303 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:49,829 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:49,920 - Attempting to click element with bbox_id: 10
+2025-08-19 15:11:49,927 - Attempting native click...
+2025-08-19 15:11:50,637 - All type attempts on bbox_id 17 failed to change the page state.
+2025-08-19 15:11:50,751 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:50,942 - Native click on bbox_id 10 successful and caused a page change.
+2025-08-19 15:11:51,011 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:51,017 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:51,265 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:54,900 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:54,906 - Attempting to click element with bbox_id: 10
+2025-08-19 15:11:54,914 - Attempting native click...
+2025-08-19 15:11:55,942 - Native click on bbox_id 10 successful and caused a page change.
+2025-08-19 15:11:56,023 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:11:58,074 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:58,079 - Attempting to type 'Superscript' into element with bbox_id: 17
+2025-08-19 15:11:58,083 - Attempting native type...
+2025-08-19 15:11:59,095 - Native type on bbox_id 17 had no effect. Falling back.
+2025-08-19 15:11:59,096 - Attempting human-like type...
+2025-08-19 15:11:59,923 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:11:59,937 - Attempting to click element with bbox_id: 10
+2025-08-19 15:11:59,947 - Attempting native click...
+2025-08-19 15:12:00,595 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:12:00,964 - Native click on bbox_id 10 successful and caused a page change.
+2025-08-19 15:12:01,047 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:12:05,299 - All type attempts on bbox_id 17 failed to change the page state.
+2025-08-19 15:12:05,411 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:12:05,843 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:12:08,324 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:12:08,373 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:12:11,293 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:12:11,375 - Attempting to click element with bbox_id: 19
+2025-08-19 15:12:11,380 - Attempting native click...
+2025-08-19 15:12:12,483 - Native click on bbox_id 19 successful and caused a page change.
+2025-08-19 15:12:12,617 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:12:13,167 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:12:16,921 - Error navigating to https://web.archive.org/web/*/superscript.nyc: Page.goto: Timeout 30000ms exceeded.
+Call log:
+  - navigating to "https://web.archive.org/web/*/superscript.nyc", waiting until "load"
+
+2025-08-19 15:12:17,836 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:12:17,888 - Attempting to click element with bbox_id: 19
+2025-08-19 15:12:17,894 - Attempting native click...
+2025-08-19 15:12:19,019 - Native click on bbox_id 19 successful and caused a page change.
+2025-08-19 15:12:19,150 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:12:23,233 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:12:23,396 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:12:25,892 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:12:30,024 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:12:30,031 - Attempting to click element with bbox_id: 20
+2025-08-19 15:12:30,036 - Attempting native click...
+2025-08-19 15:12:31,333 - Native click on bbox_id 20 successful and caused a page change.
+2025-08-19 15:12:31,475 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:12:32,447 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:12:36,887 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:12:46,614 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:12:58,036 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:13:01,975 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:13:02,162 - GroupChatClient: Redis unavailable (Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).). Falling back to in-memory queue.
+2025-08-19 15:13:21,360 - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-08-19 15:30:08,358 - Delegate task failed: object Mock can't be used in 'await' expression
+2025-08-19 15:30:08,359 - Delegate task failed: object Mock can't be used in 'await' expression

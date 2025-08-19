@@ -46,13 +46,15 @@ class KageBunshinAgent:
                  system_prompt: str = SYSTEM_TEMPLATE,
                  enable_summarization: bool = ENABLE_SUMMARIZATION,
                  group_room: Optional[str] = None,
-                 username: Optional[str] = None):
+                 username: Optional[str] = None,
+                 clone_depth: int = 0):
         """Initializes the orchestrator with browser context and state manager."""
         
         self.initial_context = context
         self.state_manager = state_manager
         self.system_prompt = system_prompt
         self.enable_summarization = enable_summarization
+        self.clone_depth = clone_depth
         # Simple in-process memory of message history across turns
         self.persistent_messages: List[BaseMessage] = []
 
@@ -131,7 +133,8 @@ class KageBunshinAgent:
                       system_prompt: str = SYSTEM_TEMPLATE,
                       enable_summarization: bool = ENABLE_SUMMARIZATION,
                       group_room: Optional[str] = None,
-                      username: Optional[str] = None):
+                      username: Optional[str] = None,
+                      clone_depth: int = 0):
         """Factory method to create a KageBunshinAgent with async initialization."""
         # Enforce a maximum number of instances per-process
         if cls._INSTANCE_COUNT >= MAX_KAGEBUNSHIN_INSTANCES:
@@ -139,7 +142,7 @@ class KageBunshinAgent:
                 f"Instance limit reached: at most {MAX_KAGEBUNSHIN_INSTANCES} KageBunshinAgent instances are allowed."
             )
         state_manager = await KageBunshinStateManager.create(context)
-        instance = cls(context, state_manager, additional_tools, system_prompt, enable_summarization, group_room, username)
+        instance = cls(context, state_manager, additional_tools, system_prompt, enable_summarization, group_room, username, clone_depth)
         cls._INSTANCE_COUNT += 1
         return instance
 
@@ -184,6 +187,7 @@ class KageBunshinAgent:
             input=user_query,
             messages=[*self.persistent_messages, HumanMessage(content=user_query)],
             context=self.initial_context,
+            clone_depth=self.clone_depth,
         )
         
         # The graph will execute until it hits an END state
@@ -218,6 +222,7 @@ class KageBunshinAgent:
             input=user_query,
             messages=initial_messages,
             context=self.initial_context,
+            clone_depth=self.clone_depth,
         )
 
         # Accumulate the full conversation history during streaming updates
@@ -245,6 +250,7 @@ class KageBunshinAgent:
                 input=user_query,
                 messages=accumulated_messages,
                 context=self.initial_context,
+                clone_depth=self.clone_depth,
             )
             self.state_manager.set_state(final_state)
             self.persistent_messages = accumulated_messages
