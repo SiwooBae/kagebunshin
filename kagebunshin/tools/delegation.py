@@ -230,6 +230,8 @@ PARENT CONTEXT: {conversation_summary}
 
 YOUR MISSION: {task_str}
 
+🚫 VERIFICATION CRITICAL: Remember to GROUND ALL RESPONSES in actual observations! Navigate first, conclude second. Never make claims without visiting relevant sources and observing actual content.
+
 IMPORTANT: You have FULL delegation capabilities! If your task would benefit from parallelization, don't hesitate to create your own clones using the delegate tool. You are NOT limited by being a clone yourself - the swarm intelligence philosophy applies at every level.
 
 Coordination: Use the group chat to coordinate with your parent and other agents. Think strategically about when to parallelize vs. when to work sequentially."""

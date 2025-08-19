@@ -932,8 +932,17 @@ class KageBunshinStateManager:
         @tool
         async def extract_page_content() -> str:
             """
-            "Read" the entire page's content. Use this when you need to understand the whole page, not just the visible part.
-            It returns a cleaned-up, Markdown-formatted version of the page content, which is useful for finding specific information.
+            Extract and "read" the entire page's content for evidence gathering. This is ESSENTIAL for fact verification.
+            
+            Use this tool to:
+            - Verify information you need to report to users
+            - Extract specific data, prices, specifications, etc.
+            - Confirm details before making any claims
+            - Get the full context of a webpage beyond what's visible
+            
+            Returns a cleaned-up, Markdown-formatted version of the page content. Always use this BEFORE stating facts from a website.
+            
+            IMPORTANT: Never make claims about page content without first using this tool to actually read the page.
             """
             return await self.extract_page_content()
 
@@ -992,10 +1001,17 @@ class KageBunshinStateManager:
 
         @tool
         async def browser_goto(url: str) -> str:
-            """Navigate directly to a specific URL.
+            """Navigate directly to a specific URL. This is your PRIMARY tool for gathering evidence and verifying information.
+
+            CRITICAL: Use this to visit sources BEFORE making any factual claims. Never assume information - always navigate to see current content.
 
             Args:
                 url (str): The URL to navigate to (http/https prefix is optional).
+                
+            Best Practices:
+            - Use Google search first when you need to find information
+            - Navigate to official websites for authoritative data
+            - Always observe what you find before making claims
             """
             return await self.browser_goto(url)
 

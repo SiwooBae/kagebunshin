@@ -15,7 +15,7 @@ LLM_VERBOSITY = "medium" # "low", "medium", "high"
 
 SUMMARIZER_MODEL = "gpt-5-nano"
 SUMMARIZER_PROVIDER = "openai"
-SUMMARIZER_REASONING_EFFORT = "minimal" # "minimal", "low", "medium", "high"
+SUMMARIZER_REASONING_EFFORT = "low" # "minimal", "low", "medium", "high"
 
 LLM_TEMPERATURE = 1
 # Enable/disable summarizer node (default off)
