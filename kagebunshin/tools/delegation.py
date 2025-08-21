@@ -27,7 +27,8 @@ from ..config.settings import (
     SUMMARIZER_MODEL,
     SUMMARIZER_PROVIDER, 
     SUMMARIZER_REASONING_EFFORT,
-    LLM_TEMPERATURE
+    LLM_TEMPERATURE,
+    ENABLE_SUMMARIZATION
 )
 from ..communication.group_chat import GroupChatClient
 from ..utils import generate_agent_name, normalize_chat_content
@@ -217,7 +218,7 @@ def get_additional_tools(context: BrowserContext, username: Optional[str] = None
                         additional_tools=clone_tools,
                         group_room=group_room,
                         username=child_name,
-                        enable_summarization=False,
+                        enable_summarization=ENABLE_SUMMARIZATION,
                         clone_depth=current_depth + 1,
                     )
                 except RuntimeError as e:

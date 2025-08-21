@@ -362,6 +362,7 @@ dependencies = [
     { name = "langchain" },
     { name = "langchain-openai" },
     { name = "langgraph" },
+    { name = "numpy" },
     { name = "pandas" },
     { name = "petname" },
     { name = "playwright" },
@@ -371,7 +372,9 @@ dependencies = [
     { name = "readability" },
     { name = "readability-lxml" },
     { name = "redis" },
+    { name = "requests" },
     { name = "textual" },
+    { name = "tqdm" },
 ]
 
 [package.optional-dependencies]
@@ -396,6 +399,7 @@ requires-dist = [
     { name = "langchain-openai", specifier = ">=0.3.28" },
     { name = "langgraph", specifier = ">=0.6.4" },
     { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.5.0" },
+    { name = "numpy", specifier = ">=1.26.0" },
     { name = "pandas", specifier = ">=2.3.1" },
     { name = "petname", specifier = ">=2.6" },
     { name = "playwright", specifier = ">=1.54.0" },
@@ -407,7 +411,9 @@ requires-dist = [
     { name = "readability", specifier = ">=0.3.2" },
     { name = "readability-lxml", specifier = ">=0.8.4.1" },
     { name = "redis", specifier = ">=6.4.0" },
+    { name = "requests", specifier = ">=2.31.0" },
     { name = "textual", specifier = ">=5.3.0" },
+    { name = "tqdm", specifier = ">=4.66.0" },
 ]
 provides-extras = ["dev"]
 

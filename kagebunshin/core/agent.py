@@ -284,18 +284,18 @@ class KageBunshinAgent:
         self.last_page_tabs = await self.state_manager.get_tabs()
         
         # Add navigation state verification to prevent hallucination
-        current_url = await self.get_current_url()
-        if not current_url or current_url in ("about:blank", "data:,") or "google.com" in current_url.lower():
-            # Agent hasn't navigated to substantive content yet
-            verification_reminder = SystemMessage(content="""⚠️ NAVIGATION STATUS: You haven't navigated to any specific content sources yet. 
+#         current_url = await self.get_current_url()
+#         if not current_url or current_url in ("about:blank", "data:,") or "google.com" in current_url.lower():
+#             # Agent hasn't navigated to substantive content yet
+#             verification_reminder = SystemMessage(content="""⚠️ NAVIGATION STATUS: You haven't navigated to any specific content sources yet. 
             
-If the user's query requires factual information, you MUST:
-1. Start by searching Google or navigating to relevant websites
-2. Observe actual page content before making any claims
-3. Base your response only on what you directly observe
+# If the user's query requires factual information, you MUST:
+# 1. Start by searching Google or navigating to relevant websites
+# 2. Observe actual page content before making any claims
+# 3. Base your response only on what you directly observe
 
-DO NOT make factual claims based on assumed knowledge.""")
-            messages.append(verification_reminder)
+# DO NOT make factual claims based on assumed knowledge.""")
+#             messages.append(verification_reminder)
         
         # Inject group chat history as context
         try:
