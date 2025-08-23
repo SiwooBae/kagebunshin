@@ -238,12 +238,13 @@ class KageBunshinStateManager:
         page = self.get_current_page()
         await page.click(selector, timeout=5000)
 
-    async def _type_text_native(self, bbox_id: int, text_content: str) -> None:
+    async def _type_text_native(self, bbox_id: int, text_content: str, press_enter: bool = False) -> None:
         """Type text using Playwright's native fill and press."""
         selector = self._get_selector(bbox_id)
         page = self.get_current_page()
         await page.fill(selector, text_content, timeout=5000)
-        await page.keyboard.press("Enter")
+        if press_enter:
+            await page.keyboard.press("Enter")
 
     async def _select_option_native(self, bbox_id: int, values: List[str]) -> None:
         """Select an option using Playwright's native select_option."""
@@ -269,7 +270,7 @@ class KageBunshinStateManager:
         await human_delay(50, 200)
         await page.mouse.click(x, y)
 
-    async def _type_text_human_like(self, bbox_id: int, text_content: str) -> None:
+    async def _type_text_human_like(self, bbox_id: int, text_content: str, press_enter: bool = False) -> None:
         """Type text using human-like delays and keystrokes."""
         bbox = self._get_bbox_by_id(bbox_id)
         if not bbox:
@@ -294,7 +295,8 @@ class KageBunshinStateManager:
         
         await human_type_text(page, text_content)
         await human_delay(200, 600)
-        await page.keyboard.press("Enter")
+        if press_enter:
+            await page.keyboard.press("Enter")
 
     async def _select_option_human_like(self, bbox_id: int, values: List[str]) -> None:
         """Select an option with human-like mouse movement and delays."""
@@ -369,7 +371,7 @@ class KageBunshinStateManager:
             logger.error(f"Human-like fallback click also failed for bbox_id {bbox_id}: {e}")
             return f"Error: All click attempts failed for element {bbox_id}. Last error: {e}"
 
-    async def type_text(self, bbox_id: int, text_content: str) -> str:
+    async def type_text(self, bbox_id: int, text_content: str, press_enter: bool = False) -> str:
         """
         Types text into an element. Tries a fast native type first, then falls back
         to a human-like method if the native type fails or has no effect.
@@ -379,10 +381,11 @@ class KageBunshinStateManager:
         before_pages = self.get_context().pages
         before_state = await self._capture_page_state()
 
+        # Always use human-like type for stability
         try:
             # Attempt 1: Native Playwright type (fast)
             logger.info("Attempting native type...")
-            await self._type_text_native(bbox_id, text_content)
+            await self._type_text_native(bbox_id, text_content, press_enter)
             await asyncio.sleep(1)
             after_state = await self._capture_page_state()
 
@@ -400,7 +403,7 @@ class KageBunshinStateManager:
         # Attempt 2: Human-like fallback
         try:
             logger.info("Attempting human-like type...")
-            await self._type_text_human_like(bbox_id, text_content)
+            await self._type_text_human_like(bbox_id, text_content, press_enter)
             await asyncio.sleep(1)
             final_state = await self._capture_page_state()
 
@@ -886,7 +889,7 @@ class KageBunshinStateManager:
     def take_note(self, note: str) -> str:
         """Take a note for future reference."""
         logger.info(f"Agent note: {note}")
-        return f"Note recorded: {note}"
+        return f"Note recorded."
     
     # ===========================================
     # TOOL CREATION FOR LLM BINDING
@@ -905,14 +908,15 @@ class KageBunshinStateManager:
             return await self.click(bbox_id)
 
         @tool
-        async def type_text(bbox_id: int, text_content: str) -> str:
+        async def type_text(bbox_id: int, text_content: str, press_enter: bool = False) -> str:
             """Type text into an input field, textarea, or other text input element identified by its bounding box ID.
 
             Args:
                 bbox_id (int): The ID number of the input element to type into.
                 text_content (str): The text to type into the element.
+                press_enter (bool): Whether to press Enter after typing. Defaults to False.
             """
-            return await self.type_text(bbox_id, text_content)
+            return await self.type_text(bbox_id, text_content, press_enter)
 
         @tool
         async def scroll(target: str, direction: str) -> str:

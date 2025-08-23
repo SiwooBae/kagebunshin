@@ -11,7 +11,7 @@ dotenv.load_dotenv()
 LLM_MODEL = "gpt-5-mini"
 LLM_PROVIDER = "openai"
 LLM_REASONING_EFFORT = "low" # "minimal", "low", "medium", "high"
-LLM_VERBOSITY = "medium" # "low", "medium", "high"
+LLM_VERBOSITY = "low" # "low", "medium", "high"
 
 SUMMARIZER_MODEL = "gpt-5-nano"
 SUMMARIZER_PROVIDER = "openai"
@@ -19,7 +19,7 @@ SUMMARIZER_REASONING_EFFORT = "low" # "minimal", "low", "medium", "high"
 
 LLM_TEMPERATURE = 1
 # Enable/disable summarizer node (default off)
-ENABLE_SUMMARIZATION = os.environ.get("KAGE_ENABLE_SUMMARIZATION", "0") == "1"
+ENABLE_SUMMARIZATION = os.environ.get("KAGE_ENABLE_SUMMARIZATION", "0") == "0"
 
 # Browser Configuration
 # Set to your Chrome executable path to use a specific installation.

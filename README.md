@@ -72,14 +72,21 @@ export ANTHROPIC_API_KEY="your-anthropic-api-key"
 
 ```bash
 # Run the agent (using uv)
-uv run -m kagebunshin
+uv run -m kagebunshin "Your task description"
 
-# Launch the interactive chat UI
-uv run -m kagebunshin --chat
+# Run with interactive REPL mode
+uv run -m kagebunshin --repl
+
+# Reference a markdown file as the task
+uv run -m kagebunshin -r @kagebunshin/config/prompts/useful_query_templates/literature_review.md
+
+# Combine custom query with markdown file reference
+uv run -m kagebunshin "Execute this task" -r @path/to/template.md
 
 # Or if installed with pip
-kagebunshin
-kagebunshin --chat
+kagebunshin "Your task"
+kagebunshin --repl
+kagebunshin -r @path/to/file.md
 ```
 
 ### Programmatic Usage

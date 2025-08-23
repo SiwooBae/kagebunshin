@@ -310,14 +310,63 @@ async def main(user_query:str) -> None:
     runner = KageBunshinRunner()
     await runner.run(user_query)
 
+def _resolve_query_from_file(file_ref: str) -> str:
+    """Resolve a markdown file reference to its content.
+    
+    Args:
+        file_ref: File reference like @kagebunshin/config/prompts/useful_query_templates/literature_review.md
+    
+    Returns:
+        The content of the markdown file
+        
+    Raises:
+        FileNotFoundError: If the file doesn't exist
+        ValueError: If the reference format is invalid
+    """
+    if not file_ref.startswith('@'):
+        raise ValueError("File reference must start with @")
+    
+    # Remove @ prefix and resolve path
+    relative_path = file_ref[1:]
+    
+    # Get the current file's directory to resolve relative paths
+    current_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    file_path = os.path.join(current_dir, relative_path)
+    
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f"File not found: {file_path}")
+    
+    if not file_path.endswith('.md'):
+        raise ValueError("Referenced file must be a markdown file (.md)")
+    
+    with open(file_path, 'r', encoding='utf-8') as f:
+        return f.read()
+
 def run() -> None:
     """Synchronous entry point for console_scripts."""
     parser = argparse.ArgumentParser(prog="kagebunshin", description="AI web automation agent")
     parser.add_argument("query", nargs="?", help="User task for the agent to execute")
+    parser.add_argument("-r", "--reference", help="Reference a markdown file using @path/to/file.md syntax")
     parser.add_argument("--repl", action="store_true", help="Run classic colored stream with persistent memory (REPL)")
     args = parser.parse_args()
+    
+    # Handle file reference
+    query = args.query
+    if args.reference:
+        try:
+            file_content = _resolve_query_from_file(args.reference)
+            if query:
+                # Combine query with file content
+                query = f"{query}\n\nReferenced content from {args.reference}:\n\n{file_content}"
+            else:
+                # Use file content as the query
+                query = file_content
+        except (FileNotFoundError, ValueError) as e:
+            print(f"{Colors.FAIL}Error: {e}{Colors.ENDC}")
+            return
+    
     if args.repl:
         # Classic colored stream with persistent memory
-        asyncio.run(KageBunshinRunner().run_loop(args.query or None, thread_id="cli-session"))
+        asyncio.run(KageBunshinRunner().run_loop(query or None, thread_id="cli-session"))
     else:
-        asyncio.run(main(args.query))
+        asyncio.run(main(query))

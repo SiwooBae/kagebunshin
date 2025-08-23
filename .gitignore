@@ -139,3 +139,5 @@ dump.rdb
 .DS_Store
 test.md
 fingerprint.log
+
+kagebunshin/config/prompts/useful_query_templates

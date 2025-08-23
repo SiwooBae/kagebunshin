@@ -2,30 +2,120 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## The Zen of Software Engineering: Let this be your lighthouse
-- Small batches flow; big batches clog.
-- Make the next change easy—even if the next change is unknown.
-- Names clarify; comments explain why; tests prove.
-- Prefer composition; inheritance only by necessity.
-- If it’s important, automate it; if it’s automated, observe it.
-- Trunk is truth; long-lived branches breed surprises.
-- A diff should tell a story; a PR should have one plot.
-- Readability scales further than cleverness.
-- Feedback beats speculation; measure, don’t guess.
-- Delete fearlessly, but with tests.
-- Design for failure; practice recovery.
-- Make state explicit; make side-effects visible.
-- Coupling is a tax; cohesion is a dividend.
-- Latency loves company—trim dependencies.
-- Security is a habit, not a hardening sprint.
-- Docs are part of the product.
-- Tooling should reduce cognitive load, not add it.
-- Monitors are not megaphones—alert only when action is clear.
-- Decisions age; record them (so you can retire them).
-- First make it work, then make it right, then make it fast—and observable.
-- AI helps you move faster; tests keep you honest.
-- Leave the campsite cleaner: boy-scout rule for code, pipelines, and docs.
-- Optimize for change, not for perfection.
+## 🔴🟢🔧 Test-Driven Development (TDD)
+
+**ALWAYS follow TDD principles when implementing new features or fixing bugs.**
+
+### The Red-Green-Refactor Cycle
+
+1. **🔴 RED**: Write a failing test that describes the desired behavior
+2. **🟢 GREEN**: Write the minimal code to make the test pass
+3. **🔧 REFACTOR**: Improve the code while keeping tests green
+
+### TDD Workflow
+
+For every new feature or bug fix:
+
+```bash
+# 1. RED: Write a failing test
+# Create/update test file first
+python -m pytest tests/path/to/test_file.py::TestClass::test_new_feature -v
+# Should FAIL initially
+
+# 2. GREEN: Implement minimal code
+# Write just enough code to pass the test
+python -m pytest tests/path/to/test_file.py::TestClass::test_new_feature -v
+# Should PASS
+
+# 3. REFACTOR: Improve code quality
+# Run full test suite to ensure no regressions
+python -m pytest tests/ -v
+```
+
+### TDD Commands
+
+```bash
+# Run tests in watch mode (install pytest-watch: pip install pytest-watch)
+ptw -- --testmon
+
+# Run only failed tests from last run
+python -m pytest --lf
+
+# Run tests that failed, then continue with rest
+python -m pytest --ff
+
+# Run specific test method with minimal output
+python -m pytest tests/core/test_module.py::TestClass::test_method -q
+
+# Run tests with immediate failure output
+python -m pytest -x --tb=short
+
+# Run tests and stop after first failure
+python -m pytest -x
+```
+
+### TDD Best Practices
+
+1. **Write the simplest test first** - Start with the most basic case
+2. **Test one behavior at a time** - Each test should verify one specific behavior
+3. **Use descriptive test names** - Name tests as `test_should_do_something_when_condition`
+4. **Test behavior, not implementation** - Focus on what the code does, not how
+5. **Keep tests independent** - Each test should run in isolation
+6. **Mock external dependencies** - Use mocks for databases, APIs, file systems
+
+### TDD Example Pattern
+
+```python
+# 1. RED: Write failing test first
+def test_should_calculate_total_price_when_adding_items():
+    # Arrange
+    cart = ShoppingCart()
+    
+    # Act & Assert
+    with pytest.raises(AttributeError):  # Should fail initially
+        cart.calculate_total()
+
+# 2. GREEN: Implement minimal code
+class ShoppingCart:
+    def calculate_total(self):
+        return 0.0  # Minimal implementation
+
+# 3. REFACTOR: Improve while keeping tests green
+def test_should_calculate_total_price_when_adding_items():
+    # Arrange
+    cart = ShoppingCart()
+    cart.add_item("apple", 1.50, 2)
+    cart.add_item("banana", 0.75, 3)
+    
+    # Act
+    total = cart.calculate_total()
+    
+    # Assert
+    assert total == 5.25  # 1.50*2 + 0.75*3
+```
+
+### Test Organization for TDD
+
+- **File naming**: `test_<module_name>.py` for each source module
+- **Class naming**: `TestClassName` for each class being tested
+- **Method naming**: `test_should_<expected_behavior>_when_<condition>`
+- **Test structure**: Follow Arrange-Act-Assert (AAA) pattern consistently
+
+### Test Quality Guidelines
+
+- **One assertion per test** when possible - makes failures easier to debug
+- **Use fixtures for common setup** - defined in `conftest.py` or test classes
+- **Mock external dependencies** - databases, APIs, file systems, network calls
+- **Test edge cases and error scenarios** - not just happy paths
+- **Use descriptive assertion messages** - `assert result == expected, f"Expected {expected}, got {result}"`
+- **Keep tests fast** - use markers for slow tests: `@pytest.mark.slow`
+
+### Test Data Management
+
+- **Use factories** for creating test data (see `tests/factories.py`)
+- **Avoid hardcoded values** - use variables with descriptive names
+- **Clean up after tests** - use fixtures with teardown or `@pytest.fixture(autouse=True)`
+- **Isolate test data** - each test should create its own data
 
 ## Common Development Commands
 
@@ -106,7 +196,7 @@ export KAGE_MAX_KAGEBUNSHIN_INSTANCES="5"
 - Integrates group chat for multi-agent coordination
 
 **KageBunshinStateManager** (`kagebunshin/core/state_manager.py`):
-- Stateless manager for browser operations and web automation
+- manager for browser operations and web automation
 - Provides tools for clicking, typing, scrolling, navigation
 - Handles screenshot capture, element annotation, and markdown extraction
 - Implements human-like behavior simulation (delays, mouse movement)
