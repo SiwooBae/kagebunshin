@@ -111,6 +111,36 @@ async def main():
         await browser.close()
 ```
 
+### BrowseComp eval
+
+Evaluate Kagebunshin on OpenAI's BrowseComp benchmark.
+
+Prereqs:
+- Ensure Playwright browsers are installed (see Installation). If using Chromium: `uv run playwright install chromium`.
+- Set `OPENAI_API_KEY` for the grader model.
+
+Quick start (uv):
+```bash
+uv run -m evals.run_browsercomp --headless --num-examples 20 --grader-model gpt-5 --grader-provider openai
+```
+
+Quick start (pip):
+```bash
+python -m evals.run_browsercomp --headless --num-examples 20 --grader-model gpt-5 --grader-provider openai
+```
+
+Options:
+- `--num-examples N`: sample N problems from the test set. When provided, `--n-repeats` must remain 1.
+- `--n-repeats N`: repeat each example N times (only when running the full set).
+- `--headless`: run the browser without a visible window.
+- `--browser {chromium,chrome}`: choose Playwright Chromium or your local Chrome.
+- `--grader-model`, `--grader-provider`: LLM used for grading (default `gpt-5` on `openai`).
+- `--report PATH`: path to save the HTML report (defaults to `runs/browsecomp-report-<timestamp>.html`).
+
+Output:
+- Prints aggregate metrics (e.g., accuracy) to stdout.
+- Saves a standalone HTML report with prompts, responses, and per-sample scores.
+
 ## Configuration
 
 Edit `kagebunshin/config/settings.py` to customize:

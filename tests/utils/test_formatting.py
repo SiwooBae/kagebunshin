@@ -137,6 +137,20 @@ class TestFormatBboxContext:
         
         assert str(sample_bbox.globalIndex) in result
 
+    def test_should_show_no_elements_for_empty_viewport_sections(self, sample_bbox):
+        """Test that empty viewport sections explicitly show 'No elements'."""
+        # Create a bbox that's only in the current viewport
+        result = format_bbox_context([sample_bbox], include_viewport_context=True)
+        
+        # Should show current viewport with element
+        assert "🟢 CURRENT VIEWPORT (1 elements)" in result
+        
+        # Should explicitly show "No elements" for empty sections
+        assert "⬆️  ABOVE VIEWPORT: No elements" in result
+        assert "⬇️  BELOW VIEWPORT: No elements" in result  
+        assert "⬅️  LEFT OF VIEWPORT: No elements" in result
+        assert "➡️  RIGHT OF VIEWPORT: No elements" in result
+
 
 class TestFormatTabContext:
     """Test suite for tab context formatting."""

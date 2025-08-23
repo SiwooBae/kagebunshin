@@ -349,9 +349,19 @@ class KageBunshinAgent:
         after_context = await self.state_manager.get_current_page_data()
         after_context_messages = await self._build_page_context(after_context, self.summarizer_llm_img_message_type)
         
+        # Load prompt from file
+        try:
+            import os
+            prompt_path = os.path.join(os.path.dirname(__file__), "..", "config", "prompts", "diff_summarizer.md")
+            with open(prompt_path, "r") as f:
+                prompt_content = f.read()
+        except Exception:
+            # Fallback to inline prompt if file not found
+            prompt_content = "You are an expert web automation assistant. Your task is to summarize the changes on a webpage after a tool was executed. Based on the page state before and after the action, and the action itself, provide a concise, natural language summary of what happened. Focus on what a user would perceive as the change. Start your summary with 'After executing the tool, ...'"
+        
         # Build prompt for summarizer
         summary_prompt_messages = [
-            SystemMessage(content="You are an expert web automation assistant. Your task is to summarize the changes on a webpage after a tool was executed. Based on the page state before and after the action, and the action itself, provide a concise, natural language summary of what happened. Focus on what a user would perceive as the change. Start your summary with 'After executing the tool, ...'"),
+            SystemMessage(content=prompt_content),
             HumanMessage(content="Here is the state of the page before the action:"),
         ]
         if self.last_page_annotation:
@@ -396,7 +406,7 @@ class KageBunshinAgent:
         
         # Page state information
         if page_data.img and page_data.bboxes:
-            context_parts.append("Current state of the page:")
+            context_parts.append("Current state of the page:\n\n")
         
         # current url
         current_url = await self.get_current_url()
@@ -416,20 +426,21 @@ class KageBunshinAgent:
         if context_parts or page_data.img:
             consolidated_content = []
             
-            # Add image if present
-            if page_data.img:
-                img_content = format_img_context(page_data.img)
-                consolidated_content.append(img_content)
-            
             # Add all text content as one block
             if context_parts:
                 consolidated_content.append({
                     "type": "text",
                     "text": "\n\n".join(context_parts)
                 })
-            
+        
             # Return single SystemMessage with mixed content if we have an image, otherwise just text
             if page_data.img:
+                img_content = format_img_context(page_data.img)
+                consolidated_content.append(img_content)
+                consolidated_content.append({
+                    "type": "text",
+                    "text": "\n\nBased on the current state of the page and the context, take the best action to fulfill the user's request."
+                })
                 return [message_type(content=consolidated_content)]
             else:
                 return [message_type(content="\n\n".join(context_parts))]

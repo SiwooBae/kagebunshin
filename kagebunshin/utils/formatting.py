@@ -229,7 +229,10 @@ def format_bbox_context(bboxes: List[BBox], include_hierarchy: bool = True, incl
     
     for position, label in viewport_labels.items():
         elements = viewport_groups.get(position, [])
+        
         if not elements:
+            section_lines = [f"\n{label}: No elements"]
+            sections.extend(section_lines)
             continue
             
         section_lines = [f"\n{label} ({len(elements)} elements):"]

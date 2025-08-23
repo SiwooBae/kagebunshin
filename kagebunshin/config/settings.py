@@ -32,8 +32,8 @@ BROWSER_EXECUTABLE_PATH = None
 
 # Viewport Configuration
 # Set the actual browser viewport size (different from screen fingerprint)
-ACTUAL_VIEWPORT_WIDTH = 1920
-ACTUAL_VIEWPORT_HEIGHT = 1080
+ACTUAL_VIEWPORT_WIDTH = 1280
+ACTUAL_VIEWPORT_HEIGHT = 1280
 
 # Path to the user data directory for the browser. Using a persistent directory
 # allows the browser to maintain sessions, cookies, and other data.
@@ -291,4 +291,4 @@ GROUPCHAT_MAX_MESSAGES = int(os.environ.get("KAGE_GROUPCHAT_MAX_MESSAGES", "200"
 # ============================
 # Concurrency / Limits
 # ============================
-MAX_KAGEBUNSHIN_INSTANCES = int(os.environ.get("KAGE_MAX_KAGEBUNSHIN_INSTANCES", "5"))
+MAX_KAGEBUNSHIN_INSTANCES = int(os.environ.get("KAGE_MAX_KAGEBUNSHIN_INSTANCES", "50"))
