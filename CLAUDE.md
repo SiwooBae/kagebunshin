@@ -112,10 +112,80 @@ def test_should_calculate_total_price_when_adding_items():
 
 ### Test Data Management
 
-- **Use factories** for creating test data (see `tests/factories.py`)
+- **Use factories** for creating test data (see `tests/conftest.py` fixtures)
 - **Avoid hardcoded values** - use variables with descriptive names
 - **Clean up after tests** - use fixtures with teardown or `@pytest.fixture(autouse=True)`
 - **Isolate test data** - each test should create its own data
+
+### KageBunshin Test Suite Structure
+
+The project includes a comprehensive test suite with 129+ tests covering all major components:
+
+#### Core Component Tests (`tests/core/`)
+- **test_agent.py**: KageBunshinAgent initialization, tool binding, workflow execution
+- **test_state.py**: State models (BBox, Annotation, KageBunshinState) validation
+- **test_state_manager.py**: Browser operations, page navigation, element interactions
+
+#### Tool & Communication Tests
+- **test_delegation.py**: Shadow clone spawning, context inheritance, resource cleanup
+- **test_group_chat.py**: Redis client, fallback to memory, message posting/retrieval
+
+#### Utility & Automation Tests  
+- **test_formatting.py**: HTML/markdown conversion, context formatting, chat normalization
+- **test_naming.py**: Agent name generation with petname library
+- **test_behavior.py**: Human behavior simulation (delays, mouse movements, typing)
+
+### Testing Best Practices for KageBunshin
+
+#### Async Testing
+```python
+@pytest.mark.asyncio
+async def test_should_handle_async_operations(self):
+    """Use pytest.mark.asyncio for async test functions."""
+    result = await some_async_function()
+    assert result is not None
+```
+
+#### Mocking External Dependencies
+```python
+def test_should_mock_playwright_interactions(self, mock_page):
+    """Mock Playwright Page objects for browser operations."""
+    mock_page.click.return_value = AsyncMock()
+    # Test browser interaction logic without actual browser
+```
+
+#### Fixture Usage
+```python
+def test_should_use_shared_fixtures(self, sample_state, mock_browser_context):
+    """Leverage conftest.py fixtures for common test data."""
+    assert sample_state["clone_depth"] == 0
+    assert mock_browser_context is not None
+```
+
+#### Testing Agent Workflows
+```python
+def test_should_verify_agent_behavior_not_implementation(self):
+    """Focus on what the agent does, not how it does it."""
+    # Test the outcome, not internal method calls
+    assert agent.can_delegate_tasks()
+    assert agent.maintains_conversation_history()
+```
+
+### Running Tests
+
+```bash
+# Run all tests with TDD workflow
+python -m pytest tests/ -v
+
+# Run specific component tests
+python -m pytest tests/core/test_agent.py -v
+
+# Run tests with async debugging
+python -m pytest tests/ --asyncio-mode=auto -v
+
+# Test specific behaviors
+python -m pytest tests/ -k "delegation" -v
+```
 
 ## Common Development Commands
 

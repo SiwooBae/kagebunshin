@@ -146,9 +146,55 @@ uv run mypy kagebunshin/
 
 ### Testing
 
+Kagebunshin includes a comprehensive unit test suite following TDD (Test-Driven Development) principles:
+
 ```bash
+# Run all tests
 uv run pytest
+
+# Run tests with verbose output
+uv run pytest -v
+
+# Run specific test module
+uv run pytest tests/core/test_agent.py
+
+# Run tests with coverage report
+uv run pytest --cov=kagebunshin
+
+# Run tests in watch mode (requires pytest-watch)
+ptw -- --testmon
 ```
+
+#### Test Structure
+
+The test suite covers all major components with 129+ comprehensive tests:
+
+```
+tests/
+├── conftest.py              # Shared fixtures and test configuration
+├── core/                    # Core functionality tests
+│   ├── test_agent.py       # KageBunshinAgent initialization & workflow
+│   ├── test_state.py       # State models and validation
+│   └── test_state_manager.py # Browser operations & page management
+├── tools/                   # Agent tools tests
+│   └── test_delegation.py  # Shadow clone delegation system
+├── communication/           # Group chat tests
+│   └── test_group_chat.py  # Redis-based communication
+├── utils/                   # Utility function tests
+│   ├── test_formatting.py  # Text/HTML formatting & normalization
+│   └── test_naming.py      # Agent name generation
+└── automation/             # Browser automation tests
+    └── test_behavior.py    # Human behavior simulation
+```
+
+#### Testing Features
+
+- **🔴 TDD Compliant**: Tests written assuming current implementation works
+- **🧪 Comprehensive Mocking**: External dependencies (Playwright, Redis, LLMs) properly mocked
+- **⚡ Async Support**: Full pytest-asyncio configuration for async components
+- **📝 AAA Pattern**: Arrange-Act-Assert structure throughout
+- **🎯 Behavioral Testing**: Focus on behavior, not implementation details
+- **🛡️ Defensive Testing**: Error handling and edge case coverage
 
 ## Project Structure
 
