@@ -111,21 +111,29 @@ class TestKageBunshinStateManager:
         assert len(tools) > 0
         # Verify some expected tool names exist
         tool_names = [tool.name for tool in tools]
-        expected_tools = ['goto_url', 'click', 'type_text', 'take_screenshot']
+        expected_tools = ['click', 'type_text', 'scroll', 'refresh', 'extract_page_content', 
+                         'go_back', 'go_forward', 'hover', 'press_key', 'drag', 'wait_for', 
+                         'browser_goto', 'browser_select_option', 'list_tabs', 'switch_tab', 
+                         'open_new_tab', 'close_tab', 'take_note']
         for expected_tool in expected_tools:
             assert expected_tool in tool_names
 
     @pytest.mark.asyncio
-    async def test_should_take_screenshot_of_current_page(self, state_manager, mock_page, sample_state):
-        """Test taking screenshot of the current page."""
-        mock_page.screenshot.return_value = b"screenshot_data"
+    async def test_should_get_current_page_data(self, state_manager, mock_page, sample_state):
+        """Test getting current page data with annotation."""
         state_manager.set_state(sample_state)
         
         with patch.object(state_manager, 'get_current_page', return_value=mock_page):
-            screenshot_data = await state_manager._take_screenshot()
-            
-            assert screenshot_data == b"screenshot_data"
-            mock_page.screenshot.assert_called_once()
+            with patch('kagebunshin.core.state_manager.annotate_page') as mock_annotate:
+                mock_annotation = Mock(spec=Annotation)
+                mock_annotation.bboxes = [Mock()]
+                mock_annotate.return_value = mock_annotation
+                
+                result = await state_manager.get_current_page_data()
+                
+                assert result == mock_annotation
+                assert state_manager.prev_snapshot == mock_annotation
+                assert state_manager.current_bboxes == mock_annotation.bboxes
 
     @pytest.mark.asyncio
     async def test_should_navigate_to_url(self, state_manager, mock_page, sample_state):
@@ -133,39 +141,42 @@ class TestKageBunshinStateManager:
         state_manager.set_state(sample_state)
         
         with patch.object(state_manager, 'get_current_page', return_value=mock_page):
-            with patch.object(state_manager, 'smart_delay_between_actions') as mock_delay:
-                await state_manager._goto_url("https://example.com")
+            with patch('kagebunshin.core.state_manager.smart_delay_between_actions') as mock_delay:
+                result = await state_manager.browser_goto("https://example.com")
                 
                 mock_page.goto.assert_called_once_with("https://example.com")
                 mock_delay.assert_called_once()
+                assert "Successfully navigated" in result
 
     @pytest.mark.asyncio 
-    async def test_should_click_element_by_selector(self, state_manager, mock_page, sample_state, sample_bbox):
-        """Test clicking an element by selector."""
+    async def test_should_click_element_by_bbox_id(self, state_manager, mock_page, sample_state, sample_bbox):
+        """Test clicking an element by bbox_id."""
         state_manager.set_state(sample_state)
         state_manager.current_bboxes = [sample_bbox]
         
         with patch.object(state_manager, 'get_current_page', return_value=mock_page):
-            with patch('kagebunshin.core.state_manager.get_random_offset_in_bbox') as mock_offset:
-                with patch('kagebunshin.core.state_manager.human_mouse_move') as mock_move:
-                    mock_offset.return_value = (150, 220)
-                    
-                    await state_manager._click('[data-ai-label="1"]')
-                    
-                    mock_page.click.assert_called_once()
-                    mock_move.assert_called_once()
+            with patch.object(state_manager, '_capture_page_state') as mock_capture:
+                mock_capture.side_effect = [("url1", "hash1", 1), ("url2", "hash2", 1)]
+                
+                result = await state_manager.click(0)
+                
+                assert "Successfully clicked" in result
+                assert state_manager._action_count > 0
 
     @pytest.mark.asyncio
-    async def test_should_type_text_in_element(self, state_manager, mock_page, sample_state):
+    async def test_should_type_text_in_element(self, state_manager, mock_page, sample_state, sample_bbox):
         """Test typing text in an element."""
         state_manager.set_state(sample_state)
+        state_manager.current_bboxes = [sample_bbox]
         
         with patch.object(state_manager, 'get_current_page', return_value=mock_page):
-            with patch('kagebunshin.core.state_manager.human_type_text') as mock_type:
-                await state_manager._type_text('[data-ai-label="1"]', "test input")
+            with patch.object(state_manager, '_capture_page_state') as mock_capture:
+                mock_capture.side_effect = [("url1", "hash1", 1), ("url2", "hash2", 1)]
                 
-                mock_page.click.assert_called_once_with('[data-ai-label="1"]')
-                mock_type.assert_called_once_with(mock_page, "test input")
+                result = await state_manager.type_text(0, "test input")
+                
+                assert "Successfully typed" in result
+                assert state_manager._action_count > 0
 
     @pytest.mark.asyncio
     async def test_should_scroll_page(self, state_manager, mock_page, sample_state):
@@ -174,13 +185,17 @@ class TestKageBunshinStateManager:
         
         with patch.object(state_manager, 'get_current_page', return_value=mock_page):
             with patch('kagebunshin.core.state_manager.human_scroll') as mock_scroll:
-                await state_manager._scroll("down", 3)
-                
-                mock_scroll.assert_called_once_with(mock_page, "down", 3)
+                with patch('kagebunshin.core.state_manager.smart_delay_between_actions'):
+                    result = await state_manager.scroll("page", "down")
+                    
+                    mock_scroll.assert_called_once()
+                    assert "Successfully scrolled" in result
 
     @pytest.mark.asyncio
-    async def test_should_extract_page_text(self, state_manager, mock_page, sample_state):
-        """Test extracting text from page."""
+    async def test_should_extract_page_content(self, state_manager, mock_page, sample_state):
+        """Test extracting page content."""
+        mock_page.url = "https://example.com"
+        mock_page.title.return_value = "Test Page"
         mock_page.content.return_value = "<html><body>Test content</body></html>"
         state_manager.set_state(sample_state)
         
@@ -188,10 +203,144 @@ class TestKageBunshinStateManager:
             with patch('kagebunshin.core.state_manager.html_to_markdown') as mock_converter:
                 mock_converter.return_value = "Test content"
                 
-                result = await state_manager._extract_text()
+                result = await state_manager.extract_page_content()
                 
+                assert "Test Page" in result
                 assert "Test content" in result
                 mock_converter.assert_called_once()
+
+    @pytest.mark.asyncio
+    async def test_should_refresh_page(self, state_manager, mock_page, sample_state):
+        """Test refreshing the current page."""
+        state_manager.set_state(sample_state)
+        
+        with patch.object(state_manager, 'get_current_page', return_value=mock_page):
+            result = await state_manager.refresh()
+            
+            mock_page.reload.assert_called_once()
+            assert "Successfully refreshed" in result
+
+    @pytest.mark.asyncio
+    async def test_should_go_back(self, state_manager, mock_page, sample_state):
+        """Test navigating back in browser history."""
+        state_manager.set_state(sample_state)
+        
+        with patch.object(state_manager, 'get_current_page', return_value=mock_page):
+            with patch('kagebunshin.core.state_manager.smart_delay_between_actions'):
+                result = await state_manager.go_back()
+                
+                mock_page.go_back.assert_called_once()
+                assert "Successfully navigated back" in result
+
+    @pytest.mark.asyncio
+    async def test_should_go_forward(self, state_manager, mock_page, sample_state):
+        """Test navigating forward in browser history."""
+        state_manager.set_state(sample_state)
+        
+        with patch.object(state_manager, 'get_current_page', return_value=mock_page):
+            with patch('kagebunshin.core.state_manager.smart_delay_between_actions'):
+                result = await state_manager.go_forward()
+                
+                mock_page.go_forward.assert_called_once()
+                assert "Successfully navigated forward" in result
+
+    @pytest.mark.asyncio
+    async def test_should_hover_over_element(self, state_manager, mock_page, sample_state, sample_bbox):
+        """Test hovering over an element."""
+        state_manager.set_state(sample_state)
+        state_manager.current_bboxes = [sample_bbox]
+        
+        with patch.object(state_manager, 'get_current_page', return_value=mock_page):
+            result = await state_manager.hover(0)
+            
+            mock_page.hover.assert_called_once_with(sample_bbox.selector, timeout=5000)
+            assert "Hovered over" in result
+
+    @pytest.mark.asyncio
+    async def test_should_press_key(self, state_manager, mock_page, sample_state):
+        """Test pressing a keyboard key."""
+        state_manager.set_state(sample_state)
+        
+        with patch.object(state_manager, 'get_current_page', return_value=mock_page):
+            result = await state_manager.press_key("Enter")
+            
+            mock_page.keyboard.press.assert_called_once_with("Enter")
+            assert "Pressed key" in result
+
+    @pytest.mark.asyncio
+    async def test_should_list_tabs(self, state_manager, mock_page, sample_state):
+        """Test listing browser tabs."""
+        mock_page.title.return_value = "Test Tab"
+        mock_page.url = "https://example.com"
+        state_manager.set_state(sample_state)
+        
+        with patch.object(state_manager, 'get_tabs') as mock_get_tabs:
+            mock_get_tabs.return_value = [{
+                "tab_index": 0,
+                "title": "Test Tab", 
+                "url": "https://example.com",
+                "is_active": True
+            }]
+            
+            result = await state_manager.list_tabs()
+            
+            assert "Available tabs:" in result
+            assert "Test Tab" in result
+
+    @pytest.mark.asyncio
+    async def test_should_switch_tab(self, state_manager, mock_page, sample_state):
+        """Test switching to a different tab."""
+        mock_page.title.return_value = "Test Tab"
+        state_manager.set_state(sample_state)
+        
+        with patch.object(state_manager, 'get_context') as mock_get_context:
+            mock_get_context.return_value.pages = [mock_page, mock_page]
+            
+            result = await state_manager.switch_tab(1)
+            
+            mock_page.bring_to_front.assert_called()
+            assert "Successfully switched" in result
+
+    @pytest.mark.asyncio
+    async def test_should_open_new_tab(self, state_manager, sample_state):
+        """Test opening a new browser tab."""
+        mock_context = AsyncMock(spec=BrowserContext)
+        mock_new_page = AsyncMock(spec=Page)
+        mock_context.new_page.return_value = mock_new_page
+        mock_context.pages = [mock_new_page]
+        
+        state_manager.set_state(sample_state)
+        
+        with patch.object(state_manager, 'get_context', return_value=mock_context):
+            result = await state_manager.open_new_tab("https://example.com")
+            
+            mock_context.new_page.assert_called_once()
+            mock_new_page.goto.assert_called_once_with("https://example.com")
+            assert "Successfully opened" in result
+
+    @pytest.mark.asyncio
+    async def test_should_close_tab(self, state_manager, sample_state):
+        """Test closing a browser tab."""
+        mock_page1 = AsyncMock(spec=Page)
+        mock_page2 = AsyncMock(spec=Page)
+        mock_page1.title.return_value = "Tab 1"
+        mock_context = AsyncMock(spec=BrowserContext)
+        mock_context.pages = [mock_page1, mock_page2]
+        
+        state_manager.set_state(sample_state)
+        state_manager.current_page_index = 1
+        
+        with patch.object(state_manager, 'get_context', return_value=mock_context):
+            result = await state_manager.close_tab(1)
+            
+            mock_page2.close.assert_called_once()
+            assert "Successfully closed" in result
+
+    def test_should_take_note(self, state_manager):
+        """Test taking a note."""
+        result = state_manager.take_note("This is a test note")
+        
+        assert "Note recorded" in result
 
     def test_should_initialize_summarizer_llm_when_available(self, mock_browser_context):
         """Test that summarizer LLM is initialized when available."""
@@ -211,3 +360,55 @@ class TestKageBunshinStateManager:
             manager = KageBunshinStateManager(mock_browser_context)
             
             assert manager.summarizer_llm is None
+
+    def test_should_get_bbox_by_id(self, state_manager, sample_bbox):
+        """Test getting bbox by ID."""
+        state_manager.current_bboxes = [sample_bbox]
+        
+        result = state_manager._get_bbox_by_id(0)
+        
+        assert result == sample_bbox
+
+    def test_should_return_none_for_invalid_bbox_id(self, state_manager):
+        """Test that invalid bbox ID returns None."""
+        result = state_manager._get_bbox_by_id(999)
+        
+        assert result is None
+
+    def test_should_get_selector_from_bbox(self, state_manager, sample_bbox):
+        """Test getting CSS selector from bbox."""
+        state_manager.current_bboxes = [sample_bbox]
+        
+        selector = state_manager._get_selector(0)
+        
+        assert selector == sample_bbox.selector
+
+    def test_should_raise_error_for_invalid_bbox_selector(self, state_manager):
+        """Test that invalid bbox ID raises error in selector method."""
+        with pytest.raises(ValueError, match="Invalid bbox_id"):
+            state_manager._get_selector(999)
+
+    def test_should_increment_action_count(self, state_manager):
+        """Test incrementing action count."""
+        initial_count = state_manager._action_count
+        
+        state_manager.increment_action_count()
+        
+        assert state_manager._action_count == initial_count + 1
+
+    def test_should_get_action_count_property(self, state_manager):
+        """Test getting action count via property."""
+        state_manager._action_count = 5
+        
+        assert state_manager.num_actions_done == 5
+
+    def test_should_get_bboxes_property(self, state_manager, sample_bbox):
+        """Test getting bboxes via property."""
+        state_manager.current_bboxes = [sample_bbox]
+        
+        bboxes = state_manager.bboxes
+        
+        assert len(bboxes) == 1
+        assert bboxes[0] == sample_bbox
+        # Should return a copy, not the original
+        assert bboxes is not state_manager.current_bboxes

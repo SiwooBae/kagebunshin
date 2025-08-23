@@ -133,10 +133,8 @@ class TestHumanMouseMove:
     """Test suite for human-like mouse movement."""
     
     @pytest.mark.asyncio
-    async def test_should_move_mouse_in_steps_when_human_behavior_enabled(self):
+    async def test_should_move_mouse_in_steps_when_human_behavior_enabled(self, mock_page):
         """Test that mouse moves in steps when human behavior is enabled."""
-        mock_page = AsyncMock(spec=Page)
-        
         with patch('kagebunshin.automation.behavior.ACTIVATE_HUMAN_BEHAVIOR', True):
             await human_mouse_move(mock_page, 0, 0, 100, 100)
             
@@ -144,10 +142,8 @@ class TestHumanMouseMove:
             assert mock_page.mouse.move.call_count > 1
 
     @pytest.mark.asyncio
-    async def test_should_move_directly_when_human_behavior_disabled(self):
+    async def test_should_move_directly_when_human_behavior_disabled(self, mock_page):
         """Test that mouse moves directly when human behavior is disabled."""
-        mock_page = AsyncMock(spec=Page)
-        
         with patch('kagebunshin.automation.behavior.ACTIVATE_HUMAN_BEHAVIOR', False):
             await human_mouse_move(mock_page, 0, 0, 100, 100)
             
@@ -155,9 +151,8 @@ class TestHumanMouseMove:
             mock_page.mouse.move.assert_called_once_with(100, 100)
 
     @pytest.mark.asyncio
-    async def test_should_end_at_target_coordinates(self):
+    async def test_should_end_at_target_coordinates(self, mock_page):
         """Test that mouse ends at the target coordinates."""
-        mock_page = AsyncMock(spec=Page)
         target_x, target_y = 150, 250
         
         with patch('kagebunshin.automation.behavior.ACTIVATE_HUMAN_BEHAVIOR', True):
@@ -170,10 +165,8 @@ class TestHumanMouseMove:
             assert abs(final_y - target_y) <= 2
 
     @pytest.mark.asyncio
-    async def test_should_add_delays_between_steps(self):
+    async def test_should_add_delays_between_steps(self, mock_page):
         """Test that delays are added between mouse movement steps."""
-        mock_page = AsyncMock(spec=Page)
-        
         with patch('kagebunshin.automation.behavior.ACTIVATE_HUMAN_BEHAVIOR', True):
             with patch('asyncio.sleep') as mock_sleep:
                 await human_mouse_move(mock_page, 0, 0, 100, 100)
@@ -186,9 +179,8 @@ class TestHumanTypeText:
     """Test suite for human-like text typing."""
     
     @pytest.mark.asyncio
-    async def test_should_type_character_by_character_when_human_behavior_enabled(self):
+    async def test_should_type_character_by_character_when_human_behavior_enabled(self, mock_page):
         """Test that text is typed character by character."""
-        mock_page = AsyncMock(spec=Page)
         text = "Hello"
         
         with patch('kagebunshin.automation.behavior.ACTIVATE_HUMAN_BEHAVIOR', True):
@@ -199,9 +191,8 @@ class TestHumanTypeText:
                 assert mock_page.keyboard.type.call_count == len(text)
 
     @pytest.mark.asyncio
-    async def test_should_insert_text_directly_when_human_behavior_disabled(self):
+    async def test_should_insert_text_directly_when_human_behavior_disabled(self, mock_page):
         """Test that text is inserted directly when human behavior disabled."""
-        mock_page = AsyncMock(spec=Page)
         text = "Hello World"
         
         with patch('kagebunshin.automation.behavior.ACTIVATE_HUMAN_BEHAVIOR', False):
@@ -211,10 +202,8 @@ class TestHumanTypeText:
             mock_page.keyboard.insert_text.assert_called_once_with(text)
 
     @pytest.mark.asyncio
-    async def test_should_add_delays_between_characters(self):
+    async def test_should_add_delays_between_characters(self, mock_page):
         """Test that delays are added between character typing."""
-        mock_page = AsyncMock(spec=Page)
-        
         with patch('kagebunshin.automation.behavior.ACTIVATE_HUMAN_BEHAVIOR', True):
             with patch('asyncio.sleep') as mock_sleep:
                 await human_type_text(mock_page, "Hi")
@@ -223,10 +212,8 @@ class TestHumanTypeText:
                 assert mock_sleep.call_count >= 1
 
     @pytest.mark.asyncio
-    async def test_should_handle_empty_text(self):
+    async def test_should_handle_empty_text(self, mock_page):
         """Test handling of empty text input."""
-        mock_page = AsyncMock(spec=Page)
-        
         with patch('kagebunshin.automation.behavior.ACTIVATE_HUMAN_BEHAVIOR', True):
             await human_type_text(mock_page, "")
             
@@ -234,9 +221,8 @@ class TestHumanTypeText:
             mock_page.keyboard.type.assert_not_called()
 
     @pytest.mark.asyncio
-    async def test_should_handle_special_characters(self):
+    async def test_should_handle_special_characters(self, mock_page):
         """Test handling of special characters."""
-        mock_page = AsyncMock(spec=Page)
         text = "Hello@world.com!"
         
         with patch('kagebunshin.automation.behavior.ACTIVATE_HUMAN_BEHAVIOR', True):
@@ -251,20 +237,16 @@ class TestHumanScroll:
     """Test suite for human-like scrolling."""
     
     @pytest.mark.asyncio
-    async def test_should_scroll_page_in_specified_direction(self):
+    async def test_should_scroll_page_in_specified_direction(self, mock_page):
         """Test scrolling in specified direction."""
-        mock_page = AsyncMock(spec=Page)
-        
         await human_scroll(mock_page, 0, 0, "down", 3)
         
         # Should have called mouse.wheel (scrolling mechanism)
         assert mock_page.mouse.wheel.called
 
     @pytest.mark.asyncio
-    async def test_should_handle_different_scroll_directions(self):
+    async def test_should_handle_different_scroll_directions(self, mock_page):
         """Test scrolling in different directions."""
-        mock_page = AsyncMock(spec=Page)
-        
         directions = ["up", "down"]
         for direction in directions:
             mock_page.reset_mock()
@@ -272,25 +254,40 @@ class TestHumanScroll:
             assert mock_page.mouse.wheel.called
 
     @pytest.mark.asyncio
-    async def test_should_respect_scroll_amount(self):
+    async def test_should_respect_scroll_amount(self, mock_page):
         """Test that scroll amount is respected."""
-        mock_page = AsyncMock(spec=Page)
-        
         await human_scroll(mock_page, 0, 0, "down", 5)
         
         # Should have scrolled with the specified amount
         assert mock_page.mouse.wheel.call_count >= 1
 
     @pytest.mark.asyncio
-    async def test_should_handle_zero_scroll_amount(self):
+    async def test_should_handle_zero_scroll_amount(self, mock_page):
         """Test handling of zero scroll amount."""
-        mock_page = AsyncMock(spec=Page)
-        
         await human_scroll(mock_page, 0, 0, "down", 0)
         
         # Should handle gracefully (may or may not scroll)
         # Should not crash
         assert True  # Test passes if no exception
+
+    @pytest.mark.asyncio
+    async def test_should_scroll_in_multiple_increments_when_human_behavior_enabled(self, mock_page):
+        """Test that scrolling is broken into multiple increments when human behavior is enabled."""
+        with patch('kagebunshin.automation.behavior.ACTIVATE_HUMAN_BEHAVIOR', True):
+            with patch('asyncio.sleep'):  # Mock sleep to speed up test
+                await human_scroll(mock_page, 0, 0, "down", 100)
+                
+                # Should have made multiple wheel calls
+                assert mock_page.mouse.wheel.call_count > 1
+
+    @pytest.mark.asyncio
+    async def test_should_scroll_once_when_human_behavior_disabled(self, mock_page):
+        """Test that scrolling happens in one call when human behavior is disabled."""
+        with patch('kagebunshin.automation.behavior.ACTIVATE_HUMAN_BEHAVIOR', False):
+            await human_scroll(mock_page, 0, 0, "down", 100)
+            
+            # Should make only one wheel call
+            mock_page.mouse.wheel.assert_called_once()
 
 
 class TestSmartDelayBetweenActions:
@@ -344,3 +341,25 @@ class TestSmartDelayBetweenActions:
         
         elapsed = end_time - start_time
         assert elapsed >= 0  # Should use default delay
+
+    @pytest.mark.asyncio
+    async def test_should_add_minimal_delay_when_human_behavior_disabled(self):
+        """Test that minimal delay is added when human behavior is disabled."""
+        with patch('kagebunshin.automation.behavior.ACTIVATE_HUMAN_BEHAVIOR', False):
+            start_time = asyncio.get_event_loop().time()
+            await smart_delay_between_actions("click")
+            end_time = asyncio.get_event_loop().time()
+            
+            elapsed = (end_time - start_time) * 1000
+            assert elapsed < 200  # Should be much shorter when disabled
+
+    @pytest.mark.asyncio
+    async def test_should_add_longer_delay_when_human_behavior_enabled(self):
+        """Test that longer delay is added when human behavior is enabled."""
+        with patch('kagebunshin.automation.behavior.ACTIVATE_HUMAN_BEHAVIOR', True):
+            start_time = asyncio.get_event_loop().time()
+            await smart_delay_between_actions("click")
+            end_time = asyncio.get_event_loop().time()
+            
+            elapsed = (end_time - start_time) * 1000
+            assert elapsed >= 100  # Should be longer when enabled

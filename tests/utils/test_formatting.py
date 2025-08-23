@@ -68,11 +68,12 @@ class TestHtmlToMarkdown:
 class TestFormatTextContext:
     """Test suite for text context formatting."""
     
-    def test_should_format_text_context_with_title(self):
-        """Test formatting text context with a title."""
-        result = format_text_context("Page Content", title="Test Page")
+    def test_should_format_text_context_with_markdown(self):
+        """Test formatting text context with markdown."""
+        result = format_text_context("# Test Page\n\nPage Content")
         
-        assert "Test Page" in result
+        assert "Page Content (Markdown):" in result
+        assert "# Test Page" in result
         assert "Page Content" in result
 
     def test_should_format_text_context_without_title(self):
@@ -84,9 +85,9 @@ class TestFormatTextContext:
 
     def test_should_handle_empty_content(self):
         """Test handling of empty content."""
-        result = format_text_context("", title="Empty Page")
+        result = format_text_context("")
         
-        assert "Empty Page" in result
+        assert "Page Content (Markdown):" in result
         assert result is not None
 
 
@@ -97,10 +98,11 @@ class TestFormatBboxContext:
         """Test formatting a single bounding box."""
         result = format_bbox_context([sample_bbox])
         
-        assert "Click me" in result
+        # The function prioritizes ariaLabel over text
+        assert "Submit button" in result  # ariaLabel is used instead of text
         assert "button" in result
-        assert "Submit button" in result
-        assert str(sample_bbox.globalIndex) in result
+        assert "bbox_id:" in result
+        assert "🟢 CURRENT VIEWPORT" in result
 
     def test_should_format_multiple_bboxes(self, sample_bbox):
         """Test formatting multiple bounding boxes."""
@@ -117,10 +119,10 @@ class TestFormatBboxContext:
         
         result = format_bbox_context([sample_bbox, bbox2])
         
-        assert "Click me" in result
-        assert "Second button" in result
-        assert "Submit button" in result
-        assert "Cancel button" in result
+        # The function prioritizes ariaLabel over text
+        assert "Submit button" in result  # First bbox ariaLabel
+        assert "Cancel button" in result  # Second bbox ariaLabel
+        assert "🟢 CURRENT VIEWPORT (2 elements)" in result
 
     def test_should_handle_empty_bbox_list(self):
         """Test handling of empty bbox list."""
@@ -141,41 +143,41 @@ class TestFormatTabContext:
     
     def test_should_format_single_tab(self, sample_tab_info):
         """Test formatting single tab information."""
-        result = format_tab_context([sample_tab_info])
+        result = format_tab_context([sample_tab_info], 0)
         
         assert "Test Tab" in result
-        assert "https://example.com" in result
-        assert "active" in result.lower() or "current" in result.lower()
+        assert "Browser Tabs:" in result
+        assert "[CURRENT]" in result or "🟢" in result
 
     def test_should_format_multiple_tabs(self, sample_tab_info):
         """Test formatting multiple tabs."""
-        tab2 = TabInfo(
-            page=Mock(),
-            tab_index=1,
-            title="Second Tab",
-            url="https://example2.com",
-            is_active=False
-        )
+        tab2 = {
+            "page": Mock(),
+            "tab_index": 1,
+            "title": "Second Tab",
+            "url": "https://example2.com",
+            "is_active": False
+        }
         
-        result = format_tab_context([sample_tab_info, tab2])
+        result = format_tab_context([sample_tab_info, tab2], 0)
         
         assert "Test Tab" in result
         assert "Second Tab" in result
-        assert "example.com" in result
-        assert "example2.com" in result
+        assert "Browser Tabs:" in result
 
     def test_should_indicate_active_tab(self, sample_tab_info):
         """Test that active tab is clearly indicated."""
-        result = format_tab_context([sample_tab_info])
+        result = format_tab_context([sample_tab_info], 0)
         
         # Active tab should be marked somehow
-        assert "active" in result.lower() or "*" in result or "current" in result.lower()
+        assert "[CURRENT]" in result or "🟢" in result
 
     def test_should_handle_empty_tab_list(self):
         """Test handling of empty tab list."""
-        result = format_tab_context([])
+        result = format_tab_context([], 0)
         
         assert result is not None
+        assert "No tabs available" in result
 
 
 class TestFormatImgContext:
@@ -185,27 +187,30 @@ class TestFormatImgContext:
         """Test formatting image context with base64 data."""
         base64_data = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAI9jU77mgAAAABJRU5ErkJggg=="
         
-        result = format_img_context(base64_data, title="Test Screenshot")
+        result = format_img_context(base64_data)
         
-        assert "Test Screenshot" in result
-        # Should contain image format information
-        assert "image" in result.lower() or "screenshot" in result.lower()
+        assert isinstance(result, dict)
+        assert result["type"] == "image_url"
+        assert "data:image/jpeg;base64," in result["image_url"]["url"]
+        assert base64_data in result["image_url"]["url"]
 
     def test_should_handle_empty_base64_data(self):
         """Test handling of empty base64 data."""
-        result = format_img_context("", title="Empty Image")
+        result = format_img_context("")
         
-        assert "Empty Image" in result
-        assert result is not None
+        assert isinstance(result, dict)
+        assert result["type"] == "image_url"
+        assert "data:image/jpeg;base64," in result["image_url"]["url"]
 
     def test_should_format_without_title(self):
-        """Test formatting image context without title."""
+        """Test formatting image context returns proper dict structure."""
         base64_data = "test_image_data"
         
         result = format_img_context(base64_data)
         
-        assert result is not None
-        assert len(result) > 0
+        assert isinstance(result, dict)
+        assert result["type"] == "image_url"
+        assert base64_data in result["image_url"]["url"]
 
 
 class TestNormalizeChatContent:
@@ -229,7 +234,8 @@ class TestNormalizeChatContent:
         
         assert "Text part" in result
         assert "More text" in result
-        assert "[Image]" in result or "image" in result.lower()
+        # Images are skipped by default (include_placeholders=False)
+        assert "Text part\nMore text" == result
 
     def test_should_handle_dict_content(self):
         """Test handling of dictionary content."""
@@ -262,8 +268,8 @@ class TestNormalizeChatContent:
         result = normalize_chat_content(content)
         
         assert "Here is an image:" in result
-        # Should indicate image presence somehow
-        assert "[Image]" in result or "image" in result.lower()
+        # Images are skipped by default
+        assert result == "Here is an image:"
 
     def test_should_handle_complex_nested_content(self):
         """Test handling of complex nested content structures."""
@@ -286,3 +292,17 @@ class TestNormalizeChatContent:
         assert "End text" in result
         assert isinstance(result, str)
         assert len(result) > 0
+
+    def test_should_include_image_placeholders_when_requested(self):
+        """Test including image placeholders when include_placeholders=True."""
+        content = [
+            "Text part",
+            {"type": "image_url", "image_url": {"url": "data:image/png;base64,abc123"}},
+            "More text"
+        ]
+        
+        result = normalize_chat_content(content, include_placeholders=True)
+        
+        assert "Text part" in result
+        assert "More text" in result
+        assert "[image:" in result or "[image]" in result

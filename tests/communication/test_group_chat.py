@@ -100,16 +100,18 @@ class TestGroupChatClient:
         """Test successful Redis connection."""
         client = GroupChatClient()
         
-        with patch('kagebunshin.communication.group_chat.aioredis') as mock_aioredis:
+        with patch('redis.asyncio.Redis') as mock_redis_class:
             mock_redis = AsyncMock()
-            mock_aioredis.from_url.return_value = mock_redis
+            mock_redis_class.return_value = mock_redis
             mock_redis.ping.return_value = True
             
             await client.connect()
             
             assert client._connected is True
             assert client._redis == mock_redis
-            mock_aioredis.from_url.assert_called_once()
+            mock_redis_class.assert_called_once_with(
+                host=client.host, port=client.port, db=client.db, decode_responses=True
+            )
             mock_redis.ping.assert_called_once()
 
     @pytest.mark.asyncio
@@ -117,8 +119,8 @@ class TestGroupChatClient:
         """Test graceful handling of Redis connection failure."""
         client = GroupChatClient()
         
-        with patch('kagebunshin.communication.group_chat.aioredis') as mock_aioredis:
-            mock_aioredis.from_url.side_effect = Exception("Redis unavailable")
+        with patch('redis.asyncio.Redis') as mock_redis_class:
+            mock_redis_class.side_effect = Exception("Redis unavailable")
             
             await client.connect()
             
@@ -133,10 +135,10 @@ class TestGroupChatClient:
         mock_redis = Mock()
         client._redis = mock_redis
         
-        with patch('kagebunshin.communication.group_chat.aioredis') as mock_aioredis:
+        with patch('redis.asyncio.Redis') as mock_redis_class:
             await client.connect()
             
-            mock_aioredis.from_url.assert_not_called()
+            mock_redis_class.assert_not_called()
 
     @pytest.mark.asyncio
     async def test_should_post_message_to_redis_when_connected(self):
@@ -146,15 +148,15 @@ class TestGroupChatClient:
         mock_redis = AsyncMock()
         client._redis = mock_redis
         
-        await client.post_message("test_room", "agent_1", "Hello Redis!")
+        await client.post("test_room", "agent_1", "Hello Redis!")
         
         # Verify Redis operations were called
-        mock_redis.lpush.assert_called_once()
+        mock_redis.rpush.assert_called_once()  # Implementation uses rpush, not lpush
         mock_redis.ltrim.assert_called_once()
         
         # Check that the message was formatted correctly
-        call_args = mock_redis.lpush.call_args[0]
-        assert call_args[0] == "chat:test_room"  # Key
+        call_args = mock_redis.rpush.call_args[0]
+        assert call_args[0] == "kagebunshin:groupchat:test_room"  # Key
         
         # Parse the JSON message
         message_json = call_args[1]
@@ -169,10 +171,10 @@ class TestGroupChatClient:
         client = GroupChatClient()
         client._connected = False
         
-        await client.post_message("test_room", "agent_1", "Hello Memory!")
+        await client.post("test_room", "agent_1", "Hello Memory!")
         
-        # Verify message was stored in memory
-        room_key = "chat:test_room"
+        # Verify message was stored in memory - key is just the room name
+        room_key = "test_room"
         assert room_key in GroupChatClient._GLOBAL_MEM_STORE
         assert len(GroupChatClient._GLOBAL_MEM_STORE[room_key]) == 1
         
@@ -189,18 +191,18 @@ class TestGroupChatClient:
         mock_redis = AsyncMock()
         client._redis = mock_redis
         
-        # Mock Redis response
+        # Mock Redis response - no encoding needed due to decode_responses=True
         test_record = ChatRecord("test_room", "agent_1", "Test message", 1234567890.0)
-        mock_redis.lrange.return_value = [test_record.as_json().encode()]
+        mock_redis.lrange.return_value = [test_record.as_json()]
         
-        messages = await client.get_recent_messages("test_room", limit=10)
+        messages = await client.history("test_room", limit=10)
         
         assert len(messages) == 1
         assert messages[0].room == "test_room"
         assert messages[0].sender == "agent_1"
         assert messages[0].message == "Test message"
         
-        mock_redis.lrange.assert_called_once_with("chat:test_room", 0, 9)
+        mock_redis.lrange.assert_called_once_with("kagebunshin:groupchat:test_room", -10, -1)
 
     @pytest.mark.asyncio
     async def test_should_get_recent_messages_from_memory_fallback(self):
@@ -208,12 +210,12 @@ class TestGroupChatClient:
         client = GroupChatClient()
         client._connected = False
         
-        # Add test data to memory store
-        room_key = "chat:test_room"
+        # Add test data to memory store - key is just the room name
+        room_key = "test_room"
         test_record = ChatRecord("test_room", "agent_1", "Memory message", 1234567890.0)
         GroupChatClient._GLOBAL_MEM_STORE[room_key] = deque([test_record])
         
-        messages = await client.get_recent_messages("test_room", limit=10)
+        messages = await client.history("test_room", limit=10)
         
         assert len(messages) == 1
         assert messages[0].room == "test_room"
@@ -226,17 +228,20 @@ class TestGroupChatClient:
         client = GroupChatClient(max_messages=3)
         client._connected = False
         
+        # Clear any existing data from previous tests
+        room_key = "test_limit_room"
+        GroupChatClient._GLOBAL_MEM_STORE.pop(room_key, None)
+        
         # Add more messages than the limit
         for i in range(5):
-            await client.post_message("test_room", "agent", f"Message {i}")
+            await client.post(room_key, "agent", f"Message {i}")
         
-        room_key = "chat:test_room"
         messages = GroupChatClient._GLOBAL_MEM_STORE[room_key]
         
         # Should only keep the most recent 3 messages
         assert len(messages) == 3
-        assert messages[0].message == "Message 4"  # Most recent first
-        assert messages[2].message == "Message 2"  # Oldest kept
+        assert messages[-1].message == "Message 4"  # Most recent last in deque
+        assert messages[0].message == "Message 2"  # Oldest kept
 
     @pytest.mark.asyncio
     async def test_should_handle_malformed_json_in_redis_gracefully(self):
@@ -246,13 +251,15 @@ class TestGroupChatClient:
         mock_redis = AsyncMock()
         client._redis = mock_redis
         
-        # Mock Redis returning invalid JSON
-        mock_redis.lrange.return_value = [b'invalid json', b'{"valid": "json"}']
+        # Mock Redis returning invalid JSON - no encoding needed
+        valid_record = ChatRecord("test_room", "agent", "Valid message", 1234567890.0)
+        mock_redis.lrange.return_value = ['invalid json', valid_record.as_json()]
         
-        messages = await client.get_recent_messages("test_room")
+        messages = await client.history("test_room")
         
         # Should skip malformed entries and continue processing
-        assert len(messages) == 0  # Both entries are invalid for ChatRecord
+        assert len(messages) == 1  # One valid entry
+        assert messages[0].message == "Valid message"
 
     @pytest.mark.asyncio
     async def test_should_handle_redis_errors_during_operations(self):
@@ -261,13 +268,13 @@ class TestGroupChatClient:
         client._connected = True
         mock_redis = AsyncMock()
         client._redis = mock_redis
-        mock_redis.lpush.side_effect = Exception("Redis error")
+        mock_redis.rpush.side_effect = Exception("Redis error")
         
         # Should not crash, should fallback gracefully
-        await client.post_message("test_room", "agent", "Test message")
+        await client.post("test_room", "agent", "Test message")
         
         # Message should be stored in memory as fallback
-        room_key = "chat:test_room"
+        room_key = "test_room"
         assert room_key in GroupChatClient._GLOBAL_MEM_STORE
 
     @pytest.mark.asyncio
@@ -276,6 +283,6 @@ class TestGroupChatClient:
         client = GroupChatClient()
         client._connected = False
         
-        messages = await client.get_recent_messages("nonexistent_room")
+        messages = await client.history("nonexistent_room")
         
         assert messages == []

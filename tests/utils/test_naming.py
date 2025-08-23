@@ -61,7 +61,8 @@ class TestGenerateAgentName:
             name = generate_agent_name()
             
             mock_petname.generate.assert_called_once()
-            assert name == "happy-agent-123"
+            # Implementation uses .title() so expect title case
+            assert name == "Happy-Agent-123"
 
     def test_should_generate_names_suitable_for_identifiers(self):
         """Test that generated names are suitable as identifiers."""

@@ -13,7 +13,7 @@ import json
 import logging
 from collections import deque
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Deque, Dict, List, Optional, Any
 
 from ..config.settings import (
@@ -92,7 +92,7 @@ class GroupChatClient:
         return f"{self.key_prefix}:{room}"
 
     async def post(self, room: str, sender: str, message: str) -> None:
-        record = ChatRecord(room=room, sender=sender, message=message, timestamp=datetime.utcnow().timestamp())
+        record = ChatRecord(room=room, sender=sender, message=message, timestamp=datetime.now(timezone.utc).timestamp())
         if self._connected and self._redis is not None:
             try:
                 key = self._key(room)
@@ -127,7 +127,7 @@ class GroupChatClient:
                                 room=obj.get("room", room),
                                 sender=obj.get("sender", "unknown"),
                                 message=obj.get("message", ""),
-                                timestamp=float(obj.get("timestamp", datetime.utcnow().timestamp())),
+                                timestamp=float(obj.get("timestamp", datetime.now(timezone.utc).timestamp())),
                             )
                         )
                     except Exception:
