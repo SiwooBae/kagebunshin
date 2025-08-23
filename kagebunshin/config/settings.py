@@ -30,6 +30,11 @@ ENABLE_SUMMARIZATION = os.environ.get("KAGE_ENABLE_SUMMARIZATION", "0") == "0"
 # BROWSER_EXECUTABLE_PATH = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 BROWSER_EXECUTABLE_PATH = None
 
+# Viewport Configuration
+# Set the actual browser viewport size (different from screen fingerprint)
+ACTUAL_VIEWPORT_WIDTH = 1920
+ACTUAL_VIEWPORT_HEIGHT = 1080
+
 # Path to the user data directory for the browser. Using a persistent directory
 # allows the browser to maintain sessions, cookies, and other data.
 # If None, a temporary profile will be used.

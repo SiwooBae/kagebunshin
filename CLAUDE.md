@@ -19,39 +19,39 @@ For every new feature or bug fix:
 ```bash
 # 1. RED: Write a failing test
 # Create/update test file first
-python -m pytest tests/path/to/test_file.py::TestClass::test_new_feature -v
+uv run pytest tests/path/to/test_file.py::TestClass::test_new_feature -v
 # Should FAIL initially
 
 # 2. GREEN: Implement minimal code
 # Write just enough code to pass the test
-python -m pytest tests/path/to/test_file.py::TestClass::test_new_feature -v
+uv run pytest tests/path/to/test_file.py::TestClass::test_new_feature -v
 # Should PASS
 
 # 3. REFACTOR: Improve code quality
 # Run full test suite to ensure no regressions
-python -m pytest tests/ -v
+uv run pytest tests/ -v
 ```
 
 ### TDD Commands
 
 ```bash
-# Run tests in watch mode (install pytest-watch: pip install pytest-watch)
+# Run tests in watch mode (install pytest-watch: uv add --dev pytest-watch)
 ptw -- --testmon
 
 # Run only failed tests from last run
-python -m pytest --lf
+uv run pytest --lf
 
 # Run tests that failed, then continue with rest
-python -m pytest --ff
+uv run pytest --ff
 
 # Run specific test method with minimal output
-python -m pytest tests/core/test_module.py::TestClass::test_method -q
+uv run pytest tests/core/test_module.py::TestClass::test_method -q
 
 # Run tests with immediate failure output
-python -m pytest -x --tb=short
+uv run pytest -x --tb=short
 
 # Run tests and stop after first failure
-python -m pytest -x
+uv run pytest -x
 ```
 
 ### TDD Best Practices
@@ -119,21 +119,21 @@ def test_should_calculate_total_price_when_adding_items():
 
 ### KageBunshin Test Suite Structure
 
-The project includes a comprehensive test suite with 129+ tests covering all major components:
+The project includes a comprehensive test suite with 155 tests covering all major components:
 
 #### Core Component Tests (`tests/core/`)
-- **test_agent.py**: KageBunshinAgent initialization, tool binding, workflow execution
-- **test_state.py**: State models (BBox, Annotation, KageBunshinState) validation
-- **test_state_manager.py**: Browser operations, page navigation, element interactions
+- **test_agent.py** (15 tests): KageBunshinAgent initialization, tool binding, workflow execution
+- **test_state.py** (14 tests): State models (BBox, Annotation, KageBunshinState) validation
+- **test_state_manager.py** (34 tests): Browser operations, page navigation, element interactions
 
 #### Tool & Communication Tests
-- **test_delegation.py**: Shadow clone spawning, context inheritance, resource cleanup
-- **test_group_chat.py**: Redis client, fallback to memory, message posting/retrieval
+- **test_delegation.py** (11 tests): Shadow clone spawning, context inheritance, resource cleanup
+- **test_group_chat.py** (17 tests): Redis client, fallback to memory, message posting/retrieval
 
 #### Utility & Automation Tests  
-- **test_formatting.py**: HTML/markdown conversion, context formatting, chat normalization
-- **test_naming.py**: Agent name generation with petname library
-- **test_behavior.py**: Human behavior simulation (delays, mouse movements, typing)
+- **test_formatting.py** (27 tests): HTML/markdown conversion, context formatting, chat normalization
+- **test_naming.py** (8 tests): Agent name generation with petname library
+- **test_behavior.py** (29 tests): Human behavior simulation (delays, mouse movements, typing)
 
 ### Testing Best Practices for KageBunshin
 
@@ -175,16 +175,25 @@ def test_should_verify_agent_behavior_not_implementation(self):
 
 ```bash
 # Run all tests with TDD workflow
-python -m pytest tests/ -v
+uv run pytest tests/ -v
 
 # Run specific component tests
-python -m pytest tests/core/test_agent.py -v
+uv run pytest tests/core/test_agent.py -v
 
-# Run tests with async debugging
-python -m pytest tests/ --asyncio-mode=auto -v
+# Run tests with async debugging (asyncio-mode=auto configured in pytest.ini)
+uv run pytest tests/ -v
 
 # Test specific behaviors
-python -m pytest tests/ -k "delegation" -v
+uv run pytest tests/ -k "delegation" -v
+
+# Run tests with coverage report
+uv run pytest --cov=kagebunshin --cov-report=html
+
+# Run tests quietly to see summary
+uv run pytest -q
+
+# Run tests and stop on first failure
+uv run pytest -x
 ```
 
 ## Common Development Commands
@@ -214,9 +223,17 @@ uv run -m kagebunshin "task description here"
 # Run interactive REPL mode with persistent memory
 uv run -m kagebunshin --repl
 
+# Reference query templates with @ syntax
+uv run -m kagebunshin -r @kagebunshin/config/prompts/useful_query_templates/literature_review.md
+uv run -m kagebunshin -r @kagebunshin/config/prompts/useful_query_templates/E2E_testing.md
+
+# Combine custom query with template
+uv run -m kagebunshin "Execute this specific task" -r @path/to/template.md
+
 # Using entry point (if installed)
 kagebunshin "task description"
 kagebunshin --repl
+kagebunshin -r @path/to/template.md
 ```
 
 ### Testing and Code Quality
@@ -350,3 +367,19 @@ Settings centralized in `kagebunshin/config/settings.py`:
 ### Testing Framework
 
 Uses pytest with async support (`pytest-asyncio`) for testing async components.
+
+### Current Test Status (Updated)
+
+As of the latest update:
+- **Total tests**: 155 tests (all passing ✅)
+- **Test coverage**: All major components covered
+- **Async support**: Full pytest-asyncio configuration with auto mode
+- **Mocking**: Comprehensive mocking of external dependencies (Playwright, Redis, LLMs)
+- **Recent improvements**:
+  - Fixed async mock hierarchy for proper Playwright object mocking
+  - Corrected pytest configuration from `[tool:pytest]` to `[pytest]` format
+  - Enhanced fixtures in `conftest.py` with proper async support
+  - All tests now align with actual implementation interfaces
+  - LLM-aware testing for non-deterministic summarization outputs
+  - Proper Redis client mocking with `decode_responses=True`
+  - Correct Langchain ToolCall objects with required fields

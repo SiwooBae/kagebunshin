@@ -4,12 +4,12 @@ This guide provides comprehensive information about the KageBunshin test suite, 
 
 ## Overview
 
-KageBunshin follows Test-Driven Development (TDD) principles with a comprehensive unit test suite covering all major components. The test suite includes 129+ tests that verify functionality without relying on external dependencies.
+KageBunshin follows Test-Driven Development (TDD) principles with a comprehensive unit test suite covering all major components. The test suite includes 155 tests that verify functionality without relying on external dependencies.
 
 ## Quick Start
 
 ```bash
-# Install test dependencies
+# Install test dependencies (pytest-asyncio included in dev dependencies)
 uv sync --all-extras
 
 # Run all tests
@@ -440,6 +440,34 @@ When adding new features, always:
 3. Test both success and failure scenarios
 4. Include edge cases and boundary conditions
 5. Update documentation if needed
+
+## Current Test Suite Status
+
+As of the latest update, the test suite includes:
+- **Total tests**: 155 tests across 8 test files  
+- **Test breakdown by file**:
+  - `core/test_state_manager.py`: 34 tests (browser operations and page management)
+  - `automation/test_behavior.py`: 29 tests (human behavior simulation and delays) 
+  - `utils/test_formatting.py`: 27 tests (text/HTML formatting and conversions)
+  - `communication/test_group_chat.py`: 17 tests (Redis chat system with fallback)
+  - `core/test_agent.py`: 15 tests (agent orchestration and workflow)
+  - `core/test_state.py`: 14 tests (Pydantic state models validation)
+  - `tools/test_delegation.py`: 11 tests (shadow clone delegation system)
+  - `utils/test_naming.py`: 8 tests (agent name generation with petname)
+
+All tests are currently **passing** and follow TDD principles with comprehensive mocking of external dependencies.
+
+### Recent Test Suite Improvements
+
+The test suite has been significantly improved with:
+- **Fixed async mocking**: Proper AsyncMock hierarchy for Playwright objects (Page, Mouse, Keyboard)
+- **Corrected pytest configuration**: Updated from `[tool:pytest]` to `[pytest]` format
+- **Enhanced fixtures**: Comprehensive mock objects in `conftest.py` with proper async support
+- **Implementation alignment**: All tests now align with actual implementation interfaces
+- **LLM-aware testing**: Delegation tests handle non-deterministic LLM outputs appropriately
+- **Redis mocking**: Proper Redis client mocking with `decode_responses=True`
+- **Tool call structure**: Correct Langchain ToolCall objects with required fields
+- **Complete state manager coverage**: 34 tests covering all browser operations
 
 ## Continuous Integration
 

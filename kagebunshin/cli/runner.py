@@ -7,7 +7,7 @@ import logging
 import argparse
 from playwright.async_api import async_playwright
 
-from ..config.settings import BROWSER_EXECUTABLE_PATH, USER_DATA_DIR, DEFAULT_PERMISSIONS
+from ..config.settings import BROWSER_EXECUTABLE_PATH, USER_DATA_DIR, DEFAULT_PERMISSIONS, ACTUAL_VIEWPORT_WIDTH, ACTUAL_VIEWPORT_HEIGHT
 from ..core.agent import KageBunshinAgent
 from ..tools.delegation import get_additional_tools
 from ..config.settings import GROUPCHAT_ROOM
@@ -113,7 +113,10 @@ class KageBunshinRunner:
                 )
             else:
                 browser = await p.chromium.launch(**launch_options)
-                context = await browser.new_context(permissions=DEFAULT_PERMISSIONS)
+                context = await browser.new_context(
+                    permissions=DEFAULT_PERMISSIONS,
+                    viewport={'width': ACTUAL_VIEWPORT_WIDTH, 'height': ACTUAL_VIEWPORT_HEIGHT}
+                )
 
             # Apply context-level fingerprinting overrides early
             profile = await apply_fingerprint_profile_to_context(context)
@@ -220,7 +223,10 @@ class KageBunshinRunner:
                 )
             else:
                 browser = await p.chromium.launch(**launch_options)
-                context = await browser.new_context(permissions=DEFAULT_PERMISSIONS)
+                context = await browser.new_context(
+                    permissions=DEFAULT_PERMISSIONS,
+                    viewport={'width': ACTUAL_VIEWPORT_WIDTH, 'height': ACTUAL_VIEWPORT_HEIGHT}
+                )
 
             # Apply context-level fingerprinting overrides early
             profile = await apply_fingerprint_profile_to_context(context)

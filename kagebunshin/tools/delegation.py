@@ -27,6 +27,8 @@ from ..config.settings import (
     SUMMARIZER_MODEL,
     SUMMARIZER_PROVIDER, 
     SUMMARIZER_REASONING_EFFORT,
+    ACTUAL_VIEWPORT_WIDTH,
+    ACTUAL_VIEWPORT_HEIGHT,
     LLM_TEMPERATURE,
     ENABLE_SUMMARIZATION
 )
@@ -204,7 +206,10 @@ def get_additional_tools(context: BrowserContext, username: Optional[str] = None
                         "error": "Cannot create new BrowserContext from the current context",
                     }
 
-                created_context = await browser.new_context(permissions=DEFAULT_PERMISSIONS)
+                created_context = await browser.new_context(
+                    permissions=DEFAULT_PERMISSIONS,
+                    viewport={'width': ACTUAL_VIEWPORT_WIDTH, 'height': ACTUAL_VIEWPORT_HEIGHT}
+                )
                 try:
                     await apply_fingerprint_profile_to_context(created_context)
                 except Exception:

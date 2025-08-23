@@ -83,6 +83,10 @@ uv run -m kagebunshin -r @kagebunshin/config/prompts/useful_query_templates/lite
 # Combine custom query with markdown file reference
 uv run -m kagebunshin "Execute this task" -r @path/to/template.md
 
+# Available query templates:
+# - @kagebunshin/config/prompts/useful_query_templates/literature_review.md
+# - @kagebunshin/config/prompts/useful_query_templates/E2E_testing.md
+
 # Or if installed with pip
 kagebunshin "Your task"
 kagebunshin --repl
@@ -167,34 +171,39 @@ ptw -- --testmon
 
 #### Test Structure
 
-The test suite covers all major components with 129+ comprehensive tests:
+The test suite covers all major components with 155 comprehensive tests:
 
 ```
 tests/
 ├── conftest.py              # Shared fixtures and test configuration
-├── core/                    # Core functionality tests
-│   ├── test_agent.py       # KageBunshinAgent initialization & workflow
-│   ├── test_state.py       # State models and validation
-│   └── test_state_manager.py # Browser operations & page management
-├── tools/                   # Agent tools tests
+├── core/                    # Core functionality tests (63 tests)
+│   ├── test_agent.py       # KageBunshinAgent initialization & workflow (15 tests)
+│   ├── test_state.py       # State models and validation (14 tests)
+│   └── test_state_manager.py # Browser operations & page management (34 tests)
+├── tools/                   # Agent tools tests (11 tests)
 │   └── test_delegation.py  # Shadow clone delegation system
-├── communication/           # Group chat tests
+├── communication/           # Group chat tests (17 tests)
 │   └── test_group_chat.py  # Redis-based communication
-├── utils/                   # Utility function tests
-│   ├── test_formatting.py  # Text/HTML formatting & normalization
-│   └── test_naming.py      # Agent name generation
-└── automation/             # Browser automation tests
+├── utils/                   # Utility function tests (35 tests)
+│   ├── test_formatting.py  # Text/HTML formatting & normalization (27 tests)
+│   └── test_naming.py      # Agent name generation (8 tests)
+└── automation/             # Browser automation tests (29 tests)
     └── test_behavior.py    # Human behavior simulation
+
+# Configuration files (in project root):
+pytest.ini                   # Pytest configuration with asyncio support
 ```
 
 #### Testing Features
 
-- **🔴 TDD Compliant**: Tests written assuming current implementation works
+- **🔴 TDD Compliant**: Tests written following Red-Green-Refactor cycle
 - **🧪 Comprehensive Mocking**: External dependencies (Playwright, Redis, LLMs) properly mocked
-- **⚡ Async Support**: Full pytest-asyncio configuration for async components
+- **⚡ Async Support**: Full pytest-asyncio configuration with auto mode enabled
 - **📝 AAA Pattern**: Arrange-Act-Assert structure throughout
-- **🎯 Behavioral Testing**: Focus on behavior, not implementation details
+- **🎯 Behavioral Testing**: Focus on behavior, not implementation details  
 - **🛡️ Defensive Testing**: Error handling and edge case coverage
+- **✅ All Passing**: 155/155 tests currently passing
+- **⚙️ Auto Configuration**: pytest.ini configured for async mode and markers
 
 ## Project Structure
 
@@ -224,7 +233,13 @@ kagebunshin/
 │
 ├── config/                 # ⚙️ Configuration management
 │   ├── settings.py        # All configuration settings
-│   └── prompts/           # System prompts
+│   └── prompts/           # System prompts and query templates
+│       ├── kagebunshin_system_prompt.md     # Main system prompt
+│       ├── kagebunshin_system_prompt_v2.md  # Alternative system prompt  
+│       ├── tell_the_cur_state.md           # State description prompt
+│       └── useful_query_templates/         # Pre-built query templates
+│           ├── literature_review.md        # Academic literature review
+│           └── E2E_testing.md             # End-to-end testing
 │
 └── utils/                  # 🛠️ Shared utilities
     ├── formatting.py      # HTML/text formatting for LLM

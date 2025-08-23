@@ -105,7 +105,8 @@ class KagebunshinSampler(SamplerBase):
                 launch_options["channel"] = "chrome"
 
             browser = await browser_launcher.launch(**launch_options)
-            context = await browser.new_context(permissions=settings.DEFAULT_PERMISSIONS)
+            context = await browser.new_context(permissions=settings.DEFAULT_PERMISSIONS,
+                                                viewport={'width': settings.ACTUAL_VIEWPORT_WIDTH, 'height': settings.ACTUAL_VIEWPORT_HEIGHT})
 
             # Apply fingerprint hardening at the context level
             try:
