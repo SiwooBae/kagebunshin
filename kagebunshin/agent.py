@@ -1,5 +1,5 @@
 """
-Simplified Agent API for KageBunshin, similar to browser-use.
+Simplified Agent API for KageBunshin.
 Provides a comprehensive, user-friendly interface that handles all configuration and browser lifecycle management.
 """
 
@@ -22,12 +22,12 @@ class Agent:
     """
     Simplified agent interface for KageBunshin web automation.
     
-    Provides a comprehensive, easy-to-use API similar to browser-use, with full control
+    Provides a comprehensive, easy-to-use API, with full control
     over all configuration parameters without needing to edit settings files.
     
     Example:
         # Simple usage
-        agent = Agent(task="Find the number of stars of the browser-use repo")
+        agent = Agent(task="Find the repo stars of Kagebunshin")
         
         # With custom LLM
         from langchain.chat_models import ChatOpenAI

@@ -105,7 +105,7 @@ from kagebunshin import Agent
 
 # Simplest usage - uses intelligent defaults
 async def main():
-    agent = Agent(task="Find the number of stars of the browser-use repo")
+    agent = Agent(task="Find me some desk toys")
     result = await agent.run()
     print(result)
 

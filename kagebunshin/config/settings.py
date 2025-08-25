@@ -189,7 +189,7 @@ HONEYPOT_DETECTION = {
 
 # Components/features to disable in Chromium for more stealthy automation
 CHROME_DISABLED_COMPONENTS = [
-    # Playwright defaults and additions inspired by browser-use
+    # Playwright defaults and additions
     'AcceptCHFrame',
     'AutoExpandDetailsElement',
     'AvoidUnnecessaryBeforeUnloadCheckSync',

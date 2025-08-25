@@ -17,7 +17,7 @@ async def simple_example():
     """Simplest usage - uses intelligent defaults."""
     print("=== Simple Example ===")
     
-    agent = Agent(task="Find the number of stars of the browser-use repo on GitHub")
+    agent = Agent(task="Find a news article on the latest AI safety research")
     result = await agent.run()
     print(f"Result: {result}")
 

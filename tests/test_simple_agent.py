@@ -15,7 +15,7 @@ class TestSimpleAgent:
         from kagebunshin import Agent
         
         mock_llm = Mock()
-        task = "Find the number of stars of the browser-use repo"
+        task = "Find the price of a Tesla Model S"
         
         agent = Agent(task=task, llm=mock_llm)
         
