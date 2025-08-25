@@ -16,7 +16,8 @@ Public API exports the `KageBunshinAgent` orchestrator and `KageBunshinRunner` C
 
 from .core.agent import KageBunshinAgent
 from .cli.runner import KageBunshinRunner
+from .agent import Agent
 
-__all__ = ["KageBunshinAgent", "KageBunshinRunner"]
+__all__ = ["Agent", "KageBunshinAgent", "KageBunshinRunner"]
 __version__ = "0.1.0"
 

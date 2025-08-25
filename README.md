@@ -95,6 +95,50 @@ kagebunshin -r @path/to/file.md
 
 ### Programmatic Usage
 
+#### Simple API (Recommended)
+
+For the easiest way to get started, use the simplified `Agent` class that handles all browser lifecycle management automatically:
+
+```python
+import asyncio
+from kagebunshin import Agent
+from langchain.chat_models import ChatOpenAI
+
+async def main():
+    agent = Agent(
+        task="Find the number of stars of the browser-use repo",
+        llm=ChatOpenAI(model="gpt-4o-mini"),
+    )
+    result = await agent.run()
+    print(result)
+
+asyncio.run(main())
+```
+
+##### Configuration Options
+
+The `Agent` class supports various configuration options:
+
+```python
+from kagebunshin import Agent
+from langchain.chat_models import ChatOpenAI
+
+agent = Agent(
+    task="Your task description",
+    llm=ChatOpenAI(model="gpt-4o-mini"),
+    headless=False,                    # Run browser in visible mode
+    enable_summarization=False,        # Enable action summarization  
+    group_room="my_room",             # Custom group chat room
+    username="my_agent",              # Custom agent name
+    browser_executable_path=None,     # Custom browser path
+    user_data_dir=None                # Persistent browser profile
+)
+```
+
+#### Advanced API
+
+For more control over the browser lifecycle, use the lower-level `KageBunshinAgent`:
+
 ```python
 from kagebunshin import KageBunshinAgent
 from playwright.async_api import async_playwright
