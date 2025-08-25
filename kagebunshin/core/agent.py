@@ -27,6 +27,7 @@ from ..config.settings import (
     GROUPCHAT_ROOM,
     MAX_KAGEBUNSHIN_INSTANCES,
     ENABLE_SUMMARIZATION,
+    RECURSION_LIMIT,
 )
 from ..utils import format_img_context, format_bbox_context, format_text_context, format_tab_context, generate_agent_name, normalize_chat_content
 from ..communication.group_chat import GroupChatClient
@@ -47,7 +48,20 @@ class KageBunshinAgent:
                  enable_summarization: bool = ENABLE_SUMMARIZATION,
                  group_room: Optional[str] = None,
                  username: Optional[str] = None,
-                 clone_depth: int = 0):
+                 clone_depth: int = 0,
+                 # Optional LLM configuration
+                 llm: Optional[Any] = None,
+                 llm_model: str = LLM_MODEL,
+                 llm_provider: str = LLM_PROVIDER,
+                 llm_reasoning_effort: str = LLM_REASONING_EFFORT,
+                 llm_temperature: float = LLM_TEMPERATURE,
+                 # Optional summarizer configuration
+                 summarizer_llm: Optional[Any] = None,
+                 summarizer_model: str = SUMMARIZER_MODEL,
+                 summarizer_provider: str = SUMMARIZER_PROVIDER,
+                 summarizer_reasoning_effort: str = SUMMARIZER_REASONING_EFFORT,
+                 # Optional workflow configuration
+                 recursion_limit: int = RECURSION_LIMIT):
         """Initializes the orchestrator with browser context and state manager."""
         
         self.initial_context = context
@@ -55,28 +69,36 @@ class KageBunshinAgent:
         self.system_prompt = system_prompt
         self.enable_summarization = enable_summarization
         self.clone_depth = clone_depth
+        self.recursion_limit = recursion_limit
         # Simple in-process memory of message history across turns
         self.persistent_messages: List[BaseMessage] = []
 
-        self.llm = init_chat_model(
-            model=LLM_MODEL,
-            model_provider=LLM_PROVIDER,
-            temperature=LLM_TEMPERATURE,
-            reasoning={"effort": LLM_REASONING_EFFORT} if "gpt-5" in LLM_MODEL else None
-        )
+        # Use provided LLM or create from configuration
+        if llm is not None:
+            self.llm = llm
+        else:
+            self.llm = init_chat_model(
+                model=llm_model,
+                model_provider=llm_provider,
+                temperature=llm_temperature,
+                reasoning={"effort": llm_reasoning_effort} if "gpt-5" in llm_model else None
+            )
         
-        # Cheaper model for summarization
-        self.summarizer_llm = init_chat_model(
-            model=SUMMARIZER_MODEL, 
-            model_provider=SUMMARIZER_PROVIDER,
-            temperature=LLM_TEMPERATURE,
-            reasoning={"effort": SUMMARIZER_REASONING_EFFORT} if "gpt-5" in SUMMARIZER_MODEL else None
-        )
+        # Use provided summarizer LLM or create from configuration
+        if summarizer_llm is not None:
+            self.summarizer_llm = summarizer_llm
+        else:
+            self.summarizer_llm = init_chat_model(
+                model=summarizer_model, 
+                model_provider=summarizer_provider,
+                temperature=llm_temperature,
+                reasoning={"effort": summarizer_reasoning_effort} if "gpt-5" in summarizer_model else None
+            )
         
         self.last_page_annotation: Optional[Annotation] = None
         self.last_page_tabs: Optional[List[TabInfo]] = None
-        self.main_llm_img_message_type = HumanMessage if "gemini" in LLM_MODEL or LLM_REASONING_EFFORT is not None else SystemMessage
-        self.summarizer_llm_img_message_type = HumanMessage if "gemini" in SUMMARIZER_MODEL or SUMMARIZER_REASONING_EFFORT is not None else SystemMessage
+        self.main_llm_img_message_type = HumanMessage if "gemini" in llm_model or llm_reasoning_effort is not None else SystemMessage
+        self.summarizer_llm_img_message_type = HumanMessage if "gemini" in summarizer_model or summarizer_reasoning_effort is not None else SystemMessage
         web_browsing_tools = self.state_manager.get_tools_for_llm()
         self.all_tools = web_browsing_tools + (additional_tools or [])
 
@@ -129,12 +151,26 @@ class KageBunshinAgent:
     @classmethod
     async def create(cls, 
                      context: BrowserContext,
-                      additional_tools: List[Any] = None, 
-                      system_prompt: str = SYSTEM_TEMPLATE,
-                      enable_summarization: bool = ENABLE_SUMMARIZATION,
-                      group_room: Optional[str] = None,
-                      username: Optional[str] = None,
-                      clone_depth: int = 0):
+                     additional_tools: List[Any] = None, 
+                     system_prompt: str = SYSTEM_TEMPLATE,
+                     enable_summarization: bool = ENABLE_SUMMARIZATION,
+                     group_room: Optional[str] = None,
+                     username: Optional[str] = None,
+                     clone_depth: int = 0,
+                     # Optional LLM configuration
+                     llm: Optional[Any] = None,
+                     llm_model: str = LLM_MODEL,
+                     llm_provider: str = LLM_PROVIDER,
+                     llm_reasoning_effort: str = LLM_REASONING_EFFORT,
+                     llm_temperature: float = LLM_TEMPERATURE,
+                     # Optional summarizer configuration
+                     summarizer_llm: Optional[Any] = None,
+                     summarizer_model: str = SUMMARIZER_MODEL,
+                     summarizer_provider: str = SUMMARIZER_PROVIDER,
+                     summarizer_reasoning_effort: str = SUMMARIZER_REASONING_EFFORT,
+                     # Optional workflow configuration
+                     recursion_limit: int = RECURSION_LIMIT,
+                     **kwargs):  # Allow additional kwargs for future extensibility
         """Factory method to create a KageBunshinAgent with async initialization."""
         # Enforce a maximum number of instances per-process
         if cls._INSTANCE_COUNT >= MAX_KAGEBUNSHIN_INSTANCES:
@@ -142,7 +178,26 @@ class KageBunshinAgent:
                 f"Instance limit reached: at most {MAX_KAGEBUNSHIN_INSTANCES} KageBunshinAgent instances are allowed."
             )
         state_manager = await KageBunshinStateManager.create(context)
-        instance = cls(context, state_manager, additional_tools, system_prompt, enable_summarization, group_room, username, clone_depth)
+        instance = cls(
+            context=context,
+            state_manager=state_manager,
+            additional_tools=additional_tools,
+            system_prompt=system_prompt,
+            enable_summarization=enable_summarization,
+            group_room=group_room,
+            username=username,
+            clone_depth=clone_depth,
+            llm=llm,
+            llm_model=llm_model,
+            llm_provider=llm_provider,
+            llm_reasoning_effort=llm_reasoning_effort,
+            llm_temperature=llm_temperature,
+            summarizer_llm=summarizer_llm,
+            summarizer_model=summarizer_model,
+            summarizer_provider=summarizer_provider,
+            summarizer_reasoning_effort=summarizer_reasoning_effort,
+            recursion_limit=recursion_limit
+        )
         cls._INSTANCE_COUNT += 1
         return instance
 
@@ -191,7 +246,7 @@ class KageBunshinAgent:
         )
         
         # The graph will execute until it hits an END state
-        final_state = await self.agent.ainvoke(initial_state, config={"recursion_limit": 100})
+        final_state = await self.agent.ainvoke(initial_state, config={"recursion_limit": self.recursion_limit})
         
         # Update the state manager with the final state before extracting the answer
         self.state_manager.set_state(final_state)
@@ -228,7 +283,7 @@ class KageBunshinAgent:
         # Accumulate the full conversation history during streaming updates
         accumulated_messages: List[BaseMessage] = list(initial_messages)
 
-        async for chunk in self.agent.astream(initial_state, stream_mode="updates", config={"recursion_limit": 100}):
+        async for chunk in self.agent.astream(initial_state, stream_mode="updates", config={"recursion_limit": self.recursion_limit}):
             # Yield upstream for observers/CLI
             yield chunk
 

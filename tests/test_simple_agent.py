@@ -19,8 +19,8 @@ class TestSimpleAgent:
         
         agent = Agent(task=task, llm=mock_llm)
         
-        assert agent.task == task
-        assert agent.llm == mock_llm
+        assert agent.config.task == task
+        assert agent.config.llm == mock_llm
 
     def test_should_initialize_with_optional_parameters(self):
         """Test agent initialization with optional parameters."""
@@ -37,11 +37,11 @@ class TestSimpleAgent:
             group_room="test_room"
         )
         
-        assert agent.task == task
-        assert agent.llm == mock_llm
-        assert agent.headless is True
-        assert agent.enable_summarization is True
-        assert agent.group_room == "test_room"
+        assert agent.config.task == task
+        assert agent.config.llm == mock_llm
+        assert agent.config.headless is True
+        assert agent.config.enable_summarization is True
+        assert agent.config.group_room == "test_room"
 
     @pytest.mark.asyncio
     async def test_should_run_and_return_result(self):

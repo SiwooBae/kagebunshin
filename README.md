@@ -97,17 +97,30 @@ kagebunshin -r @path/to/file.md
 
 #### Simple API (Recommended)
 
-For the easiest way to get started, use the simplified `Agent` class that handles all browser lifecycle management automatically:
+The simplified `Agent` class provides comprehensive configuration without needing to edit settings files:
 
 ```python
 import asyncio
 from kagebunshin import Agent
+
+# Simplest usage - uses intelligent defaults
+async def main():
+    agent = Agent(task="Find the number of stars of the browser-use repo")
+    result = await agent.run()
+    print(result)
+
+asyncio.run(main())
+```
+
+##### With Custom LLM
+
+```python
 from langchain.chat_models import ChatOpenAI
 
 async def main():
     agent = Agent(
-        task="Find the number of stars of the browser-use repo",
-        llm=ChatOpenAI(model="gpt-4o-mini"),
+        task="Find repo stars and analyze trends",
+        llm=ChatOpenAI(model="gpt-4o-mini", temperature=0)
     )
     result = await agent.run()
     print(result)
@@ -115,25 +128,70 @@ async def main():
 asyncio.run(main())
 ```
 
-##### Configuration Options
-
-The `Agent` class supports various configuration options:
+##### Full Configuration Example
 
 ```python
-from kagebunshin import Agent
-from langchain.chat_models import ChatOpenAI
-
 agent = Agent(
-    task="Your task description",
-    llm=ChatOpenAI(model="gpt-4o-mini"),
-    headless=False,                    # Run browser in visible mode
-    enable_summarization=False,        # Enable action summarization  
-    group_room="my_room",             # Custom group chat room
-    username="my_agent",              # Custom agent name
-    browser_executable_path=None,     # Custom browser path
-    user_data_dir=None                # Persistent browser profile
+    task="Complex research with multiple steps",
+    
+    # LLM Configuration
+    llm_model="gpt-5",                    # Model name
+    llm_provider="openai",               # "openai" or "anthropic"
+    llm_reasoning_effort="high",         # "minimal", "low", "medium", "high"
+    llm_temperature=0.1,                 # Temperature (0.0-2.0)
+    
+    # Summarizer Configuration
+    summarizer_model="gpt-5-nano",       # Cheaper model for summaries
+    enable_summarization=True,           # Enable action summaries
+    
+    # Browser Configuration
+    headless=False,                      # Visible browser
+    viewport_width=1280,                 # Browser viewport width
+    viewport_height=1280,                # Browser viewport height
+    browser_executable_path="/path/chrome", # Custom browser
+    user_data_dir="~/chrome-profile",   # Persistent profile
+    
+    # Workflow Configuration
+    recursion_limit=200,                 # Max recursion depth
+    max_iterations=150,                  # Max iterations
+    timeout=120,                         # Timeout per operation
+    
+    # Multi-agent Configuration
+    group_room="research_team",          # Group chat room
+    username="lead_researcher"           # Agent name
 )
+result = await agent.run()
 ```
+
+##### Available Parameters
+
+**LLM Configuration:**
+- `llm`: Pre-configured LLM instance (optional)
+- `llm_model`: Model name (default: "gpt-5-mini")
+- `llm_provider`: "openai" or "anthropic" (default: "openai")
+- `llm_reasoning_effort`: "minimal", "low", "medium", "high" (default: "low")
+- `llm_temperature`: Temperature 0.0-2.0 (default: 1.0)
+
+**Summarizer Configuration:**
+- `summarizer_model`: Model for summaries (default: "gpt-5-nano")
+- `summarizer_provider`: Provider for summarizer (default: "openai")
+- `enable_summarization`: Enable action summaries (default: False)
+
+**Browser Configuration:**
+- `headless`: Run in headless mode (default: False)
+- `viewport_width`: Browser width (default: 1280)
+- `viewport_height`: Browser height (default: 1280)
+- `browser_executable_path`: Custom browser path (default: auto-detect)
+- `user_data_dir`: Persistent profile directory (default: temporary)
+
+**Workflow Configuration:**
+- `recursion_limit`: Max recursion depth (default: 150)
+- `max_iterations`: Max iterations per task (default: 100)
+- `timeout`: Timeout per operation in seconds (default: 60)
+
+**Multi-agent Configuration:**
+- `group_room`: Group chat room name (default: "lobby")
+- `username`: Agent name (default: auto-generated)
 
 #### Advanced API
 
