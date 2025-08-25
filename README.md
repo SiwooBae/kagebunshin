@@ -325,18 +325,6 @@ tests/
 # Configuration files (in project root):
 pytest.ini                   # Pytest configuration with asyncio support
 ```
-
-#### Testing Features
-
-- **🔴 TDD Compliant**: Tests written following Red-Green-Refactor cycle
-- **🧪 Comprehensive Mocking**: External dependencies (Playwright, Redis, LLMs) properly mocked
-- **⚡ Async Support**: Full pytest-asyncio configuration with auto mode enabled
-- **📝 AAA Pattern**: Arrange-Act-Assert structure throughout
-- **🎯 Behavioral Testing**: Focus on behavior, not implementation details  
-- **🛡️ Defensive Testing**: Error handling and edge case coverage
-- **✅ All Passing**: 155/155 tests currently passing
-- **⚙️ Auto Configuration**: pytest.ini configured for async mode and markers
-
 ## Project Structure
 
 Kagebunshin features a clean, modular architecture optimized for readability and extensibility:
@@ -386,14 +374,6 @@ kagebunshin/
 - **🔧 Tools**: Agent delegation system for parallel task execution
 - **💬 Communication**: Redis-based group chat for agent coordination
 - **🖥️ CLI**: Interactive command-line interface with streaming updates
-
-### Architecture Benefits
-
-- **🎯 Clear Separation**: Each module has a focused, single responsibility
-- **📈 Scalable Design**: Easy to extend with new tools, behaviors, and UI components
-- **🔍 Better Organization**: Related functionality is logically grouped together
-- **🧩 Modular Components**: Large monolithic files decomposed into focused modules
-- **🌳 Hierarchical Structure**: Nested organization for complex subsystems
 
 ## Contributing
 
