@@ -290,11 +290,213 @@ def format_bbox_context_simple(bboxes: List[BBox]) -> str:
     return format_bbox_context(bboxes, include_hierarchy=False, include_viewport_context=False)
 
 
+def format_unified_context(bboxes: List[BBox], detail_level: str = "full_hierarchy", include_viewport_context: bool = True) -> str:
+    """Format complete page context with unified representation (interactive + content elements).
+    
+    Args:
+        bboxes: List of BBox elements (both interactive and content)
+        detail_level: Level of detail to show:
+            - "full_hierarchy": Complete DOM structure with content + interactive (default)
+            - "interactive_only": Only interactive elements (backward compatibility)
+            - "content_focus": Content elements with minimal interactive elements
+        include_viewport_context: Whether to categorize by viewport position
+    """
+    if not bboxes:
+        return "No elements found on this page."
+    
+    # Backward compatibility: filter to interactive only
+    if detail_level == "interactive_only":
+        interactive_bboxes = [b for b in bboxes if b.isInteractive]
+        return format_bbox_context(interactive_bboxes, include_hierarchy=True, include_viewport_context=include_viewport_context)
+    
+    # Group elements by semantic sections first
+    sections = {
+        'header': [],
+        'nav': [],
+        'main': [],
+        'aside': [],
+        'footer': [],
+        'unsectioned': []
+    }
+    
+    # Group by viewport position if requested
+    viewport_groups = {
+        'in-viewport': [],
+        'above-viewport': [],
+        'below-viewport': [],
+        'left-of-viewport': [],
+        'right-of-viewport': []
+    } if include_viewport_context else {'in-viewport': bboxes}
+    
+    # Categorize elements
+    for i, bbox in enumerate(bboxes):
+        # Group by semantic section
+        section_key = bbox.semanticSection if bbox.semanticSection in sections else 'unsectioned'
+        sections[section_key].append((i, bbox))
+        
+        # Group by viewport position
+        if include_viewport_context:
+            position = getattr(bbox, 'viewportPosition', 'in-viewport')
+            if position in viewport_groups:
+                viewport_groups[position].append((i, bbox))
+            else:
+                viewport_groups['in-viewport'].append((i, bbox))
+        else:
+            viewport_groups['in-viewport'].append((i, bbox))
+    
+    # Build output sections
+    output_sections = []
+    
+    # Function to format a single element in unified style
+    def format_unified_element(index: int, bbox: BBox, base_indent: str = "") -> str:
+        # Get display text (may be truncated)
+        text = bbox.text[:100] + ("..." if len(bbox.text) > 100 else "") if bbox.text else ""
+        
+        # Element type and role indicator
+        type_info = f"<{bbox.type}/>"
+        if not bbox.isInteractive:
+            role_indicator = "📄" if bbox.elementRole == "content" else "🏗️" if bbox.elementRole == "structural" else "🧭" if bbox.elementRole == "navigation" else ""
+        else:
+            role_indicator = "🎯"
+        
+        # Interactive elements show bbox_id, content elements show "N/A"
+        element_id = index if bbox.isInteractive else "N/A"
+        
+        # Build main element description
+        main_desc = f'{role_indicator} bbox_id: {element_id} {type_info}'
+        
+        # Add content type for non-interactive elements
+        if not bbox.isInteractive and bbox.contentType:
+            if bbox.contentType == "heading" and bbox.headingLevel:
+                main_desc += f" [H{bbox.headingLevel}]"
+            else:
+                main_desc += f" [{bbox.contentType}]"
+        
+        # Add text content
+        if text.strip():
+            if bbox.wordCount and bbox.wordCount > 0:
+                word_info = f" ({bbox.wordCount} words)" if bbox.wordCount > 10 else ""
+                if bbox.truncated:
+                    word_info += " [truncated]"
+                main_desc += f': "{text}"{word_info}'
+            else:
+                main_desc += f': "{text}"'
+        
+        # Add frame context if not main
+        if hasattr(bbox, 'frameContext') and bbox.frameContext != "main":
+            main_desc += f" [Frame: {bbox.frameContext}]"
+        
+        # Add container info for structural elements
+        if bbox.isContainer and hasattr(bbox, 'hierarchy') and bbox.hierarchy:
+            if hasattr(bbox.hierarchy, 'childrenCount') and bbox.hierarchy.childrenCount > 0:
+                main_desc += f" [contains {bbox.hierarchy.childrenCount} children]"
+        
+        return main_desc
+    
+    # Build viewport sections if requested
+    if include_viewport_context:
+        viewport_labels = {
+            'in-viewport': '🟢 CURRENT VIEWPORT',
+            'above-viewport': '⬆️  ABOVE VIEWPORT',
+            'below-viewport': '⬇️  BELOW VIEWPORT', 
+            'left-of-viewport': '⬅️  LEFT OF VIEWPORT',
+            'right-of-viewport': '➡️  RIGHT OF VIEWPORT'
+        }
+        
+        for position, label in viewport_labels.items():
+            elements = viewport_groups.get(position, [])
+            
+            if not elements:
+                continue
+                
+            section_lines = [f"\n{label} ({len(elements)} elements):"]
+            
+            # Group by semantic sections within viewport
+            viewport_sections = {}
+            for index, bbox in elements:
+                section_key = bbox.semanticSection if bbox.semanticSection in sections else 'unsectioned'
+                if section_key not in viewport_sections:
+                    viewport_sections[section_key] = []
+                viewport_sections[section_key].append((index, bbox))
+            
+            # Format each semantic section
+            for section_name in ['header', 'nav', 'main', 'aside', 'footer', 'unsectioned']:
+                section_elements = viewport_sections.get(section_name, [])
+                if not section_elements:
+                    continue
+                
+                if section_name != 'unsectioned':
+                    section_lines.append(f"\t📍 {section_name.upper()} SECTION:")
+                    section_indent = "\t\t"
+                else:
+                    section_indent = "\t"
+                
+                # Sort by interactive first, then by element role, then by hierarchy depth
+                section_elements.sort(key=lambda x: (
+                    not x[1].isInteractive,  # Interactive elements first
+                    x[1].elementRole,
+                    getattr(x[1].hierarchy, 'depth', 0) if hasattr(x[1], 'hierarchy') and x[1].hierarchy else 0
+                ))
+                
+                for index, bbox in section_elements:
+                    # For out-of-viewport elements, use N/A as index
+                    display_index = index if position == 'in-viewport' else "N/A"
+                    formatted_element = format_unified_element(display_index, bbox, section_indent)
+                    section_lines.append(f"{section_indent}{formatted_element}")
+            
+            output_sections.extend(section_lines)
+    
+    else:
+        # Simple hierarchical view without viewport categories
+        output_sections.append("🎯 PAGE ELEMENTS (Unified View):")
+        
+        # Group by semantic sections
+        for section_name in ['header', 'nav', 'main', 'aside', 'footer', 'unsectioned']:
+            section_elements = sections.get(section_name, [])
+            if not section_elements:
+                continue
+            
+            if section_name != 'unsectioned':
+                output_sections.append(f"\n📍 {section_name.upper()} SECTION:")
+                section_indent = "\t"
+            else:
+                section_indent = ""
+            
+            # Sort elements within section
+            section_elements.sort(key=lambda x: (
+                not x[1].isInteractive,  # Interactive elements first
+                x[1].elementRole,
+                getattr(x[1].hierarchy, 'depth', 0) if hasattr(x[1], 'hierarchy') and x[1].hierarchy else 0
+            ))
+            
+            for index, bbox in section_elements:
+                formatted_element = format_unified_element(index, bbox, section_indent)
+                output_sections.append(f"{section_indent}{formatted_element}")
+    
+    # Add summary stats
+    interactive_count = len([b for b in bboxes if b.isInteractive])
+    content_count = len([b for b in bboxes if not b.isInteractive])
+    
+    stats = [
+        f"\n📊 SUMMARY: {len(bboxes)} total elements",
+        f"   • 🎯 Interactive: {interactive_count}",
+        f"   • 📄 Content: {content_count}",
+        f"   • 💡 Use bbox_id for interactive elements, extract_page_content() for full text"
+    ]
+    
+    output_sections.extend(stats)
+    
+    return "\n".join(output_sections)
+
+
 def format_enhanced_page_context(bboxes: List[BBox], markdown_content: str = "", frame_stats=None, viewport_categories: Dict[str, int] = None) -> str:
-    """Format complete page context with enhanced bbox information and page content."""
+    """Format complete page context with enhanced bbox information and page content.
+    
+    Updated to use the new unified context approach while maintaining backward compatibility.
+    """
     sections = []
     
-    # Add page content if available
+    # Add page content overview if available
     if markdown_content:
         sections.append("📄 PAGE CONTENT OVERVIEW:")
         sections.append(markdown_content[:500] + ("..." if len(markdown_content) > 500 else ""))
@@ -329,10 +531,9 @@ def format_enhanced_page_context(bboxes: List[BBox], markdown_content: str = "",
                 sections.append(f"   • {label}: {count} elements")
         sections.append("")
     
-    # Add enhanced bbox context
-    sections.append("🎯 INTERACTIVE ELEMENTS:")
-    bbox_context = format_bbox_context(bboxes, include_hierarchy=True, include_viewport_context=True)
-    sections.append(bbox_context)
+    # Use new unified context by default, but maintain the enhanced structure
+    unified_context = format_unified_context(bboxes, detail_level="full_hierarchy", include_viewport_context=True)
+    sections.append(unified_context)
     
     return "\n".join(sections)
 

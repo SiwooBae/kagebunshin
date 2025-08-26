@@ -52,6 +52,27 @@ class BBox(BaseModel):
     globalIndex: int = Field(description="Global index across all processed elements")
     boundingBox: BoundingBox = Field(description="Detailed bounding box information")
     
+    # Unified representation fields
+    isInteractive: bool = Field(default=True, description="Whether element is interactive (clickable, typeable, etc.)")
+    elementRole: str = Field(default="interactive", description="Element role: 'interactive', 'content', 'structural', 'navigation'")
+    
+    # Content-specific fields (for non-interactive elements)
+    contentType: Optional[str] = Field(default=None, description="Content type: 'heading', 'paragraph', 'list', 'image', etc.")
+    headingLevel: Optional[int] = Field(default=None, description="For headings: 1-6")
+    wordCount: Optional[int] = Field(default=None, description="Word count for text content")
+    truncated: Optional[bool] = Field(default=False, description="Whether text was truncated")
+    fullTextAvailable: Optional[bool] = Field(default=False, description="Whether full text can be extracted")
+    
+    # Semantic relationships
+    parentId: Optional[int] = Field(default=None, description="Global index of parent element")
+    childIds: List[int] = Field(default_factory=list, description="Global indices of direct children")
+    labelFor: Optional[int] = Field(default=None, description="For labels: ID of associated input")
+    describedBy: Optional[int] = Field(default=None, description="ID of element that describes this one")
+    
+    # Layout context
+    isContainer: bool = Field(default=False, description="Whether this is a container element (section, div, etc.)")
+    semanticSection: Optional[str] = Field(default=None, description="Semantic section: 'header', 'main', 'nav', 'footer', 'aside'")
+    
     @field_validator('isCaptcha', mode='before')
     @classmethod
     def parse_is_captcha(cls, v):
@@ -113,11 +134,3 @@ class Annotation(BaseModel):
         description="Statistics about iframe processing"
     )
     totalElements: int = Field(default=0, description="Total number of interactive elements found")
-
-
-# class ResponseFormat(BaseModel):
-#     """Response format for KageBunshinV2"""
-#     thinking: str = Field(description="Your detailed, step-by-step reasoning goes here. First, evaluate your last action's result from the agent history. Second, analyze the current browser state and screenshot. Finally, formulate a clear goal for this turn.")
-#     evaluation_previous_goal: str = Field(description="One-sentence analysis of your last action. Clearly state success, failure, or uncertain.")
-#     memory: str = Field(description="1-3 sentences of specific memory of this step and overall progress. You should put here everything that will help you track progress in future steps. Like counting pages visited, items found, etc.")
-#     next_goal: str = Field(description="State the next immediate goals and actions to achieve it, in one clear sentence.")

@@ -448,13 +448,44 @@ function getInteractiveElements(contextDocument, documentOffset = { x: 0, y: 0 }
         const viewForStyle = (element.ownerDocument && element.ownerDocument.defaultView) || window;
         const style = viewForStyle.getComputedStyle(element);
         
-        // Early filtering - skip elements that shouldn't be processed
-        const filterResult = shouldSkipElement(element, style);
-        if (filterResult.skip) {
+        // Basic visibility filtering - but we now include content elements too
+        const basicFilterResult = shouldSkipElement(element, style);
+        const isInteractive = !basicFilterResult.skip;
+        
+        // For non-interactive elements, check if they're content we should include
+        let includeAsContent = false;
+        if (basicFilterResult.skip) {
+          // Check if this is a content element we should include
+          const tagName = element.tagName ? element.tagName.toLowerCase() : "";
+          const textContent = element.textContent ? element.textContent.trim() : "";
+          const hasSignificantText = textContent.length > 5; // At least 6 characters
+          
+          // Include content elements: headings, paragraphs, text containers
+          includeAsContent = (
+            (tagName.match(/^h[1-6]$/) && hasSignificantText) || // Headings
+            (tagName === 'p' && hasSignificantText) || // Paragraphs
+            (tagName === 'span' && hasSignificantText && textContent.length > 20) || // Significant spans
+            (tagName === 'div' && hasSignificantText && textContent.length > 30) || // Significant divs
+            (tagName === 'li' && hasSignificantText) || // List items
+            (tagName === 'td' && hasSignificantText) || // Table cells
+            (tagName === 'th' && hasSignificantText) || // Table headers
+            (tagName === 'section') || // Semantic sections
+            (tagName === 'article') || // Articles
+            (tagName === 'nav') || // Navigation
+            (tagName === 'header') || // Headers
+            (tagName === 'footer') || // Footers
+            (tagName === 'aside') || // Asides
+            (tagName === 'main') || // Main content
+            (tagName === 'img' && element.alt) // Images with alt text
+          );
+        }
+        
+        // Skip if neither interactive nor content
+        if (!isInteractive && !includeAsContent) {
           return {
             element: element,
             include: false,
-            skipReason: filterResult.reason,
+            skipReason: basicFilterResult.reason || 'not-content',
             area: 0,
             rects: [],
             text: "",
@@ -465,7 +496,21 @@ function getInteractiveElements(contextDocument, documentOffset = { x: 0, y: 0 }
             elementId: "",
             hierarchy: {},
             frameContext: frameContext,
-            globalIndex: globalElementIndex++
+            globalIndex: globalElementIndex++,
+            // New unified fields
+            isInteractive: false,
+            elementRole: 'skipped',
+            contentType: null,
+            headingLevel: null,
+            wordCount: 0,
+            truncated: false,
+            fullTextAvailable: false,
+            parentId: null,
+            childIds: [],
+            labelFor: null,
+            describedBy: null,
+            isContainer: false,
+            semanticSection: null
           };
         }
 
@@ -477,6 +522,59 @@ function getInteractiveElements(contextDocument, documentOffset = { x: 0, y: 0 }
 
         // Get hierarchical information
         var hierarchicalInfo = getHierarchicalInfo(element);
+        
+        // Determine element classification
+        const elementRole = isInteractive ? 'interactive' : 
+                           elementType.match(/^h[1-6]$|p|span|div|li|td|th/) ? 'content' :
+                           elementType.match(/^section|article|nav|header|footer|aside|main$/) ? 'structural' :
+                           elementType.match(/^nav|menu/) ? 'navigation' : 'content';
+        
+        // Determine content type for non-interactive elements
+        let contentType = null;
+        let headingLevel = null;
+        if (!isInteractive) {
+          if (elementType.match(/^h[1-6]$/)) {
+            contentType = 'heading';
+            headingLevel = parseInt(elementType.replace('h', ''));
+          } else if (elementType === 'p') {
+            contentType = 'paragraph';
+          } else if (elementType === 'img') {
+            contentType = 'image';
+          } else if (elementType.match(/^ul|ol|li$/)) {
+            contentType = 'list';
+          } else if (elementType.match(/^table|tr|td|th$/)) {
+            contentType = 'table';
+          } else if (elementType.match(/^div|span$/)) {
+            contentType = 'container';
+          }
+        }
+        
+        // Calculate word count and truncation
+        const words = textualContent.split(/\s+/).filter(w => w.length > 0);
+        const wordCount = words.length;
+        const maxWords = isInteractive ? 50 : 100; // More words for content elements
+        const truncated = wordCount > maxWords;
+        const displayText = truncated ? words.slice(0, maxWords).join(' ') + '...' : textualContent;
+        
+        // Determine semantic section
+        let semanticSection = null;
+        let currentEl = element;
+        while (currentEl && currentEl !== document.body) {
+          const tag = currentEl.tagName ? currentEl.tagName.toLowerCase() : '';
+          if (tag.match(/^header|main|nav|footer|aside$/)) {
+            semanticSection = tag;
+            break;
+          }
+          currentEl = currentEl.parentElement;
+        }
+        
+        // Determine if this is a container element
+        const isContainer = Boolean(elementType.match(/^div|section|article|nav|header|footer|aside|main|ul|ol$/)) ||
+                           (element.children && element.children.length > 0);
+        
+        // Build parent-child relationships (will be processed later)
+        const parentId = null; // Will be set in post-processing
+        const childIds = []; // Will be populated in post-processing
 
         var rects = [...element.getClientRects()]
             .map((bb) => {
@@ -570,14 +668,18 @@ function getInteractiveElements(contextDocument, documentOffset = { x: 0, y: 0 }
                                    (ariaLabel && ariaLabel.trim().length > 0) ||
                                    elementType === 'button' || elementType === 'a';
 
-      const shouldInclude = isClickable && (isLargeEnough || isIconSized || hasSpecialSignificance || includeOutOfViewport);
+      // For interactive elements, use original logic
+      // For content elements, include if they have significant content or are structural
+      const shouldInclude = isInteractive ? 
+        (isClickable && (isLargeEnough || isIconSized || hasSpecialSignificance || includeOutOfViewport)) :
+        includeAsContent; // Content elements already filtered above
 
       return {
         element: element,
         include: shouldInclude,
         area,
         rects,
-        text: textualContent,
+        text: displayText, // Use truncated text
         type: elementType,
         ariaLabel: ariaLabel,
         isCaptcha: isCaptchaElement,
@@ -585,7 +687,21 @@ function getInteractiveElements(contextDocument, documentOffset = { x: 0, y: 0 }
         elementId: id,
         hierarchy: hierarchicalInfo,
         frameContext: frameContext,
-        globalIndex: globalElementIndex++
+        globalIndex: globalElementIndex++,
+        // New unified representation fields
+        isInteractive: isInteractive,
+        elementRole: elementRole,
+        contentType: contentType,
+        headingLevel: headingLevel,
+        wordCount: wordCount,
+        truncated: truncated,
+        fullTextAvailable: wordCount > maxWords,
+        parentId: parentId,
+        childIds: childIds,
+        labelFor: element.getAttribute('for') ? null : null, // Will need to resolve to globalIndex later
+        describedBy: element.getAttribute('aria-describedby') ? null : null, // Will need to resolve later
+        isContainer: isContainer,
+        semanticSection: semanticSection
       };
       
       } catch (elementError) {
@@ -603,7 +719,21 @@ function getInteractiveElements(contextDocument, documentOffset = { x: 0, y: 0 }
           elementId: "",
           hierarchy: {},
           frameContext: frameContext,
-          globalIndex: globalElementIndex++
+          globalIndex: globalElementIndex++,
+          // New unified representation fields
+          isInteractive: false,
+          elementRole: 'error',
+          contentType: null,
+          headingLevel: null,
+          wordCount: 0,
+          truncated: false,
+          fullTextAvailable: false,
+          parentId: null,
+          childIds: [],
+          labelFor: null,
+          describedBy: null,
+          isContainer: false,
+          semanticSection: null
         };
       }
     })
@@ -912,7 +1042,21 @@ function markPage(options = {}) {
                 viewportPosition: viewportPosition || 'in-viewport',
                 distanceFromViewport: distanceFromViewport || 0,
                 globalIndex: item.globalIndex,
-                boundingBox: { left, top, width, height }
+                boundingBox: { left, top, width, height },
+                // New unified representation fields
+                isInteractive: item.isInteractive,
+                elementRole: item.elementRole,
+                contentType: item.contentType,
+                headingLevel: item.headingLevel,
+                wordCount: item.wordCount,
+                truncated: item.truncated,
+                fullTextAvailable: item.fullTextAvailable,
+                parentId: item.parentId,
+                childIds: item.childIds,
+                labelFor: item.labelFor,
+                describedBy: item.describedBy,
+                isContainer: item.isContainer,
+                semanticSection: item.semanticSection
             });
         }
     });

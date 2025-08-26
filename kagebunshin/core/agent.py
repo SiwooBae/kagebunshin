@@ -29,7 +29,7 @@ from ..config.settings import (
     ENABLE_SUMMARIZATION,
     RECURSION_LIMIT,
 )
-from ..utils import format_img_context, format_bbox_context, format_text_context, format_tab_context, generate_agent_name, normalize_chat_content
+from ..utils import format_img_context, format_bbox_context, format_text_context, format_tab_context, format_unified_context, generate_agent_name, normalize_chat_content
 from ..communication.group_chat import GroupChatClient
 
 logger = logging.getLogger(__name__)
@@ -467,13 +467,13 @@ class KageBunshinAgent:
         current_url = await self.get_current_url()
         context_parts.append(f"Current URL: {current_url}")
 
-        # Bounding boxes information
+        # Unified page context (combines interactive elements and content structure)
         if page_data.bboxes:
-            bbox_context = format_bbox_context(page_data.bboxes)
-            context_parts.append(bbox_context)
+            unified_context = format_unified_context(page_data.bboxes, detail_level="full_hierarchy")
+            context_parts.append(unified_context)
         
-        # Page content
-        if page_data.markdown:
+        # Additional page content if available (fallback for cases without bboxes)
+        elif page_data.markdown:
             text_context = format_text_context(page_data.markdown)
             context_parts.append(text_context)
         

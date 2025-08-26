@@ -458,6 +458,11 @@ class KageBunshinStateManager:
                 logger.info("Attempting native click...")
                 await self._click_native(bbox_id)
                 await self._wait_for_load_state()
+                
+                # Additional delay for dynamic content when performance optimization is enabled
+                if self.performance_enabled:
+                    await asyncio.sleep(0.5)  # Allow DOM changes to settle
+                    
                 after_state = await self._capture_page_state()
 
                 if before_state != after_state:

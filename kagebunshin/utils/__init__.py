@@ -11,6 +11,7 @@ from .formatting import (
     format_tab_context,
     format_img_context,
     format_enhanced_page_context,
+    format_unified_context,
     annotate_page,
     normalize_chat_content,
 )
@@ -26,6 +27,7 @@ __all__ = [
     "format_tab_context",
     "format_img_context",
     "format_enhanced_page_context",
+    "format_unified_context",
     "annotate_page",
     "normalize_chat_content",
     "generate_agent_name",
