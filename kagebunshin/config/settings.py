@@ -11,7 +11,7 @@ dotenv.load_dotenv()
 LLM_MODEL = "gpt-5-mini"
 LLM_PROVIDER = "openai"
 LLM_REASONING_EFFORT = "low" # "minimal", "low", "medium", "high"
-LLM_VERBOSITY = "low" # "low", "medium", "high"
+LLM_VERBOSITY = "high" # "low", "medium", "high"
 
 SUMMARIZER_MODEL = "gpt-5-nano"
 SUMMARIZER_PROVIDER = "openai"
@@ -19,7 +19,7 @@ SUMMARIZER_REASONING_EFFORT = "minimal" # "minimal", "low", "medium", "high"
 
 LLM_TEMPERATURE = 1
 # Enable/disable summarizer node (default off)
-ENABLE_SUMMARIZATION = os.environ.get("KAGE_ENABLE_SUMMARIZATION", "0") == "0"
+ENABLE_SUMMARIZATION = os.environ.get("KAGE_ENABLE_SUMMARIZATION", "0") == "1"
 
 # Browser Configuration
 # Set to your Chrome executable path to use a specific installation.
@@ -289,6 +289,112 @@ GROUPCHAT_ROOM = os.environ.get("KAGE_GROUPCHAT_ROOM", "lobby")
 GROUPCHAT_MAX_MESSAGES = int(os.environ.get("KAGE_GROUPCHAT_MAX_MESSAGES", "200"))
 
 # ============================
-# Concurrency / Limits
+# Performance Optimization Settings
 # ============================
-MAX_KAGEBUNSHIN_INSTANCES = int(os.environ.get("KAGE_MAX_KAGEBUNSHIN_INSTANCES", "50"))
+
+# Speed mode: "stealth" (maximum reliability), "balanced" (default), "fast" (maximum speed)
+PERFORMANCE_MODE = os.environ.get("KAGE_PERFORMANCE_MODE", "balanced")
+
+# Performance mode configurations
+PERFORMANCE_PROFILES = {
+    "stealth": {
+        "description": "Maximum reliability, minimal speed optimization",
+        "enable_intelligent_fallback": False,
+        "enable_element_caching": False, 
+        "enable_parallel_verification": False,
+        "confidence_threshold": 0.9,
+        "force_human_behavior": True,
+        "delay_profile": "human",
+        "learning_enabled": False
+    },
+    "balanced": {
+        "description": "Balance between speed and reliability",
+        "enable_intelligent_fallback": True,
+        "enable_element_caching": True,
+        "enable_parallel_verification": True, 
+        "confidence_threshold": 0.7,
+        "force_human_behavior": False,
+        "delay_profile": "adaptive",
+        "learning_enabled": True
+    },
+    "fast": {
+        "description": "Maximum speed with acceptable reliability",
+        "enable_intelligent_fallback": True,
+        "enable_element_caching": True,
+        "enable_parallel_verification": True,
+        "confidence_threshold": 0.4,
+        "force_human_behavior": False, 
+        "delay_profile": "minimal",
+        "learning_enabled": True
+    }
+}
+
+# Delay profiles for different performance modes
+DELAY_PROFILES = {
+    "minimal": {
+        "action_delay_range": (0.05, 0.1),
+        "click_delay_range": (0.02, 0.05), 
+        "type_delay_range": (0.01, 0.03),
+        "scroll_delay_range": (0.1, 0.2),
+        "navigate_delay_range": (0.5, 1.0),
+        "use_human_typing": False,
+        "use_human_scrolling": False
+    },
+    "fast": {
+        "action_delay_range": (0.1, 0.3),
+        "click_delay_range": (0.05, 0.1),
+        "type_delay_range": (0.02, 0.08), 
+        "scroll_delay_range": (0.2, 0.5),
+        "navigate_delay_range": (0.8, 1.5),
+        "use_human_typing": False,
+        "use_human_scrolling": True
+    },
+    "normal": {
+        "action_delay_range": (0.3, 1.0),
+        "click_delay_range": (0.1, 0.3),
+        "type_delay_range": (0.05, 0.15),
+        "scroll_delay_range": (0.3, 1.0), 
+        "navigate_delay_range": (1.0, 3.0),
+        "use_human_typing": True,
+        "use_human_scrolling": True
+    },
+    "human": {
+        "action_delay_range": (0.5, 2.0),
+        "click_delay_range": (0.1, 0.4),
+        "type_delay_range": (0.05, 0.2),
+        "scroll_delay_range": (0.5, 2.0),
+        "navigate_delay_range": (2.0, 5.0),
+        "use_human_typing": True,
+        "use_human_scrolling": True
+    },
+    "adaptive": {
+        # Dynamic profile - delays are determined by performance optimizer
+        "base_action_delay_range": (0.1, 0.8),
+        "base_click_delay_range": (0.05, 0.2),
+        "base_type_delay_range": (0.02, 0.1),
+        "base_scroll_delay_range": (0.2, 1.0),
+        "base_navigate_delay_range": (1.0, 3.0),
+        "use_human_typing": True,  # Can be overridden by optimizer
+        "use_human_scrolling": True  # Can be overridden by optimizer
+    }
+}
+
+# Site-specific overrides (domain -> performance settings)
+SITE_PERFORMANCE_OVERRIDES = {
+    # Example overrides for known problematic sites
+    "recaptcha.net": {"force_mode": "stealth"},
+    "cloudflare.com": {"force_mode": "stealth"},
+    "amazon.com": {"preferred_mode": "balanced"},
+    "google.com": {"preferred_mode": "fast"},
+    # Add more as needed
+}
+
+# Performance optimization flags
+ENABLE_PERFORMANCE_LEARNING = os.environ.get("KAGE_ENABLE_PERFORMANCE_LEARNING", "1") == "1"
+PERFORMANCE_CACHE_TTL = int(os.environ.get("KAGE_PERFORMANCE_CACHE_TTL", "300"))  # 5 minutes
+MAX_PERFORMANCE_HISTORY = int(os.environ.get("KAGE_MAX_PERFORMANCE_HISTORY", "1000"))
+
+# ============================
+# Concurrency / Limits  
+# ============================
+MAX_KAGEBUNSHIN_INSTANCES = int(os.environ.get("KAGE_MAX_KAGEBUNSHIN_INSTANCES", "20"))

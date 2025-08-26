@@ -25,7 +25,14 @@ from ..automation.behavior import (
     human_scroll,
 )
 from ..automation.fingerprinting import apply_fingerprint_profile
-from ..config.settings import SUMMARIZER_MODEL, SUMMARIZER_PROVIDER
+from ..automation.performance_optimizer import PerformanceOptimizer
+from ..config.settings import (
+    SUMMARIZER_MODEL, 
+    SUMMARIZER_PROVIDER, 
+    PERFORMANCE_MODE, 
+    PERFORMANCE_PROFILES,
+    ENABLE_PERFORMANCE_LEARNING
+)
 logger = logging.getLogger(__name__)
 
 
@@ -50,6 +57,12 @@ class KageBunshinStateManager:
         self._action_count: int = 0
         self.prev_snapshot: Optional[Annotation] = None
         self.current_page_index: int = 0
+        
+        # Performance optimization
+        self.performance_optimizer = PerformanceOptimizer(speed_mode=PERFORMANCE_MODE)
+        self.performance_enabled = ENABLE_PERFORMANCE_LEARNING
+        self.performance_profile = PERFORMANCE_PROFILES.get(PERFORMANCE_MODE, PERFORMANCE_PROFILES["balanced"])
+        
         # Lightweight summarizer LLM for cheap text summaries
         try:
             self.summarizer_llm = init_chat_model(
@@ -120,6 +133,25 @@ class KageBunshinStateManager:
     def increment_action_count(self) -> None:
         """Increment the action count."""
         self._action_count += 1
+        
+    def get_current_url(self) -> str:
+        """Get the current page URL."""
+        try:
+            page = self.get_current_page()
+            return page.url
+        except Exception:
+            return "about:blank"
+            
+    def get_delay_profile(self) -> str:
+        """Get the appropriate delay profile for current context."""
+        if not self.performance_enabled:
+            return "normal"
+            
+        try:
+            url = self.get_current_url()
+            return self.performance_optimizer.get_optimal_delay_profile(url, "general")
+        except Exception:
+            return self.performance_profile.get("delay_profile", "normal")
 
     # ===========================================
     # PROPERTY GETTERS FOR DERIVED STATE
@@ -192,19 +224,48 @@ class KageBunshinStateManager:
         return None
 
     def _get_selector(self, bbox_id: int) -> str:
-        """Get CSS selector for a bbox ID."""
+        """Get CSS selector for a bbox ID with caching support."""
         bbox = self._get_bbox_by_id(bbox_id)
         if not bbox:
             raise ValueError(f"Invalid bbox_id: {bbox_id}. Valid range: 0-{len(self.current_bboxes)-1}")
         if bbox.isCaptcha:
             raise ValueError(f"Action failed: Element {bbox_id} is identified as a CAPTCHA.")
+        
+        # Try to get cached selector first
+        if self.performance_enabled:
+            cached_info = self.performance_optimizer.get_cached_element_info(f"bbox_{bbox_id}")
+            if cached_info and "selector" in cached_info:
+                return cached_info["selector"]
+        
+        # Get selector from bbox
         try:
             selector = getattr(bbox, "selector", None)
             if selector:
+                # Cache the selector
+                if self.performance_enabled:
+                    self.performance_optimizer.cache_element_info(f"bbox_{bbox_id}", {
+                        "selector": selector,
+                        "element_type": bbox.type,
+                        "aria_label": bbox.ariaLabel,
+                        "text": bbox.text
+                    })
                 return selector
         except Exception:
             pass
-        return f'[data-ai-label="{bbox_id}"]'
+            
+        # Fallback selector
+        fallback_selector = f'[data-ai-label="{bbox_id}"]'
+        
+        # Cache the fallback selector
+        if self.performance_enabled:
+            self.performance_optimizer.cache_element_info(f"bbox_{bbox_id}", {
+                "selector": fallback_selector,
+                "element_type": bbox.type,
+                "aria_label": bbox.ariaLabel,
+                "text": bbox.text
+            })
+            
+        return fallback_selector
 
 
     def _update_current_page_in_state(self, new_page: Page) -> None:
@@ -242,19 +303,35 @@ class KageBunshinStateManager:
     # HYBRID ACTION EXECUTION
     # ===========================================
 
-    async def _capture_page_state(self) -> Tuple[str, str, int]:
+    async def _capture_page_state(self, lightweight: bool = False) -> Tuple[str, str, int]:
         """Captures the current page state (URL, DOM hash, and tab count) for verification."""
         page = self.get_current_page()
         context = self.get_context()
         num_tabs = len(context.pages)
         url = page.url
-        try:
-            content = await page.content()
-            dom_hash = hashlib.sha256(content.encode()).hexdigest()
-        except Exception:
-            # Fallback if page content is not available
-            dom_hash = hashlib.sha256(str(time.time()).encode()).hexdigest()
+        
+        # For performance optimization, use lightweight verification when enabled
+        if lightweight and self.performance_enabled:
+            # Use a simpler hash based on URL and tab count
+            simple_state = f"{url}_{num_tabs}_{time.time()}"
+            dom_hash = hashlib.sha256(simple_state.encode()).hexdigest()[:16]  # Shortened hash
+        else:
+            try:
+                content = await page.content()
+                dom_hash = hashlib.sha256(content.encode()).hexdigest()
+            except Exception:
+                # Fallback if page content is not available
+                dom_hash = hashlib.sha256(str(time.time()).encode()).hexdigest()
+        
         return url, dom_hash, num_tabs
+        
+    async def _verify_page_changed_async(self, before_state: Tuple[str, str, int], lightweight: bool = False) -> bool:
+        """Asynchronously verify if page state changed."""
+        try:
+            after_state = await self._capture_page_state(lightweight=lightweight)
+            return before_state != after_state
+        except Exception:
+            return False  # Assume no change if verification fails
 
     # --- Native Actions (Fast, Playwright-based) ---
 
@@ -291,9 +368,10 @@ class KageBunshinStateManager:
         start_x, start_y = current_pos.get("x", 0), current_pos.get("y", 0)
         x, y = get_random_offset_in_bbox(bbox)
         
-        await smart_delay_between_actions("click")
-        await human_mouse_move(page, start_x, start_y, x, y)
-        await human_delay(50, 200)
+        delay_profile = self.get_delay_profile()
+        await smart_delay_between_actions("click", profile=delay_profile)
+        await human_mouse_move(page, start_x, start_y, x, y, profile=delay_profile)
+        await human_delay(50, 200, profile=delay_profile)
         await page.mouse.click(x, y)
 
     async def _type_text_human_like(self, bbox_id: int, text_content: str, press_enter: bool = False) -> None:
@@ -305,22 +383,23 @@ class KageBunshinStateManager:
         page = self.get_current_page()
         x, y = get_random_offset_in_bbox(bbox)
         
-        await smart_delay_between_actions("type")
+        delay_profile = self.get_delay_profile()
+        await smart_delay_between_actions("type", profile=delay_profile)
         current_pos = await page.evaluate("() => ({ x: window.mouseX || 0, y: window.mouseY || 0 })")
         start_x, start_y = current_pos.get("x", 0), current_pos.get("y", 0)
         
-        await human_mouse_move(page, start_x, start_y, x, y)
+        await human_mouse_move(page, start_x, start_y, x, y, profile=delay_profile)
         await page.mouse.click(x, y)
-        await human_delay(100, 300)
+        await human_delay(100, 300, profile=delay_profile)
         
         select_all = "Meta+A" if platform.system() == "Darwin" else "Control+A"
         await page.keyboard.press(select_all)
-        await human_delay(50, 150)
+        await human_delay(50, 150, profile=delay_profile)
         await page.keyboard.press("Backspace")
-        await human_delay(100, 200)
+        await human_delay(100, 200, profile=delay_profile)
         
-        await human_type_text(page, text_content)
-        await human_delay(200, 600)
+        await human_type_text(page, text_content, profile=delay_profile)
+        await human_delay(200, 600, profile=delay_profile)
         if press_enter:
             await page.keyboard.press("Enter")
 
@@ -333,17 +412,18 @@ class KageBunshinStateManager:
         selector = self._get_selector(bbox_id)
         page = self.get_current_page()
         
-        await smart_delay_between_actions("click")
+        delay_profile = self.get_delay_profile()
+        await smart_delay_between_actions("click", profile=delay_profile)
         
         x, y = get_random_offset_in_bbox(bbox)
         current_pos = await page.evaluate("() => ({ x: window.mouseX || 0, y: window.mouseY || 0 })")
         start_x, start_y = current_pos.get("x", 0), current_pos.get("y", 0)
         
-        await human_mouse_move(page, start_x, start_y, x, y)
-        await human_delay(100, 300)
+        await human_mouse_move(page, start_x, start_y, x, y, profile=delay_profile)
+        await human_delay(100, 300, profile=delay_profile)
         
         await page.select_option(selector, values)
-        await human_delay(200, 500)
+        await human_delay(200, 500, profile=delay_profile)
 
     # ===========================================
     # BROWSER INTERACTION TOOL METHODS
@@ -351,33 +431,59 @@ class KageBunshinStateManager:
 
     async def click(self, bbox_id: int) -> str:
         """
-        Clicks on an element. Tries a fast native click first, then falls back
-        to a human-like click if the native click fails or has no effect.
+        Clicks on an element. Uses intelligent fallback strategy based on performance optimization.
+        May skip native attempt and go straight to human-like if the optimizer suggests it.
         Also detects and switches to new tabs if they are opened by the click.
         """
+        start_time = time.time()
         logger.info(f"Attempting to click element with bbox_id: {bbox_id}")
+        
+        url = self.get_current_url()
+        selector = self._get_selector(bbox_id)
         before_pages = self.get_context().pages
         before_state = await self._capture_page_state()
+        
+        native_success = False
+        fallback_needed = False
+        
+        # Check if we should skip native attempt
+        should_skip_native = (
+            self.performance_enabled and 
+            self.performance_optimizer.should_skip_native_attempt(url, selector, "click")
+        )
+        
+        if not should_skip_native:
+            try:
+                # Attempt 1: Native Playwright click (fast)
+                logger.info("Attempting native click...")
+                await self._click_native(bbox_id)
+                await self._wait_for_load_state()
+                after_state = await self._capture_page_state()
 
-        try:
-            # Attempt 1: Native Playwright click (fast)
-            logger.info("Attempting native click...")
-            await self._click_native(bbox_id)
-            await self._wait_for_load_state()
-            after_state = await self._capture_page_state()
+                if before_state != after_state:
+                    native_success = True
+                    self.increment_action_count()
+                    await self._check_for_new_tabs(before_pages)
+                    logger.info(f"Native click on bbox_id {bbox_id} successful and caused a page change.")
+                    
+                    # Record successful interaction
+                    if self.performance_enabled:
+                        response_time = time.time() - start_time
+                        self.performance_optimizer.record_interaction(
+                            url, selector, "click", True, False, response_time
+                        )
+                    
+                    return f"Successfully clicked element {bbox_id}."
+                
+                logger.warning(f"Native click on bbox_id {bbox_id} had no effect. Falling back.")
 
-            if before_state != after_state:
-                self.increment_action_count()
-                await self._check_for_new_tabs(before_pages)
-                logger.info(f"Native click on bbox_id {bbox_id} successful and caused a page change.")
-                return f"Successfully clicked element {bbox_id}."
-            
-            logger.warning(f"Native click on bbox_id {bbox_id} had no effect. Falling back.")
-
-        except Exception as e:
-            logger.warning(f"Native click failed for bbox_id {bbox_id}: {e}. Falling back.")
+            except Exception as e:
+                logger.warning(f"Native click failed for bbox_id {bbox_id}: {e}. Falling back.")
+        else:
+            logger.info(f"Skipping native click for {bbox_id} based on performance optimizer recommendation.")
 
         # Attempt 2: Human-like fallback
+        fallback_needed = True
         try:
             logger.info("Attempting human-like click...")
             await self._click_human_like(bbox_id)
@@ -388,45 +494,94 @@ class KageBunshinStateManager:
                 self.increment_action_count()
                 await self._check_for_new_tabs(before_pages)
                 logger.info(f"Human-like fallback click on bbox_id {bbox_id} successful.")
+                
+                # Record interaction outcome
+                if self.performance_enabled:
+                    response_time = time.time() - start_time
+                    self.performance_optimizer.record_interaction(
+                        url, selector, "click", native_success, fallback_needed, response_time
+                    )
+                
                 return f"Successfully clicked element {bbox_id} using fallback."
             else:
                 logger.error(f"All click attempts on bbox_id {bbox_id} failed to change the page state.")
+                
+                # Record failed interaction
+                if self.performance_enabled:
+                    response_time = time.time() - start_time
+                    self.performance_optimizer.record_interaction(
+                        url, selector, "click", False, True, response_time
+                    )
+                
                 return f"Error: Clicking element {bbox_id} had no effect on the page."
 
         except Exception as e:
             logger.error(f"Human-like fallback click also failed for bbox_id {bbox_id}: {e}")
+            
+            # Record failed interaction
+            if self.performance_enabled:
+                response_time = time.time() - start_time
+                self.performance_optimizer.record_interaction(
+                    url, selector, "click", False, True, response_time
+                )
+            
             return f"Error: All click attempts failed for element {bbox_id}. Last error: {e}"
 
     async def type_text(self, bbox_id: int, text_content: str, press_enter: bool = False) -> str:
         """
-        Types text into an element. Tries a fast native type first, then falls back
-        to a human-like method if the native type fails or has no effect.
+        Types text into an element. Uses intelligent fallback strategy based on performance optimization.
+        May skip native attempt and go straight to human-like if the optimizer suggests it.
         Also detects and switches to new tabs if they are opened by the action.
         """
+        start_time = time.time()
         logger.info(f"Attempting to type '{text_content}' into element with bbox_id: {bbox_id}")
+        
+        url = self.get_current_url()
+        selector = self._get_selector(bbox_id)
         before_pages = self.get_context().pages
         before_state = await self._capture_page_state()
+        
+        native_success = False
+        fallback_needed = False
+        
+        # Check if we should skip native attempt
+        should_skip_native = (
+            self.performance_enabled and 
+            self.performance_optimizer.should_skip_native_attempt(url, selector, "type")
+        )
 
-        # Always use human-like type for stability
-        try:
-            # Attempt 1: Native Playwright type (fast)
-            logger.info("Attempting native type...")
-            await self._type_text_native(bbox_id, text_content, press_enter)
-            await self._wait_for_load_state()
-            after_state = await self._capture_page_state()
+        if not should_skip_native:
+            try:
+                # Attempt 1: Native Playwright type (fast)
+                logger.info("Attempting native type...")
+                await self._type_text_native(bbox_id, text_content, press_enter)
+                await self._wait_for_load_state()
+                after_state = await self._capture_page_state()
 
-            if before_state != after_state:
-                self.increment_action_count()
-                await self._check_for_new_tabs(before_pages)
-                logger.info(f"Native type on bbox_id {bbox_id} successful.")
-                return f"Successfully typed '{text_content}' into element {bbox_id}."
-            
-            logger.warning(f"Native type on bbox_id {bbox_id} had no effect. Falling back.")
+                if before_state != after_state:
+                    native_success = True
+                    self.increment_action_count()
+                    await self._check_for_new_tabs(before_pages)
+                    logger.info(f"Native type on bbox_id {bbox_id} successful and caused a page change.")
+                    
+                    # Record successful interaction
+                    if self.performance_enabled:
+                        response_time = time.time() - start_time
+                        self.performance_optimizer.record_interaction(
+                            url, selector, "type", True, False, response_time
+                        )
+                    
+                    return f"Successfully typed '{text_content}' into element {bbox_id}."
+                
+                logger.warning(f"Native type on bbox_id {bbox_id} had no effect. Falling back.")
 
-        except Exception as e:
-            logger.warning(f"Native type failed for bbox_id {bbox_id}: {e}. Falling back.")
+            except Exception as e:
+                logger.warning(f"Native type failed for bbox_id {bbox_id}: {e}. Falling back.")
+        else:
+            logger.info(f"Skipping native type for {bbox_id} based on performance optimizer recommendation.")
 
         # Attempt 2: Human-like fallback
+        fallback_needed = True
         try:
             logger.info("Attempting human-like type...")
             await self._type_text_human_like(bbox_id, text_content, press_enter)
@@ -437,44 +592,94 @@ class KageBunshinStateManager:
                 self.increment_action_count()
                 await self._check_for_new_tabs(before_pages)
                 logger.info(f"Human-like fallback type on bbox_id {bbox_id} successful.")
+                
+                # Record interaction outcome
+                if self.performance_enabled:
+                    response_time = time.time() - start_time
+                    self.performance_optimizer.record_interaction(
+                        url, selector, "type", native_success, fallback_needed, response_time
+                    )
+                
                 return f"Successfully typed '{text_content}' into element {bbox_id} using fallback."
             else:
                 logger.error(f"All type attempts on bbox_id {bbox_id} failed to change the page state.")
+                
+                # Record failed interaction
+                if self.performance_enabled:
+                    response_time = time.time() - start_time
+                    self.performance_optimizer.record_interaction(
+                        url, selector, "type", False, True, response_time
+                    )
+                
                 return f"Error: Typing into element {bbox_id} had no effect on the page."
 
         except Exception as e:
             logger.error(f"Human-like fallback type also failed for bbox_id {bbox_id}: {e}")
+            
+            # Record failed interaction
+            if self.performance_enabled:
+                response_time = time.time() - start_time
+                self.performance_optimizer.record_interaction(
+                    url, selector, "type", False, True, response_time
+                )
+            
             return f"Error: All type attempts failed for element {bbox_id}. Last error: {e}"
 
     async def browser_select_option(self, bbox_id: int, values: List[str]) -> str:
         """
-        Selects an option in a dropdown. Tries a fast native select first, then falls back
-        to a human-like method if the native select fails or has no effect.
+        Selects an option in a dropdown. Uses intelligent fallback strategy based on performance optimization.
+        May skip native attempt and go straight to human-like if the optimizer suggests it.
         Also detects and switches to new tabs if they are opened by the action.
         """
+        start_time = time.time()
         logger.info(f"Attempting to select {values} in element with bbox_id: {bbox_id}")
+        
+        url = self.get_current_url()
+        selector = self._get_selector(bbox_id)
         before_pages = self.get_context().pages
         before_state = await self._capture_page_state()
+        
+        native_success = False
+        fallback_needed = False
+        
+        # Check if we should skip native attempt
+        should_skip_native = (
+            self.performance_enabled and 
+            self.performance_optimizer.should_skip_native_attempt(url, selector, "select")
+        )
 
-        try:
-            # Attempt 1: Native Playwright select (fast)
-            logger.info("Attempting native select...")
-            await self._select_option_native(bbox_id, values)
-            await self._wait_for_load_state()
-            after_state = await self._capture_page_state()
+        if not should_skip_native:
+            try:
+                # Attempt 1: Native Playwright select (fast)
+                logger.info("Attempting native select...")
+                await self._select_option_native(bbox_id, values)
+                await self._wait_for_load_state()
+                after_state = await self._capture_page_state()
 
-            if before_state != after_state:
-                self.increment_action_count()
-                await self._check_for_new_tabs(before_pages)
-                logger.info(f"Native select on bbox_id {bbox_id} successful.")
-                return f"Successfully selected {values} in element {bbox_id}."
-            
-            logger.warning(f"Native select on bbox_id {bbox_id} had no effect. Falling back.")
+                if before_state != after_state:
+                    native_success = True
+                    self.increment_action_count()
+                    await self._check_for_new_tabs(before_pages)
+                    logger.info(f"Native select on bbox_id {bbox_id} successful and caused a page change.")
+                    
+                    # Record successful interaction
+                    if self.performance_enabled:
+                        response_time = time.time() - start_time
+                        self.performance_optimizer.record_interaction(
+                            url, selector, "select", True, False, response_time
+                        )
+                    
+                    return f"Successfully selected {values} in element {bbox_id}."
+                
+                logger.warning(f"Native select on bbox_id {bbox_id} had no effect. Falling back.")
 
-        except Exception as e:
-            logger.warning(f"Native select failed for bbox_id {bbox_id}: {e}. Falling back.")
+            except Exception as e:
+                logger.warning(f"Native select failed for bbox_id {bbox_id}: {e}. Falling back.")
+        else:
+            logger.info(f"Skipping native select for {bbox_id} based on performance optimizer recommendation.")
 
         # Attempt 2: Human-like fallback
+        fallback_needed = True
         try:
             logger.info("Attempting human-like select...")
             await self._select_option_human_like(bbox_id, values)
@@ -485,13 +690,37 @@ class KageBunshinStateManager:
                 self.increment_action_count()
                 await self._check_for_new_tabs(before_pages)
                 logger.info(f"Human-like fallback select on bbox_id {bbox_id} successful.")
+                
+                # Record interaction outcome
+                if self.performance_enabled:
+                    response_time = time.time() - start_time
+                    self.performance_optimizer.record_interaction(
+                        url, selector, "select", native_success, fallback_needed, response_time
+                    )
+                
                 return f"Successfully selected {values} in element {bbox_id} using fallback."
             else:
                 logger.error(f"All select attempts on bbox_id {bbox_id} failed to change the page state.")
+                
+                # Record failed interaction
+                if self.performance_enabled:
+                    response_time = time.time() - start_time
+                    self.performance_optimizer.record_interaction(
+                        url, selector, "select", False, True, response_time
+                    )
+                
                 return f"Error: Selecting in element {bbox_id} had no effect on the page."
 
         except Exception as e:
             logger.error(f"Human-like fallback select also failed for bbox_id {bbox_id}: {e}")
+            
+            # Record failed interaction
+            if self.performance_enabled:
+                response_time = time.time() - start_time
+                self.performance_optimizer.record_interaction(
+                    url, selector, "select", False, True, response_time
+                )
+            
             return f"Error: All select attempts failed for element {bbox_id}. Last error: {e}"
 
     async def scroll(self, target: str, direction: str) -> str:
@@ -502,12 +731,13 @@ class KageBunshinStateManager:
                 return "Error: Direction must be 'up' or 'down'"
 
             page = self.get_current_page()
-            await smart_delay_between_actions("scroll")
+            delay_profile = self.get_delay_profile()
+            await smart_delay_between_actions("scroll", profile=delay_profile)
             
             if target.lower() == "page":
                 # Scroll the entire page
                 scroll_amount = 500
-                await human_scroll(page, 0, 0, direction, scroll_amount)
+                await human_scroll(page, 0, 0, direction, scroll_amount, profile=delay_profile)
             else:
                 # Try to parse target as bbox_id
                 try:
@@ -522,7 +752,7 @@ class KageBunshinStateManager:
                         element_box = await element.bounding_box()
                         if element_box:
                             scroll_amount = 200
-                            await human_scroll(page, element_box['x'], element_box['y'], direction, scroll_amount)
+                            await human_scroll(page, element_box['x'], element_box['y'], direction, scroll_amount, profile=delay_profile)
                         else:
                             return f"Error: Could not get bounding box for element {bbox_id}"
                     else:
@@ -682,7 +912,8 @@ class KageBunshinStateManager:
         """Navigate back in browser history."""
         try:
             page = self.get_current_page()
-            await smart_delay_between_actions("navigate")
+            delay_profile = self.get_delay_profile()
+            await smart_delay_between_actions("navigate", profile=delay_profile)
             await page.go_back()
             self.increment_action_count()
             
@@ -702,7 +933,8 @@ class KageBunshinStateManager:
                 url = 'https://' + url
                 
             page = self.get_current_page()
-            await smart_delay_between_actions("navigate")
+            delay_profile = self.get_delay_profile()
+            await smart_delay_between_actions("navigate", profile=delay_profile)
             await page.goto(url)
             self.increment_action_count()
             
@@ -719,7 +951,8 @@ class KageBunshinStateManager:
         """Navigate forward in browser history."""
         try:
             page = self.get_current_page()
-            await smart_delay_between_actions("navigate")
+            delay_profile = self.get_delay_profile()
+            await smart_delay_between_actions("navigate", profile=delay_profile)
             await page.go_forward()
             self.increment_action_count()
             await self._wait_for_load_state()
@@ -914,6 +1147,36 @@ class KageBunshinStateManager:
         """Take a note for future reference."""
         logger.info(f"Agent note: {note}")
         return f"Note recorded."
+        
+    def get_performance_stats(self) -> Dict[str, Any]:
+        """Get performance optimization statistics."""
+        if not self.performance_enabled:
+            return {"performance_optimization": "disabled"}
+            
+        try:
+            stats = self.performance_optimizer.get_performance_stats()
+            stats.update({
+                "current_performance_mode": PERFORMANCE_MODE,
+                "performance_profile": self.performance_profile,
+                "total_actions": self._action_count
+            })
+            return stats
+        except Exception as e:
+            # Return basic stats on error
+            return {
+                "performance_optimization": "error",
+                "error": str(e),
+                "current_performance_mode": PERFORMANCE_MODE,
+                "total_actions": self._action_count
+            }
+        
+    def reset_performance_cache(self) -> str:
+        """Clear performance optimization cache."""
+        if not self.performance_enabled:
+            return "Performance optimization is disabled."
+            
+        self.performance_optimizer.clear_cache()
+        return "Performance cache cleared successfully."
     
     # ===========================================
     # TOOL CREATION FOR LLM BINDING
@@ -2310,6 +2573,46 @@ class KageBunshinStateManager:
             """
             return self.take_note(note)
 
+        @tool
+        def get_performance_stats() -> str:
+            """Get performance optimization statistics and insights.
+            
+            Returns detailed information about the performance optimizer's current state,
+            including site-specific performance profiles, success rates, and optimization
+            statistics. Useful for debugging performance issues and understanding
+            how the system is learning from interactions.
+            
+            Returns:
+                str: JSON-formatted performance statistics including:
+                     - Current performance mode (stealth/balanced/fast)
+                     - Overall native success rates
+                     - Site-specific performance profiles
+                     - Cache statistics
+                     - Total actions performed
+            """
+            stats = self.get_performance_stats()
+            return f"Performance Statistics:\n{stats}"
+
+        @tool
+        def reset_performance_cache() -> str:
+            """Clear all performance optimization cache and learning data.
+            
+            Resets the performance optimizer to its initial state by clearing:
+            - Element selector cache
+            - Site-specific performance profiles
+            - Interaction history and statistics
+            
+            This can be useful when:
+            - Performance optimization seems to be making poor decisions
+            - You want to start fresh with performance learning
+            - Testing different optimization strategies
+            - Site behavior has changed significantly
+            
+            Returns:
+                str: Confirmation message of cache reset operation
+            """
+            return self.reset_performance_cache()
+
         return [
             click,
             type_text,
@@ -2328,5 +2631,7 @@ class KageBunshinStateManager:
             switch_tab,
             open_new_tab,
             close_tab,
-            take_note
+            take_note,
+            get_performance_stats,
+            reset_performance_cache
         ]
