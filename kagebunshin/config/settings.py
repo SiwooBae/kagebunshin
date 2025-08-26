@@ -15,7 +15,7 @@ LLM_VERBOSITY = "low" # "low", "medium", "high"
 
 SUMMARIZER_MODEL = "gpt-5-nano"
 SUMMARIZER_PROVIDER = "openai"
-SUMMARIZER_REASONING_EFFORT = "low" # "minimal", "low", "medium", "high"
+SUMMARIZER_REASONING_EFFORT = "minimal" # "minimal", "low", "medium", "high"
 
 LLM_TEMPERATURE = 1
 # Enable/disable summarizer node (default off)
@@ -50,7 +50,7 @@ TIMEOUT = 60  # 1 minute
 
 # System Prompts
 _current_dir = Path(__file__).parent
-_prompt_path = _current_dir / "prompts" / "kagebunshin_system_prompt_v2.md"
+_prompt_path = _current_dir / "prompts" / "kagebunshin_system_prompt_v3.md"
 
 with open(_prompt_path, "r") as f:
     SYSTEM_TEMPLATE = f.read()
