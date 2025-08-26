@@ -1,0 +1,31 @@
+================================================================================
+KageBunshin Performance Benchmark Results
+================================================================================
+
+Scenario: quick_navigation
+------------------------------------------------------------
+Mode         Success Rate Avg Time   Min Time   Max Time  
+------------------------------------------------------------
+stealth          100.0%     29.49s     26.22s     32.76s
+balanced         100.0%     23.83s     17.52s     30.14s
+fast             100.0%     22.47s     18.14s     26.80s
+
+  balanced vs stealth: +19.2% improvement
+  fast vs stealth: +23.8% improvement
+
+
+================================================================================
+Performance Analysis
+================================================================================
+
+📊 Quick Navigation:
+   • Balanced mode: +19.2% vs stealth (23.83s vs 29.49s) ⚡
+   • Fast mode: +23.8% vs stealth (22.47s vs 29.49s) 🚀
+   • Most reliable: stealth (100% success rate)
+
+🎯 Key Findings:
+   • Balanced mode average improvement: +19.2%
+   • Fast mode average improvement: +23.8%
+   • Stealth mode average success rate: 100.0%
+   • Balanced mode average success rate: 100.0%
+   • Fast mode average success rate: 100.0%

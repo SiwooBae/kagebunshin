@@ -1,0 +1,108 @@
+{
+  "timestamp": "2025-08-26T15:41:08.562129",
+  "config": {
+    "runs_per_scenario": 2,
+    "timeout_per_run": 300,
+    "headless": true,
+    "viewport_width": 1280,
+    "viewport_height": 1280,
+    "performance_modes": [
+      "stealth",
+      "balanced",
+      "fast"
+    ],
+    "scenarios": [
+      {
+        "name": "quick_navigation",
+        "description": "Quick navigation test",
+        "task": "Go to example.com and extract the page content",
+        "target_url": "https://example.com",
+        "expected_operations": [
+          "browser_goto",
+          "extract_page_content"
+        ],
+        "timeout": 60
+      }
+    ]
+  },
+  "results": [
+    {
+      "scenario_name": "quick_navigation",
+      "performance_mode": "stealth",
+      "total_runs": 2,
+      "successful_runs": 2,
+      "success_rate": 1.0,
+      "average_time": 29.49476909637451,
+      "median_time": 29.49476909637451,
+      "min_time": 26.22466802597046,
+      "max_time": 32.764870166778564,
+      "std_deviation": 4.624621284096187,
+      "runs": [
+        {
+          "run_number": 1,
+          "execution_time": 32.764870166778564,
+          "success": true,
+          "error_message": null
+        },
+        {
+          "run_number": 2,
+          "execution_time": 26.22466802597046,
+          "success": true,
+          "error_message": null
+        }
+      ]
+    },
+    {
+      "scenario_name": "quick_navigation",
+      "performance_mode": "balanced",
+      "total_runs": 2,
+      "successful_runs": 2,
+      "success_rate": 1.0,
+      "average_time": 23.829209089279175,
+      "median_time": 23.829209089279175,
+      "min_time": 17.51588010787964,
+      "max_time": 30.14253807067871,
+      "std_deviation": 8.92839546921834,
+      "runs": [
+        {
+          "run_number": 1,
+          "execution_time": 17.51588010787964,
+          "success": true,
+          "error_message": null
+        },
+        {
+          "run_number": 2,
+          "execution_time": 30.14253807067871,
+          "success": true,
+          "error_message": null
+        }
+      ]
+    },
+    {
+      "scenario_name": "quick_navigation",
+      "performance_mode": "fast",
+      "total_runs": 2,
+      "successful_runs": 2,
+      "success_rate": 1.0,
+      "average_time": 22.473817467689514,
+      "median_time": 22.473817467689514,
+      "min_time": 18.143656969070435,
+      "max_time": 26.803977966308594,
+      "std_deviation": 6.1237717043993465,
+      "runs": [
+        {
+          "run_number": 1,
+          "execution_time": 26.803977966308594,
+          "success": true,
+          "error_message": null
+        },
+        {
+          "run_number": 2,
+          "execution_time": 18.143656969070435,
+          "success": true,
+          "error_message": null
+        }
+      ]
+    }
+  ]
+}

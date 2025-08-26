@@ -10,8 +10,8 @@ dotenv.load_dotenv()
 # LLM Configuration
 LLM_MODEL = "gpt-5-mini"
 LLM_PROVIDER = "openai"
-LLM_REASONING_EFFORT = "low" # "minimal", "low", "medium", "high"
-LLM_VERBOSITY = "high" # "low", "medium", "high"
+LLM_REASONING_EFFORT = "minimal" # "minimal", "low", "medium", "high"
+LLM_VERBOSITY = "medium" # "low", "medium", "high"
 
 SUMMARIZER_MODEL = "gpt-5-nano"
 SUMMARIZER_PROVIDER = "openai"
