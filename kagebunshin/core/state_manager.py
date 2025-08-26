@@ -78,6 +78,13 @@ class KageBunshinStateManager:
 
     def set_state(self, state: KageBunshinState) -> None: 
         """Set the current state to operate on."""
+        if not state:
+            raise ValueError("State cannot be None or empty.")
+        
+        context = state.get("context")
+        if context is None:
+            raise ValueError("State must contain a valid browser context. Context cannot be None.")
+            
         self.current_state = state
         self.current_bboxes = []  # Reset derived data
         
@@ -86,7 +93,14 @@ class KageBunshinStateManager:
         if not self.current_state:
             raise ValueError("No state set. Call set_state first.")
         
-        pages = self.current_state["context"].pages
+        context = self.current_state.get("context")
+        if context is None:
+            raise ValueError("Browser context is None. State may be corrupted or browser context was closed.")
+            
+        pages = context.pages
+        if not pages:
+            raise ValueError("No pages available in browser context. Browser may have been closed.")
+            
         current_index = self.current_page_index
         if current_index >= len(pages):
             raise ValueError(f"Invalid page index: {current_index}. Valid range: 0-{len(pages)-1}")
@@ -96,7 +110,12 @@ class KageBunshinStateManager:
         """Get the browser context from state."""
         if not self.current_state:
             raise ValueError("No state set. Call set_state first.")
-        return self.current_state["context"]
+        
+        context = self.current_state.get("context")
+        if context is None:
+            raise ValueError("Browser context is None. State may be corrupted or browser context was closed.")
+            
+        return context
 
     def increment_action_count(self) -> None:
         """Increment the action count."""
@@ -540,46 +559,44 @@ class KageBunshinStateManager:
         Designed to preserve content so LLMs can "read" articles and long text without hallucinating.
         """
         try:
+            # This will now provide specific error messages if context or page is None
             page = self.get_current_page()
+            
+            # Additional validation to ensure page is accessible
+            if not hasattr(page, 'url') or not hasattr(page, 'title') or not hasattr(page, 'content'):
+                raise ValueError("Page object is invalid or corrupted.")
+            
             url = page.url
+            if url is None:
+                url = "about:blank"
+                logger.warning("Page URL is None, using placeholder")
+                
             title = await page.title()
+            if title is None:
+                title = "Untitled"
+                logger.warning("Page title is None, using placeholder")
+                
             html_content = await page.content()
+            if html_content is None:
+                logger.error("Page content is None, cannot extract content")
+                return "Error: Unable to extract page content - page content is None"
             
             # Build a full cleaned Markdown representation of the visible HTML
             cleaned_markdown = html_to_markdown(html_content)
+            if cleaned_markdown is None:
+                logger.warning("html_to_markdown returned None, using empty string")
+                cleaned_markdown = ""
 
-            # summary_text = ""
-            # if self.summarizer_llm is not None:
-            #     try:
-            #         prompt = (
-            #             "You are a faithful HTML-to-Markdown converter. Given the page's cleaned Markdown text, "
-            #             "produce a high-fidelity Markdown of the page content. "
-            #             "Preserve headings, paragraphs, lists, tables, code blocks, and hyperlinks. Do not invent content. "
-            #             "Prefer the provided cleaned Markdown text over the outline when in doubt."
-            #         )
-            #         # Cap lengths to keep within budget for the cheap model
-            #         # max_clean_md = 12000
-            #         # max_outline = 6000
-            #         cleaned_md_snippet = cleaned_markdown
-            #         dom_snippet = dom_outline
-            #         messages = [
-            #             SystemMessage(content=prompt),
-            #             HumanMessage(content=(
-            #                 f"URL: {url}\nTitle: {title}\n\n"
-            #                 f"Cleaned Markdown (truncated):\n{cleaned_md_snippet}\n\n"
-            #                 # f"DOM Outline (truncated):\n{dom_snippet}\n\n"
-            #                 f"Output the final Markdown only."
-            #             )),
-            #         ]
-            #         summary_response = await self.summarizer_llm.ainvoke(messages)
-            #         summary_text = str(getattr(summary_response, "content", "")).strip()
-            #     except Exception as e:
-            #         logger.warning(f"Summarizer failed, returning DOM only: {e}")
             output = f"URL: {url}\nTitle: {title}\n\n{cleaned_markdown}"
             return output
 
+        except ValueError as e:
+            # These are our specific validation errors - log and re-raise with context
+            logger.error(f"State validation error in extract_page_content: {e}")
+            return f"Error extracting page content: {str(e)}"
         except Exception as e:
-            logger.error(f"Error extracting page content: {e}")
+            # Log the full exception for debugging
+            logger.error(f"Error extracting page content: {e}", exc_info=True)
             return f"Error extracting page content: {str(e)}"
 
     def _build_dom_outline(self, html_content: str, max_depth: int = 4, max_nodes: int = 800) -> str:
@@ -1597,6 +1614,14 @@ class KageBunshinStateManager:
             ```
             press_key("Control+F")  # Open find dialog
             press_key("F11")        # Toggle fullscreen
+            ```
+            
+            **Selecting From Autocomplete:**
+            ```
+            type_text(0, "Austin, TX", press_enter=False)
+            press_key("ArrowDown")  # move down the list
+            ...                     # repeat until the desired item is selected
+            press_key("Enter")      # select the item
             ```
             
             Troubleshooting:

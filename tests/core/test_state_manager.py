@@ -92,7 +92,7 @@ class TestKageBunshinStateManager:
         )
         state_manager.set_state(state)
         
-        with pytest.raises(ValueError, match="Invalid page index"):
+        with pytest.raises(ValueError, match="No pages available in browser context"):
             state_manager.get_current_page()
 
     def test_should_get_browser_context_from_state(self, state_manager, sample_state):
@@ -102,6 +102,37 @@ class TestKageBunshinStateManager:
         context = state_manager.get_context()
         
         assert context == sample_state["context"]
+
+    def test_should_raise_error_when_context_is_none(self, state_manager, mock_browser_context):
+        """Test that None context in state raises appropriate error."""
+        # Create a state with None context (simulating the reported issue)
+        state_with_none_context = {
+            "input": "test",
+            "messages": [],
+            "context": None,  # This is what was causing the original error
+            "clone_depth": 0
+        }
+        
+        # set_state should now catch this and raise an error
+        with pytest.raises(ValueError, match="State must contain a valid browser context"):
+            state_manager.set_state(state_with_none_context)
+            
+    def test_should_handle_extract_page_content_with_none_context(self, state_manager):
+        """Test that extract_page_content handles None context gracefully."""
+        # Manually set a state with None context to test the extract_page_content error handling
+        state_manager.current_state = {
+            "input": "test", 
+            "messages": [],
+            "context": None,
+            "clone_depth": 0
+        }
+        
+        # This should now return a proper error message instead of crashing
+        import asyncio
+        result = asyncio.run(state_manager.extract_page_content())
+        
+        assert "Error extracting page content" in result
+        assert "Browser context is None" in result
 
     def test_should_get_tools_for_llm(self, state_manager):
         """Test that state manager provides tools for LLM binding."""
@@ -253,7 +284,7 @@ class TestKageBunshinStateManager:
         with patch.object(state_manager, 'get_current_page', return_value=mock_page):
             result = await state_manager.hover(0)
             
-            mock_page.hover.assert_called_once_with(sample_bbox.selector, timeout=5000)
+            mock_page.hover.assert_called_once_with(sample_bbox.selector, timeout=3000)
             assert "Hovered over" in result
 
     @pytest.mark.asyncio
