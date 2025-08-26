@@ -160,7 +160,9 @@ def format_bbox_context(bboxes: List[BBox], include_hierarchy: bool = True, incl
             text = bbox.text[:100] + ("..." if len(bbox.text) > 100 else "")
         
         el_type = bbox.type
-        captcha_indicator = " [CAPTCHA]" if bbox.isCaptcha else ""
+        # We don't need to show LLM the captcha indicator.
+        # captcha_indicator = " [CAPTCHA]" if bbox.isCaptcha else ""
+        captcha_indicator = ""
         
         # Frame context
         frame_info = ""

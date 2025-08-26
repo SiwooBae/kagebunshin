@@ -228,8 +228,8 @@ class KageBunshinStateManager:
         bbox = self._get_bbox_by_id(bbox_id)
         if not bbox:
             raise ValueError(f"Invalid bbox_id: {bbox_id}. Valid range: 0-{len(self.current_bboxes)-1}")
-        if bbox.isCaptcha:
-            raise ValueError(f"Action failed: Element {bbox_id} is identified as a CAPTCHA.")
+        # if bbox.isCaptcha:
+        #     raise ValueError(f"Action failed: Element {bbox_id} is identified as a CAPTCHA.")
         
         # Try to get cached selector first
         if self.performance_enabled:
@@ -1254,7 +1254,6 @@ class KageBunshinStateManager:
             ## Important Notes
 
             **Element Validation:**
-            - Elements identified as CAPTCHAs are automatically blocked
             - Invalid bbox_id values trigger immediate error with valid range
             - Elements must be currently visible and accessible on the page
             - Some elements may require hovering first to become clickable
@@ -1352,7 +1351,6 @@ class KageBunshinStateManager:
             - Must correspond to a text input element (input, textarea, contenteditable)
             - Valid range is 0 to (number of detected elements - 1)
             - Invalid IDs will raise ValueError with valid range information
-            - CAPTCHA-identified elements are automatically blocked
 
             **text_content** (str, required):
             - The text to input into the element
@@ -1772,7 +1770,6 @@ class KageBunshinStateManager:
             
             Important Notes:
             - Invalid bbox_id values will raise ValueError with valid range
-            - CAPTCHA-identified elements are blocked and will raise ValueError
             - Hover effects vary greatly between websites and elements
             - Some elements may require hover before becoming clickable
             - Mobile-responsive sites may not support hover interactions
@@ -1933,7 +1930,6 @@ class KageBunshinStateManager:
             
             Important Notes:
             - Invalid bbox_id values will raise ValueError with valid range
-            - CAPTCHA-identified elements are blocked and will raise ValueError
             - Both elements must exist and be visible on the page
             - Some drag operations may trigger page updates or animations
             - Not all elements support drag and drop (depends on implementation)
@@ -2191,7 +2187,6 @@ class KageBunshinStateManager:
             - Must correspond to a `<select>` element or dropdown component
             - Valid range is 0 to (number of detected elements - 1)
             - Invalid IDs will raise ValueError with valid range information
-            - CAPTCHA-identified elements are automatically blocked
 
             **values** (List[str], required):
             - List of option values to select (supports single or multiple selections)
