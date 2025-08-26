@@ -348,7 +348,7 @@ def format_tab_context(tabs: List[TabInfo], current_tab_index: int) -> str:
         # tab_descriptions.append(f"      URL: {tab['url']}")
     
     tab_descriptions.append(f"\nCurrently viewing Tab {current_tab_index}")
-    tab_descriptions.append("💡 Use list_tabs() to see detailed tab information or switch_tab(index) to change tabs")
+    tab_descriptions.append("💡 Use switch_tab(index) to change tabs (avoid list_tabs() unless you need full URLs)")
     
     return "\n".join(tab_descriptions)
 

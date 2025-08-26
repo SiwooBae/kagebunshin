@@ -152,19 +152,130 @@ def get_additional_tools(context: BrowserContext, username: Optional[str] = None
 
     @tool
     async def delegate(tasks: List[str], state: Annotated[dict, InjectedState]) -> str:
-        """Spawn shadow-clone sub-agents in parallel to execute multiple focused subtasks.
+        """Spawn shadow-clone sub-agents in parallel to execute multiple focused subtasks, enabling swarm intelligence.
 
-        Args:
-            tasks: List of subtasks to execute. One clone is spawned per task.
-            state: Current conversation state injected by LangGraph.
+        This is Kagebunshin's core delegation mechanism that creates parallel clone agents to divide and conquer
+        complex tasks. Each clone operates independently with its own browser context while inheriting the
+        parent's conversation history for context continuity.
 
-        Behavior:
-            - Always creates a fresh incognito BrowserContext per task (best isolation).
-            - Clones inherit summarized conversation history from parent for context.
-            - Clones have full delegation capabilities and can create their own sub-clones.
-            - No initial URL is opened automatically.
-            - Returns a JSON array of {"task", "status", "result"|"error"} as a string.
-            - Resources are closed automatically after each clone finishes.
+        ## Purpose & Use Cases
+
+        **Strategic Delegation Scenarios:**
+        - Research tasks requiring multiple sources (delegate parallel fact-checking)
+        - Multi-step workflows where subtasks can run concurrently
+        - Data collection from multiple websites simultaneously  
+        - Comparative analysis requiring parallel evaluation
+        - Complex automation where different components need independent browser sessions
+
+        **Swarm Intelligence Benefits:**
+        - Parallel execution dramatically reduces total task completion time
+        - Independent browser contexts prevent interference between subtasks
+        - Each clone can further delegate, creating recursive swarm behavior
+        - Automatic resource cleanup prevents memory leaks
+        - Built-in capacity management prevents system overload
+
+        ## Arguments
+
+        **tasks** (List[str], required):
+        - List of clear, focused subtask descriptions
+        - Each task spawns exactly one clone agent
+        - Tasks should be independent and parallelizable
+        - Avoid overly broad or interdependent tasks
+        - Example: ["Research Python frameworks", "Check pricing on Site A", "Extract contact info from Site B"]
+
+        ## Returns
+
+        **JSON string** containing array of results:
+        ```json
+        [
+            {"task": "subtask description", "status": "ok", "result": "detailed findings..."},
+            {"task": "another subtask", "status": "error", "error": "specific error message"},
+            {"task": "third task", "status": "denied", "error": "capacity limit reached"}
+        ]
+        ```
+
+        **Status Values:**
+        - `"ok"`: Task completed successfully, see "result" field
+        - `"error"`: Task failed due to technical issue, see "error" field  
+        - `"denied"`: Task rejected due to capacity limits or recursion depth
+
+        ## Behavior Details
+
+        **Clone Creation Process:**
+        1. Creates fresh incognito BrowserContext for each task (complete isolation)
+        2. Generates unique agent name for each clone
+        3. Summarizes parent's conversation history using lightweight LLM
+        4. Injects context briefing with parent summary and specific mission
+        5. Spawns clone with full tool access including delegation capabilities
+
+        **Resource Management:**
+        - Automatic cleanup: contexts closed and agents disposed after completion
+        - Capacity enforcement: respects MAX_KAGEBUNSHIN_INSTANCES limit
+        - Depth limiting: prevents infinite recursion (max depth: 3 levels)
+        - Concurrent execution: all tasks run in parallel
+
+        **Context Inheritance:**
+        - Clones receive summarized conversation history from parent
+        - Summary includes initial user request, key actions, and current status
+        - Clone depth tracking prevents excessive nesting
+        - Each clone can access group chat for coordination
+
+        ## Important Notes
+
+        **Performance Considerations:**
+        - Each clone uses significant resources (browser context + agent)
+        - Monitor system resources when delegating many tasks
+        - Consider task complexity vs. delegation overhead
+
+        **Task Design Best Practices:**
+        - Make tasks specific and actionable ("Research X" vs "Find information")
+        - Ensure tasks are truly independent (no shared state requirements)
+        - Include success criteria in task descriptions
+        - Avoid tasks that require real-time coordination
+
+        **Error Handling:**
+        - Individual task failures don't affect other parallel tasks
+        - Resource cleanup occurs even if tasks fail
+        - Capacity limits enforced at both global and per-delegation level
+        - Clone creation failures return structured error information
+
+        ## Troubleshooting
+
+        **"Delegation denied: max agents reached":**
+        - System capacity limit hit, wait for other agents to complete
+        - Reduce number of parallel tasks in delegation call
+        - Consider sequential execution for some subtasks
+
+        **"Maximum clone depth reached":**
+        - Clone tried to create too many recursive sub-clones
+        - Redesign task hierarchy to be shallower
+        - Use direct tool calls instead of further delegation
+
+        **Empty or malformed results:**
+        - Check that tasks are specific and actionable
+        - Verify URLs and target sites are accessible
+        - Review task descriptions for clarity and feasibility
+
+        ## Integration with Group Chat
+
+        Clones automatically have access to post_groupchat tool for coordination:
+        - Share progress updates between parallel tasks
+        - Coordinate to avoid duplicate work
+        - Alert parent agent of important findings
+        - Request help from other agents in the swarm
+
+        ## Advanced Patterns
+
+        **Hierarchical Delegation:**
+        - Parent delegates high-level tasks to clones
+        - Each clone can further delegate specialized subtasks
+        - Creates tree-like execution hierarchy
+        - Automatic depth limiting prevents runaway recursion
+
+        **Dynamic Task Adjustment:**
+        - Monitor clone results and delegate additional tasks based on findings
+        - Use group chat to coordinate dynamic task assignment
+        - Implement feedback loops between parent and clones
         """
 
         if not tasks or not isinstance(tasks, list):
@@ -236,8 +347,6 @@ PARENT CONTEXT: {conversation_summary}
 
 YOUR MISSION: {task_str}
 
-🚫 VERIFICATION CRITICAL: Remember to GROUND ALL RESPONSES in actual observations! Navigate first, conclude second. Never make claims without visiting relevant sources and observing actual content.
-
 IMPORTANT: You have FULL delegation capabilities! If your task would benefit from parallelization, don't hesitate to create your own clones using the delegate tool. You are NOT limited by being a clone yourself - the swarm intelligence philosophy applies at every level.
 
 Coordination: Use the group chat to coordinate with your parent and other agents. Think strategically about when to parallelize vs. when to work sequentially."""
@@ -266,10 +375,105 @@ Coordination: Use the group chat to coordinate with your parent and other agents
 
     @tool
     async def post_groupchat(message: str) -> str:
-        """Post a short message to the shared Agent Group Chat for collaboration.
+        """Post a message to the shared Agent Group Chat for multi-agent coordination and collaboration.
 
-        Args:
-            message: The message to broadcast to other agents.
+        This tool enables real-time communication between all Kagebunshin agents in the same group room,
+        fostering emergent swarm intelligence behavior. Messages can be accessed by all agents for coordination, progress sharing, and collaborative problem-solving.
+
+        ## Purpose & Use Cases
+
+        **Coordination Scenarios:**
+        - Share progress updates with parent agent and sibling clones
+        - Alert other agents about important discoveries or findings
+        - Request assistance with specific subtasks from available agents
+        - Announce task completion or readiness for next phase
+        - Coordinate to avoid duplicate work across parallel agents
+
+        **Collaboration Benefits:**
+        - Prevents redundant work when multiple agents have similar tasks
+        - Enables knowledge sharing and collective intelligence
+        - Allows dynamic task redistribution based on agent capabilities
+        - Creates emergent coordination patterns without central control
+        - Supports both reactive and proactive agent communication
+
+        ## Arguments
+
+        **message** (str, required):
+        - The message content to broadcast to all agents in the group room
+        - Should be concise but informative (other agents have limited context)
+        - Include relevant context like URLs, findings, or specific needs
+        - Use clear, actionable language that other agents can understand
+        - Avoid overly long messages that clutter the group chat history
+
+        ## Returns
+
+        **Success response**: `"Posted to group chat ({room_name})"`
+        **Error response**: `"Error posting to group chat: {error_details}"`
+
+        Return value indicates whether the message was successfully posted to the group chat system.
+        Failed posts don't interrupt agent execution but may affect coordination effectiveness.
+
+        ## Behavior Details
+
+        **Message Broadcasting:**
+        - Messages are instantly available to all agents monitoring the same group room
+        - Timestamp and sender information automatically attached to each message
+        - Message history limited to recent entries to prevent memory bloat
+
+        **Group Room Management:**
+        - All agents in same session typically share the same group room
+        - Room name configurable via environment variables or agent initialization
+        - Default room is "lobby" unless specified otherwise
+        - Cross-room communication not supported (agents isolated by room)
+
+        ## Important Notes
+
+        **Message Best Practices:**
+        - Be specific about findings: "Found 15 relevant results on Site A" vs "Making progress"
+        - Include actionable information: "Need help with CAPTCHA on login page"
+        - Use consistent formatting for easier parsing by other agents
+        - Mention specific URLs or resources when relevant
+
+        ## Integration with Delegation
+
+        **Parent-Clone Communication:**
+        - Parent agents can broadcast task assignments or updates
+        - Clone agents can report back completion status or issues
+        - Enables dynamic task reallocation based on agent performance
+
+        **Swarm Coordination:**
+        - Multiple parallel clones can coordinate to avoid overlap
+        - Emergent load balancing through voluntary task claiming
+        - Collective intelligence through shared observations and findings
+
+        ## Troubleshooting
+
+        **"Error posting to group chat: connection failed":**
+        - Redis server may be unavailable or misconfigured  
+        - Check Redis connection settings in environment variables
+        - Agent will continue functioning with in-memory fallback
+
+        **Messages not appearing to other agents:**
+        - Verify all agents are using the same group room name
+        - Check Redis configuration consistency across agents
+        - Ensure proper network connectivity between agents and Redis
+
+        **Group chat history missing:**
+        - Redis may have been restarted, clearing message history
+        - In-memory fallback doesn't persist across agent restarts
+        - Message history automatically trimmed to prevent memory issues
+
+        ## Advanced Patterns
+
+        **Conditional Broadcasting:**
+        - Post updates only for significant findings or milestones
+        - Use message priority levels for different types of communication
+        - Implement message filtering based on agent roles or capabilities
+
+        **Structured Communication:**
+        - Use consistent message formats for easier automated processing
+        - Implement message tagging for categorization
+        - Create communication protocols for specific coordination scenarios
         """
         try:
             await chat_client.connect()
