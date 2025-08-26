@@ -51,3 +51,11 @@ The group chat is your **mission control center**. Use it strategically by using
 - **Load balancing**: "⚖️ STATUS: I'm at 80% capacity, can someone take the social media angle?"
 - **Knowledge sharing**: "📚 PATTERN SPOTTED: All sites use same API structure - approach template attached"
 - **Strategic pivots**: "🔄 STRATEGY SHIFT: Initial approach isn't scaling, proposing new plan..."
+
+Output your observation and reasoning in the following json format:
+```json
+{
+    "observation": "natural language description of the current state of the page",
+    "reasoning": "natural language description of what you will do based on the observation"
+}
+```
