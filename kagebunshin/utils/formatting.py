@@ -267,7 +267,8 @@ def format_bbox_context(bboxes: List[BBox], include_hierarchy: bool = True, incl
                 hierarchy_info = f"{hierarchy_indent}└─ "
                 base_indent = hierarchy_indent
         
-        main_content = f'{hierarchy_info}bbox_id: {index} (<{el_type}/>{captcha_indicator}): "{text}"{frame_info}'
+        focus_indicator = " [FOCUSED]" if hasattr(bbox, 'focused') and bbox.focused else ""
+        main_content = f'{hierarchy_info}bbox_id: {index}{focus_indicator} (<{el_type}/>{captcha_indicator}): "{text}"{frame_info}'
         
         # Add children information if available
         children_info = ""
@@ -424,8 +425,9 @@ def format_unified_context(bboxes: List[BBox], detail_level: str = "full_hierarc
         # Interactive elements show bbox_id, content elements show "N/A"
         element_id = index if bbox.isInteractive else "N/A"
         
-        # Build main element description
-        main_desc = f'{role_indicator} bbox_id: {element_id} {type_info}'
+        # Build main element description with focus indicator
+        focus_indicator = " [FOCUSED]" if hasattr(bbox, 'focused') and bbox.focused else ""
+        main_desc = f'{role_indicator} bbox_id: {element_id}{focus_indicator} {type_info}'
         
         # Add content type for non-interactive elements
         if not bbox.isInteractive and bbox.contentType:

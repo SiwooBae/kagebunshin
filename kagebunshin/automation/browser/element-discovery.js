@@ -157,12 +157,15 @@ function getInteractiveElements(contextDocument, documentOffset = { x: 0, y: 0 }
       const shouldInclude = determineInclusion(area, isInteractive, isClickable, isCaptchaElement, 
                                               ariaLabel, elementType, includeOutOfViewport, includeAsContent);
 
+      // Detect if this element currently has focus
+      const isFocused = (element === contextDocument.activeElement);
+
       return createElementItem(element, shouldInclude, area, rects, textData.displayText, elementType,
                               ariaLabel, isCaptchaElement, className, id, hierarchicalInfo, frameContext,
                               linkHref, inputMetadata, formContext, isInteractive, elementRole,
                               contentData.contentType, contentData.headingLevel, textData.wordCount,
                               textData.truncated, textData.fullTextAvailable, parentId, childIds,
-                              isContainer, semanticSection);
+                              isContainer, semanticSection, isFocused);
       
       } catch (elementError) {
         // Return error placeholder for failed elements
@@ -218,7 +221,8 @@ function createSkippedElementItem(element, basicFilterResult, frameContext) {
     labelFor: null,
     describedBy: null,
     isContainer: false,
-    semanticSection: null
+    semanticSection: null,
+    focused: false
   };
 }
 
@@ -536,7 +540,7 @@ function createElementItem(element, shouldInclude, area, rects, displayText, ele
                           ariaLabel, isCaptchaElement, className, id, hierarchicalInfo, frameContext,
                           linkHref, inputMetadata, formContext, isInteractive, elementRole,
                           contentType, headingLevel, wordCount, truncated, fullTextAvailable, 
-                          parentId, childIds, isContainer, semanticSection) {
+                          parentId, childIds, isContainer, semanticSection, isFocused) {
   return {
     element: element,
     include: shouldInclude,
@@ -567,7 +571,8 @@ function createElementItem(element, shouldInclude, area, rects, displayText, ele
     labelFor: element.getAttribute('for') ? null : null, // Will need to resolve to globalIndex later
     describedBy: element.getAttribute('aria-describedby') ? null : null, // Will need to resolve later
     isContainer: isContainer,
-    semanticSection: semanticSection
+    semanticSection: semanticSection,
+    focused: isFocused
   };
 }
 
@@ -605,6 +610,7 @@ function createErrorElementItem(element, frameContext) {
     labelFor: null,
     describedBy: null,
     isContainer: false,
-    semanticSection: null
+    semanticSection: null,
+    focused: false
   };
 }

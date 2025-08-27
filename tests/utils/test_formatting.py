@@ -151,6 +151,38 @@ class TestFormatBboxContext:
         assert "⬅️  LEFT OF VIEWPORT: No elements" in result
         assert "➡️  RIGHT OF VIEWPORT: No elements" in result
 
+    def test_should_show_focused_indicator_for_focused_bbox(self):
+        """Test that focused elements show [FOCUSED] indicator in formatting."""
+        from kagebunshin.core.state import BBox, BoundingBox
+        
+        # Create a focused bbox
+        focused_bbox = BBox(
+            x=150.0,
+            y=250.0,
+            text="Search input",
+            type="input",
+            ariaLabel="Search field",
+            selector='[data-ai-label="5"]',
+            globalIndex=5,
+            boundingBox=BoundingBox(left=150.0, top=250.0, width=200.0, height=30.0),
+            focused=True
+        )
+        
+        result = format_bbox_context([focused_bbox])
+        
+        # Should show FOCUSED indicator
+        assert "[FOCUSED]" in result
+        assert "bbox_id: 0 [FOCUSED]" in result  # Uses array index, not globalIndex
+        assert "Search field" in result  # ariaLabel should still be shown
+
+    def test_should_not_show_focused_indicator_for_unfocused_bbox(self, sample_bbox):
+        """Test that unfocused elements do not show [FOCUSED] indicator."""
+        result = format_bbox_context([sample_bbox])
+        
+        # Should NOT show FOCUSED indicator
+        assert "[FOCUSED]" not in result
+        assert "bbox_id: 0" in result  # Uses array index, not globalIndex
+
 
 class TestFormatTabContext:
     """Test suite for tab context formatting."""

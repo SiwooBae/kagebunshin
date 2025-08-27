@@ -309,18 +309,18 @@ function createVisualAnnotations(items) {
       // Only render in-viewport boxes visually
       if (bbox.viewportPosition !== 'in-viewport') return;
 
-      // Create rectangle overlay
+      // Create rectangle overlay with focus styling
       const rectEl = document.createElementNS("http://www.w3.org/2000/svg", "rect");
       rectEl.setAttribute("x", String(bbox.left));
       rectEl.setAttribute("y", String(bbox.top));
       rectEl.setAttribute("width", String(bbox.width));
       rectEl.setAttribute("height", String(bbox.height));
-      rectEl.setAttribute("fill", color + "40"); // 25% alpha for subtle overlay
-      rectEl.setAttribute("stroke", color);
-      rectEl.setAttribute("stroke-width", "2");
+      rectEl.setAttribute("fill", color + (item.focused ? "60" : "40")); // Stronger fill for focused
+      rectEl.setAttribute("stroke", item.focused ? "#FFD700" : color); // Gold stroke for focused
+      rectEl.setAttribute("stroke-width", item.focused ? "3" : "2"); // Thicker stroke for focused
 
-      // Create label with background
-      const labelText = String(index);
+      // Create label with background, add focus indicator if needed
+      const labelText = item.focused ? `[F] ${index}` : String(index);
       const approxCharW = 7;
       const labelHeight = 18;
       const labelWidth = (labelText.length * approxCharW) + 8;
@@ -374,7 +374,8 @@ function createVisualAnnotations(items) {
       // Add tooltip for debugging
       const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
       const shortText = (item.text || '').slice(0, 80);
-      title.textContent = `type: ${item.type} role: ${(item.hierarchy && item.hierarchy.semanticRole) || ''}\naria: ${item.ariaLabel || ''}\ntext: ${shortText}${item.text && item.text.length > 80 ? '…' : ''}\nframe: ${item.frameContext || 'main'}`;
+      const focusInfo = item.focused ? '\nFOCUSED: YES' : '';
+      title.textContent = `type: ${item.type} role: ${(item.hierarchy && item.hierarchy.semanticRole) || ''}\naria: ${item.ariaLabel || ''}\ntext: ${shortText}${item.text && item.text.length > 80 ? '…' : ''}\nframe: ${item.frameContext || 'main'}${focusInfo}`;
       rectEl.appendChild(title);
 
       // Add all elements to overlay
@@ -460,7 +461,8 @@ function buildResult(items, viewportCategories) {
               labelFor: item.labelFor,
               describedBy: item.describedBy,
               isContainer: item.isContainer,
-              semanticSection: item.semanticSection
+              semanticSection: item.semanticSection,
+              focused: item.focused
           });
       }
   });

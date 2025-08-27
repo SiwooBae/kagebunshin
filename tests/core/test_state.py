@@ -147,6 +147,43 @@ class TestBBox:
         assert bbox.frameContext == "main"
         assert bbox.viewportPosition == "in-viewport"
         assert bbox.distanceFromViewport == 0
+        assert bbox.focused is False  # Default value
+
+    def test_should_create_bbox_with_focused_true(self):
+        """Test creating BBox with focused=True."""
+        bbox = BBox(
+            x=100.0,
+            y=200.0,
+            text="Search input",
+            type="input",
+            ariaLabel="Search field",
+            selector='[data-ai-label="5"]',
+            globalIndex=5,
+            boundingBox=BoundingBox(left=100.0, top=200.0, width=200.0, height=30.0),
+            focused=True
+        )
+        
+        assert bbox.focused is True
+        assert bbox.x == 100.0
+        assert bbox.type == "input"
+
+    def test_should_create_bbox_with_focused_false_explicitly(self):
+        """Test creating BBox with focused=False explicitly set."""
+        bbox = BBox(
+            x=50.0,
+            y=100.0,
+            text="Submit",
+            type="button",
+            ariaLabel="Submit form",
+            selector='[data-ai-label="10"]',
+            globalIndex=10,
+            boundingBox=BoundingBox(left=50.0, top=100.0, width=80.0, height=30.0),
+            focused=False
+        )
+        
+        assert bbox.focused is False
+        assert bbox.x == 50.0
+        assert bbox.type == "button"
 
 
 class TestFrameStats:
