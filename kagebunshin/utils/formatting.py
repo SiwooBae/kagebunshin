@@ -28,11 +28,18 @@ logger.setLevel(logging.ERROR)
 
 # Get the directory of the current file and load JavaScript for page marking
 current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+text_merger_js_path = os.path.join(current_dir, "automation", "browser", "text_merger.js")
 mark_page_js_path = os.path.join(current_dir, "automation", "browser", "page_utils.js")
 
-# Load the JavaScript to mark the page
+# Load the JavaScript files - text merger first, then page utils
+with open(text_merger_js_path) as f:
+    text_merger_script = f.read()
+
 with open(mark_page_js_path) as f:
-    mark_page_script = f.read()
+    page_utils_script = f.read()
+
+# Combine both scripts
+mark_page_script = text_merger_script + "\n\n" + page_utils_script
 
 
 def html_to_markdown(html_content: str) -> str:
@@ -124,8 +131,39 @@ def normalize_chat_content(content: Any, include_placeholders: bool = False) -> 
 
 
 def format_text_context(markdown_content: str) -> str:
-    """Format markdown text into a human-readable context string."""
-    return f"Page Content (Markdown):\n\n{markdown_content}"
+    """Format markdown text into a human-readable context string with deduplication."""
+    if not markdown_content:
+        return "Page Content (Markdown):\n\n"
+    
+    # Remove excessive whitespace and normalize line breaks
+    cleaned_content = markdown_content.strip()
+    
+    # Remove duplicate consecutive lines
+    lines = cleaned_content.split('\n')
+    deduplicated_lines = []
+    prev_line = None
+    
+    for line in lines:
+        line = line.strip()
+        # Skip if same as previous line (avoid exact duplicates)
+        if line != prev_line or not line:
+            deduplicated_lines.append(line)
+        prev_line = line
+    
+    # Remove excessive empty lines (max 2 consecutive empty lines)
+    final_lines = []
+    empty_count = 0
+    for line in deduplicated_lines:
+        if not line.strip():
+            empty_count += 1
+            if empty_count <= 2:
+                final_lines.append(line)
+        else:
+            empty_count = 0
+            final_lines.append(line)
+    
+    cleaned_content = '\n'.join(final_lines).strip()
+    return f"Page Content (Markdown):\n\n{cleaned_content}"
 
 
 def format_bbox_context(bboxes: List[BBox], include_hierarchy: bool = True, include_viewport_context: bool = True) -> str:
@@ -218,7 +256,11 @@ def format_bbox_context(bboxes: List[BBox], include_hierarchy: bool = True, incl
         children_info = ""
         if include_hierarchy and hasattr(bbox, 'hierarchy') and bbox.hierarchy:
             hierarchy = bbox.hierarchy
-            if hasattr(hierarchy, 'interactiveChildrenCount') and hierarchy.interactiveChildrenCount > 0:
+            if hasattr(hierarchy, 'childrenTypeBreakdown') and hierarchy.childrenTypeBreakdown:
+                breakdown = hierarchy.childrenTypeBreakdown
+                if hasattr(breakdown, 'summary') and breakdown.summary:
+                    children_info = f"\n{base_indent}\t├─ Contains: {breakdown.summary}"
+            elif hasattr(hierarchy, 'interactiveChildrenCount') and hierarchy.interactiveChildrenCount > 0:
                 children_info = f"\n{base_indent}\t├─ Contains {hierarchy.interactiveChildrenCount} interactive children"
         
         return main_content + children_info
@@ -391,8 +433,13 @@ def format_unified_context(bboxes: List[BBox], detail_level: str = "full_hierarc
         
         # Add container info for structural elements
         if bbox.isContainer and hasattr(bbox, 'hierarchy') and bbox.hierarchy:
-            if hasattr(bbox.hierarchy, 'childrenCount') and bbox.hierarchy.childrenCount > 0:
-                main_desc += f" [contains {bbox.hierarchy.childrenCount} children]"
+            hierarchy = bbox.hierarchy
+            if hasattr(hierarchy, 'childrenTypeBreakdown') and hierarchy.childrenTypeBreakdown:
+                breakdown = hierarchy.childrenTypeBreakdown
+                if hasattr(breakdown, 'summary') and breakdown.summary:
+                    main_desc += f" [contains: {breakdown.summary}]"
+            elif hasattr(hierarchy, 'childrenCount') and hierarchy.childrenCount > 0:
+                main_desc += f" [contains {hierarchy.childrenCount} children]"
         
         return main_desc
     
@@ -444,8 +491,10 @@ def format_unified_context(bboxes: List[BBox], detail_level: str = "full_hierarc
                 for index, bbox in section_elements:
                     # For out-of-viewport elements, use N/A as index
                     display_index = index if position == 'in-viewport' else "N/A"
-                    formatted_element = format_unified_element(display_index, bbox, section_indent)
-                    section_lines.append(f"{section_indent}{formatted_element}")
+                    # change: now out of viewport elements don't include interactive elements
+                    if position == 'in-viewport' or bbox.isInteractive == False:
+                        formatted_element = format_unified_element(display_index, bbox, section_indent)
+                        section_lines.append(f"{section_indent}{formatted_element}")
             
             output_sections.extend(section_lines)
     
@@ -582,9 +631,9 @@ async def _annotate_pdf_page(page: Page) -> Annotation:
         for p in reader.pages:
             text += p.extract_text() or ""
 
-        # Truncate to 5000 words as requested
+        # Truncate to the first 1000 words
         words = text.split()
-        markdown = " ".join(words[:5000])
+        markdown = " ".join(words[:1000])
 
         screenshot = await page.screenshot()
         await page.evaluate("unmarkPage()")

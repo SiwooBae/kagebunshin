@@ -7,7 +7,7 @@ import logging
 import argparse
 from playwright.async_api import async_playwright
 
-from ..config.settings import BROWSER_EXECUTABLE_PATH, USER_DATA_DIR, DEFAULT_PERMISSIONS, ACTUAL_VIEWPORT_WIDTH, ACTUAL_VIEWPORT_HEIGHT
+from ..config.settings import BROWSER_EXECUTABLE_PATH, USER_DATA_DIR, DEFAULT_PERMISSIONS, ACTUAL_VIEWPORT_WIDTH, ACTUAL_VIEWPORT_HEIGHT, ENABLE_SUMMARIZATION
 from ..core.agent import KageBunshinAgent
 from ..tools.delegation import get_additional_tools
 from ..config.settings import GROUPCHAT_ROOM
@@ -134,7 +134,7 @@ class KageBunshinRunner:
                 additional_tools=extra_tools,
                 group_room=GROUPCHAT_ROOM,
                 username=agent_name,
-                enable_summarization=False,
+                enable_summarization=ENABLE_SUMMARIZATION,
             )
             self._print_step("INIT", "Stateless KageBunshin Orchestrator created successfully!", Colors.OKGREEN)
             self._print_step("INIT", "Starting web automation with stateless ReAct agent...", Colors.OKCYAN)

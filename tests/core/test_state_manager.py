@@ -241,6 +241,60 @@ class TestKageBunshinStateManager:
                 mock_converter.assert_called_once()
 
     @pytest.mark.asyncio
+    async def test_should_extract_pdf_page_content(self, state_manager, mock_page, sample_state):
+        """Test extracting PDF page content."""
+        mock_page.url = "https://example.com/document.pdf"
+        mock_page.title.return_value = "Test PDF"
+        mock_page.content.return_value = '<html><embed type="application/pdf" src="document.pdf"></embed></html>'
+        
+        # Mock the request context and response for PDF content
+        mock_request_context = AsyncMock()
+        mock_response = AsyncMock()
+        mock_response.body.return_value = b"fake pdf content"
+        mock_request_context.get.return_value = mock_response
+        mock_page.context.request = mock_request_context
+        
+        state_manager.set_state(sample_state)
+        
+        with patch.object(state_manager, 'get_current_page', return_value=mock_page):
+            with patch('pypdf.PdfReader') as mock_pdf_reader:
+                # Mock PDF reader to return some text
+                mock_page_obj = Mock()
+                mock_page_obj.extract_text.return_value = "This is test PDF content extracted from the document."
+                mock_reader_instance = Mock()
+                mock_reader_instance.pages = [mock_page_obj]
+                mock_pdf_reader.return_value = mock_reader_instance
+                
+                result = await state_manager.extract_page_content()
+                
+                assert "Test PDF" in result
+                assert "Content Type: PDF Document" in result
+                assert "This is test PDF content extracted from the document." in result
+                mock_pdf_reader.assert_called_once()
+
+    @pytest.mark.asyncio
+    async def test_should_handle_pdf_extraction_error(self, state_manager, mock_page, sample_state):
+        """Test handling PDF extraction errors gracefully."""
+        mock_page.url = "https://example.com/document.pdf"
+        mock_page.title.return_value = "Test PDF"
+        mock_page.content.return_value = '<html><embed type="application/pdf" src="document.pdf"></embed></html>'
+        
+        # Mock the request context to fail
+        mock_request_context = AsyncMock()
+        mock_request_context.get.side_effect = Exception("Network error")
+        mock_page.context.request = mock_request_context
+        
+        state_manager.set_state(sample_state)
+        
+        with patch.object(state_manager, 'get_current_page', return_value=mock_page):
+            result = await state_manager.extract_page_content()
+            
+            assert "Test PDF" in result
+            assert "Content Type: PDF Document" in result
+            assert "Error: Failed to extract text from PDF" in result
+            assert "Network error" in result
+
+    @pytest.mark.asyncio
     async def test_should_refresh_page(self, state_manager, mock_page, sample_state):
         """Test refreshing the current page."""
         state_manager.set_state(sample_state)

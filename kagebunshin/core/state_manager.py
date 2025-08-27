@@ -792,6 +792,7 @@ class KageBunshinStateManager:
         """Return full visible page content as Markdown, plus a DOM outline, and an optional LLM-parsed Markdown.
 
         Designed to preserve content so LLMs can "read" articles and long text without hallucinating.
+        Supports both HTML pages and PDF documents.
         """
         try:
             # This will now provide specific error messages if context or page is None
@@ -816,14 +817,43 @@ class KageBunshinStateManager:
                 logger.error("Page content is None, cannot extract content")
                 return "Error: Unable to extract page content - page content is None"
             
-            # Build a full cleaned Markdown representation of the visible HTML
-            cleaned_markdown = html_to_markdown(html_content)
-            if cleaned_markdown is None:
-                logger.warning("html_to_markdown returned None, using empty string")
-                cleaned_markdown = ""
+            # Check if this is a PDF page using the same logic as annotate_page
+            is_pdf = 'type="application/pdf"' in html_content or 'class="pdf' in html_content
+            
+            if is_pdf:
+                # Handle PDF content extraction
+                try:
+                    logger.info("PDF page detected. Extracting text content.")
+                    api_request_context = page.context.request
+                    response = await api_request_context.get(page.url)
+                    pdf_bytes = await response.body()
 
-            output = f"URL: {url}\nTitle: {title}\n\n{cleaned_markdown}"
-            return output
+                    # Extract text from PDF using pypdf
+                    from io import BytesIO
+                    import pypdf
+                    
+                    pdf_file = BytesIO(pdf_bytes)
+                    reader = pypdf.PdfReader(pdf_file)
+                    pdf_text = ""
+                    for p in reader.pages:
+                        pdf_text += p.extract_text() or ""
+                    
+                    # Format the output for PDF content
+                    output = f"URL: {url}\nTitle: {title}\nContent Type: PDF Document\n\n{pdf_text.strip()}"
+                    return output
+                    
+                except Exception as pdf_error:
+                    logger.error(f"Failed to extract PDF content: {pdf_error}")
+                    return f"URL: {url}\nTitle: {title}\nContent Type: PDF Document\n\nError: Failed to extract text from PDF. {str(pdf_error)}"
+            else:
+                # Handle regular HTML content
+                cleaned_markdown = html_to_markdown(html_content)
+                if cleaned_markdown is None:
+                    logger.warning("html_to_markdown returned None, using empty string")
+                    cleaned_markdown = ""
+
+                output = f"URL: {url}\nTitle: {title}\n\n{cleaned_markdown}"
+                return output
 
         except ValueError as e:
             # These are our specific validation errors - log and re-raise with context
@@ -1370,6 +1400,7 @@ class KageBunshinStateManager:
             - Set to True for search fields and single-line forms
             - Useful for submitting forms without clicking submit buttons
             - Alternative to clicking submit buttons in many workflows
+            - **WARNING:** If the search field is likely to be a dropdown, set press_enter=False
 
             ## Returns
 

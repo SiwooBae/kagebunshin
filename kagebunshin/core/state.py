@@ -55,6 +55,7 @@ class BBox(BaseModel):
     # Unified representation fields
     isInteractive: bool = Field(default=True, description="Whether element is interactive (clickable, typeable, etc.)")
     elementRole: str = Field(default="interactive", description="Element role: 'interactive', 'content', 'structural', 'navigation'")
+    focused: bool = Field(default=False, description="Whether this element currently has focus")
     
     # Content-specific fields (for non-interactive elements)
     contentType: Optional[str] = Field(default=None, description="Content type: 'heading', 'paragraph', 'list', 'image', etc.")

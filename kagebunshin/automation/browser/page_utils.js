@@ -51,195 +51,7 @@ function getColorForItem(item) {
   return TYPE_COLORS.generic;
 }
 
-// Text Fragment Merger - Simplified version for integration
-class TextFragmentMerger {
-    constructor(options = {}) {
-        this.maxGap = options.maxGap || 5;
-        this.maxMergeLength = options.maxMergeLength || 100;
-        this.minConfidence = options.minConfidence || 0.7;
-        this.maxLineHeightDiff = options.maxLineHeightDiff || 5;
-        this.respectAriaLabels = options.respectAriaLabels !== false;
-        this.detectIconFonts = options.detectIconFonts !== false;
-        this.mergeAcrossLines = options.mergeAcrossLines || false;
-        this.iconFontClasses = ['fa', 'icon', 'glyphicon', 'material-icons'];
-    }
-    
-    mergeAdjacentElements(elements, options = {}) {
-        if (!elements || elements.length === 0) return [];
-        
-        const mergeOptions = { ...this, ...options };
-        const parentGroups = this._groupByParent(elements);
-        const mergedGroups = [];
-        
-        for (const [parent, siblings] of parentGroups) {
-            const parentMerged = this._mergeSiblings(siblings, mergeOptions);
-            mergedGroups.push(...parentMerged);
-        }
-        
-        return mergedGroups.filter(group => group.confidence >= mergeOptions.minConfidence);
-    }
-    
-    _groupByParent(elements) {
-        const groups = new Map();
-        for (const element of elements) {
-            const parent = element.parentElement || document.body;
-            if (!groups.has(parent)) groups.set(parent, []);
-            groups.get(parent).push(element);
-        }
-        return groups;
-    }
-    
-    _mergeSiblings(siblings, options) {
-        if (siblings.length === 0) return [];
-        if (siblings.length === 1) return [this._createSingleElementGroup(siblings[0])];
-        
-        siblings.sort((a, b) => {
-            const position = a.compareDocumentPosition(b);
-            return position & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : position & Node.DOCUMENT_POSITION_PRECEDING ? 1 : 0;
-        });
-        
-        const groups = [];
-        let currentGroup = null;
-        
-        for (const element of siblings) {
-            if (element.hasAttribute('data-no-merge') && element.getAttribute('data-no-merge') === 'true') continue;
-            
-            if (!currentGroup) {
-                currentGroup = this._startNewGroup(element);
-            } else if (this._shouldMergeWithGroup(element, currentGroup, options)) {
-                this._addToGroup(currentGroup, element);
-            } else {
-                groups.push(this._finalizeGroup(currentGroup));
-                currentGroup = this._startNewGroup(element);
-            }
-        }
-        
-        if (currentGroup) groups.push(this._finalizeGroup(currentGroup));
-        return groups;
-    }
-    
-    _startNewGroup(element) {
-        const rect = element.getBoundingClientRect();
-        const computedStyle = window.getComputedStyle(element);
-        
-        return {
-            elements: [element],
-            boundingRects: [rect],
-            mergedText: element.textContent || element.innerText || '',
-            interactionTarget: this._getInteractionTarget(element),
-            ariaLabel: element.getAttribute('aria-label'),
-            isIconFont: this._isIconFont(element, computedStyle),
-            confidence: 1.0
-        };
-    }
-    
-    _shouldMergeWithGroup(element, group, options) {
-        const rect = element.getBoundingClientRect();
-        const lastRect = group.boundingRects[group.boundingRects.length - 1];
-        
-        // Check Y position (same line)
-        const yDiff = Math.abs(rect.top - lastRect.top);
-        if (yDiff > options.maxLineHeightDiff && !options.mergeAcrossLines) return false;
-        
-        // Check horizontal gap
-        let gap = rect.left >= lastRect.right ? rect.left - lastRect.right :
-                  rect.right <= lastRect.left ? lastRect.left - rect.right : 0;
-        if (gap > options.maxGap) return false;
-        
-        // Check text length
-        const elementText = element.textContent || element.innerText || '';
-        if ((group.mergedText.length + elementText.length) > options.maxMergeLength) return false;
-        
-        // Check interaction compatibility
-        const elementTarget = this._getInteractionTarget(element);
-        if (!elementTarget !== !group.interactionTarget) return false;
-        if (elementTarget && group.interactionTarget && elementTarget !== group.interactionTarget) {
-            if (elementTarget.href && group.interactionTarget.href) {
-                if (elementTarget.href !== group.interactionTarget.href) return false;
-            } else if (elementTarget.onclick || group.interactionTarget.onclick) {
-                return false; // Different click handlers
-            }
-        }
-        
-        // Check ARIA labels
-        if (options.respectAriaLabels) {
-            const elementAria = element.getAttribute('aria-label');
-            if (elementAria && group.ariaLabel && elementAria !== group.ariaLabel) return false;
-        }
-        
-        // Check icon font mixing
-        if (options.detectIconFonts) {
-            const style = window.getComputedStyle(element);
-            const isIcon = this._isIconFont(element, style);
-            if (isIcon !== group.isIconFont) return false;
-        }
-        
-        return true;
-    }
-    
-    _addToGroup(group, element) {
-        group.elements.push(element);
-        group.boundingRects.push(element.getBoundingClientRect());
-        group.mergedText += element.textContent || element.innerText || '';
-    }
-    
-    _finalizeGroup(group) {
-        const mergedRect = this._calculateMergedBoundingBox(group.boundingRects);
-        return {
-            elements: group.elements,
-            text: group.mergedText.trim(),
-            boundingBox: mergedRect,
-            confidence: group.confidence,
-            isMerged: group.elements.length > 1,
-            originalCount: group.elements.length,
-            representativeElement: group.elements[0],
-            interactionTarget: group.interactionTarget
-        };
-    }
-    
-    _createSingleElementGroup(element) {
-        return {
-            elements: [element],
-            text: element.textContent || element.innerText || '',
-            boundingBox: element.getBoundingClientRect(),
-            confidence: 1.0,
-            isMerged: false,
-            originalCount: 1,
-            representativeElement: element,
-            interactionTarget: this._getInteractionTarget(element)
-        };
-    }
-    
-    _getInteractionTarget(element) {
-        if (element.onclick || element.href || element.type === 'button') return element;
-        let parent = element.parentElement;
-        while (parent && parent !== document.body) {
-            if (parent.onclick || parent.href) return parent;
-            parent = parent.parentElement;
-        }
-        return null;
-    }
-    
-    _isIconFont(element, computedStyle) {
-        if (!this.detectIconFonts) return false;
-        const className = element.className || '';
-        if (this.iconFontClasses.some(cls => className.includes(cls))) return true;
-        const fontFamily = computedStyle.fontFamily.toLowerCase();
-        return ['fontawesome', 'glyphicons', 'material', 'icon'].some(font => fontFamily.includes(font));
-    }
-    
-    _calculateMergedBoundingBox(rects) {
-        if (rects.length === 0) return new DOMRect();
-        if (rects.length === 1) return rects[0];
-        
-        let minLeft = Math.min(...rects.map(r => r.left));
-        let minTop = Math.min(...rects.map(r => r.top));
-        let maxRight = Math.max(...rects.map(r => r.right));
-        let maxBottom = Math.max(...rects.map(r => r.bottom));
-        
-        return new DOMRect(minLeft, minTop, maxRight - minLeft, maxBottom - minTop);
-    }
-}
+// Text Fragment Merger will be loaded from external text_merger.js file
 
 function removeOverlay() {
   try {
@@ -532,7 +344,7 @@ function getHierarchicalInfo(element) {
     const siblingIndex = siblings.indexOf(element);
     const totalSiblings = siblings.length;
     
-    // Get child information
+    // Get child information with element type breakdown
     const children = Array.from(element.children);
     const interactiveChildren = children.filter(child => {
         const style = window.getComputedStyle(child);
@@ -541,6 +353,30 @@ function getHierarchicalInfo(element) {
                style.cursor === "pointer";
     });
     
+    // Create breakdown of child element types (only for elements with >2 children)
+    let childrenTypeBreakdown = {};
+    if (children.length > 2) {
+        const typeCounts = {};
+        children.forEach(child => {
+            const tag = child.tagName ? child.tagName.toLowerCase() : 'unknown';
+            typeCounts[tag] = (typeCounts[tag] || 0) + 1;
+        });
+        
+        // Format as "3 div, 2 a, 1 button"
+        const topTypes = Object.entries(typeCounts)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 3) // Show top 3 types
+            .map(([type, count]) => `${count} <${type}>`)
+            .join(', ');
+            
+        if (topTypes) {
+            childrenTypeBreakdown = {
+                summary: topTypes,
+                total: children.length
+            };
+        }
+    }
+    
     return {
         depth: hierarchy.length,
         hierarchy: hierarchy.reverse(), // Reverse to go from root to element
@@ -548,6 +384,7 @@ function getHierarchicalInfo(element) {
         totalSiblings: totalSiblings,
         childrenCount: children.length,
         interactiveChildrenCount: interactiveChildren.length,
+        childrenTypeBreakdown: childrenTypeBreakdown,
         semanticRole: element.getAttribute('role') || element.tagName.toLowerCase()
     };
 }
@@ -687,6 +524,9 @@ function getInteractiveElements(contextDocument, documentOffset = { x: 0, y: 0 }
             hierarchy: {},
             frameContext: frameContext,
             globalIndex: globalElementIndex++,
+            href: "", // Add empty href for consistency
+            inputMetadata: {}, // Add empty inputMetadata for consistency
+            formContext: {}, // Add empty formContext for consistency
             // New unified fields
             isInteractive: false,
             elementRole: 'skipped',
@@ -709,6 +549,112 @@ function getInteractiveElements(contextDocument, documentOffset = { x: 0, y: 0 }
         var ariaLabel = element.getAttribute("aria-label") || "";
         var className = element.className || "";
         var id = element.id || "";
+
+        // Enhanced image context extraction
+        if (elementType === 'img') {
+          const alt = element.getAttribute('alt') || '';
+          const title = element.getAttribute('title') || '';
+          const src = element.getAttribute('src') || '';
+          
+          let imageContext = '';
+          if (alt) {
+            imageContext = alt;
+          } else if (title) {
+            imageContext = title;
+          } else if (src) {
+            // Extract filename from src
+            try {
+              const filename = src.split('/').pop().split('?')[0];
+              if (filename && filename !== src) {
+                imageContext = `image: ${filename}`;
+              }
+            } catch (e) {
+              // Fallback if URL parsing fails
+            }
+          }
+          
+          if (imageContext) {
+            textualContent = imageContext;
+          }
+        }
+
+        // Enhanced link context extraction
+        let linkHref = '';
+        if (elementType === 'a') {
+          const href = element.getAttribute('href');
+          if (href) {
+            // Clean and normalize URLs
+            try {
+              let cleanHref = href;
+              // Remove common tracking parameters
+              if (href.includes('?')) {
+                const url = new URL(href, window.location.origin);
+                // Keep only essential parameters, remove tracking
+                const paramsToKeep = ['id', 'category', 'search', 'q', 'page'];
+                const newParams = new URLSearchParams();
+                for (const [key, value] of url.searchParams) {
+                  if (paramsToKeep.some(keep => key.toLowerCase().includes(keep))) {
+                    newParams.set(key, value);
+                  }
+                }
+                url.search = newParams.toString();
+                cleanHref = url.pathname + (url.search ? '?' + url.search : '');
+              }
+              linkHref = cleanHref;
+            } catch (e) {
+              // If URL parsing fails, use original href
+              linkHref = href;
+            }
+          }
+        }
+
+        // Enhanced input field metadata extraction
+        let inputMetadata = {};
+        let formContext = {};
+        if (elementType === 'input' || elementType === 'textarea' || elementType === 'select') {
+          const placeholder = element.getAttribute('placeholder') || '';
+          const value = element.value || '';
+          const inputType = element.getAttribute('type') || 'text';
+          
+          inputMetadata = {
+            placeholder: placeholder,
+            value: value,
+            inputType: inputType
+          };
+          
+          // Add placeholder to text content if no other text available
+          if (!textualContent && placeholder) {
+            textualContent = `[${placeholder}]`;
+          } else if (!textualContent && inputType) {
+            textualContent = `[${inputType} input]`;
+          }
+          
+          // Form association context
+          const form = element.closest('form');
+          if (form) {
+            const formId = form.id || form.getAttribute('name') || '';
+            const formAction = form.getAttribute('action') || '';
+            const formMethod = form.getAttribute('method') || 'get';
+            formContext = {
+              id: formId,
+              action: formAction,
+              method: formMethod
+            };
+          }
+          
+          // Label association
+          const elementId = element.id;
+          if (elementId) {
+            const label = document.querySelector(`label[for="${elementId}"]`);
+            if (label && label.textContent) {
+              inputMetadata.labelText = label.textContent.trim();
+              // If no other text content, use label text
+              if (!textualContent || textualContent === `[${inputType} input]`) {
+                textualContent = label.textContent.trim();
+              }
+            }
+          }
+        }
 
         // Get hierarchical information
         var hierarchicalInfo = getHierarchicalInfo(element);
@@ -739,22 +685,93 @@ function getInteractiveElements(contextDocument, documentOffset = { x: 0, y: 0 }
           }
         }
         
-        // Calculate word count and truncation
+        // Calculate word count and improved truncation
         const words = textualContent.split(/\s+/).filter(w => w.length > 0);
         const wordCount = words.length;
         const maxWords = isInteractive ? 50 : 100; // More words for content elements
         const truncated = wordCount > maxWords;
-        const displayText = truncated ? words.slice(0, maxWords).join(' ') + '...' : textualContent;
         
-        // Determine semantic section
+        let displayText;
+        if (truncated) {
+          // Improved truncation that preserves start and end context
+          const startWords = Math.floor(maxWords * 0.7);
+          const endWords = Math.floor(maxWords * 0.2);
+          const remainingWords = maxWords - startWords - endWords;
+          
+          if (remainingWords >= 0) {
+            const start = words.slice(0, startWords).join(' ');
+            const end = words.slice(-endWords).join(' ');
+            displayText = `${start}...${end}`;
+          } else {
+            // Fallback to simple truncation if calculation doesn't work
+            displayText = words.slice(0, maxWords).join(' ') + '...';
+          }
+        } else {
+          displayText = textualContent;
+        }
+        
+        // Improved semantic section detection with roles and landmarks
         let semanticSection = null;
         let currentEl = element;
         while (currentEl && currentEl !== document.body) {
           const tag = currentEl.tagName ? currentEl.tagName.toLowerCase() : '';
-          if (tag.match(/^header|main|nav|footer|aside$/)) {
+          const role = currentEl.getAttribute('role');
+          
+          // Check for explicit ARIA roles first
+          if (role) {
+            switch(role.toLowerCase()) {
+              case 'main':
+                semanticSection = 'main';
+                break;
+              case 'banner':
+                semanticSection = 'header';
+                break;
+              case 'navigation':
+                semanticSection = 'nav';
+                break;
+              case 'contentinfo':
+                semanticSection = 'footer';
+                break;
+              case 'complementary':
+                semanticSection = 'aside';
+                break;
+              case 'search':
+                semanticSection = 'search';
+                break;
+              case 'form':
+                semanticSection = 'form';
+                break;
+            }
+            if (semanticSection) break;
+          }
+          
+          // Check for semantic HTML5 elements
+          if (tag.match(/^header|main|nav|footer|aside|section|article$/)) {
             semanticSection = tag;
             break;
           }
+          
+          // Check for common class patterns
+          const className = currentEl.className ? currentEl.className.toLowerCase() : '';
+          if (className) {
+            if (className.includes('header') || className.includes('navbar')) {
+              semanticSection = 'header';
+              break;
+            } else if (className.includes('footer')) {
+              semanticSection = 'footer';
+              break;
+            } else if (className.includes('sidebar') || className.includes('aside')) {
+              semanticSection = 'aside';
+              break;
+            } else if (className.includes('main') || className.includes('content')) {
+              semanticSection = 'main';
+              break;
+            } else if (className.includes('nav')) {
+              semanticSection = 'nav';
+              break;
+            }
+          }
+          
           currentEl = currentEl.parentElement;
         }
         
@@ -878,6 +895,9 @@ function getInteractiveElements(contextDocument, documentOffset = { x: 0, y: 0 }
         hierarchy: hierarchicalInfo,
         frameContext: frameContext,
         globalIndex: globalElementIndex++,
+        href: linkHref, // Add href information for links
+        inputMetadata: inputMetadata, // Add input field metadata
+        formContext: formContext, // Add form association context
         // New unified representation fields
         isInteractive: isInteractive,
         elementRole: elementRole,
@@ -910,6 +930,9 @@ function getInteractiveElements(contextDocument, documentOffset = { x: 0, y: 0 }
           hierarchy: {},
           frameContext: frameContext,
           globalIndex: globalElementIndex++,
+          href: "", // Add empty href for consistency
+          inputMetadata: {}, // Add empty inputMetadata for consistency
+          formContext: {}, // Add empty formContext for consistency
           // New unified representation fields
           isInteractive: false,
           elementRole: 'error',
@@ -1082,62 +1105,63 @@ function markPage(options = {}) {
         console.log(`DEBUG: Starting text merging on ${items.length} items`);
         
         try {
-            // Check if TextFragmentMerger is available
-            if (typeof TextFragmentMerger === 'undefined') {
-                throw new Error('TextFragmentMerger class is not available');
-            }
-            
-            const merger = new TextFragmentMerger({
-                maxGap: options.textMergingGap || 5,
-                maxMergeLength: options.textMergingLength || 100,
-                minConfidence: options.textMergingConfidence || 0.7,
-                respectAriaLabels: options.textMergingRespectAria !== false,
-                detectIconFonts: options.textMergingDetectIcons !== false,
-                mergeAcrossLines: options.textMergingAcrossLines || false
-            });
-            
-            const mergedGroups = merger.mergeAdjacentElements(
-                items.map(item => item.element),
-                { enableTextMerging: true }
-            );
-            
-            console.log(`DEBUG: Merged ${items.length} items into ${mergedGroups.length} groups`);
-            
-            // Convert merged groups back to item format
-            const mergedItems = mergedGroups.map((group, mergedIndex) => {
-                // Find the original item that corresponds to the representative element
-                const originalItem = items.find(item => item.element === group.representativeElement);
-                if (!originalItem) {
-                    console.warn('DEBUG: Could not find original item for merged group', group);
-                    return null;
-                }
+            // Check if TextFragmentMerger is available and is a constructor
+            if (typeof TextFragmentMerger === 'undefined' || typeof TextFragmentMerger !== 'function') {
+                console.warn('DEBUG: TextFragmentMerger class is not available, skipping text merging');
+                // Continue without text merging
+            } else {
+                const merger = new TextFragmentMerger({
+                    maxGap: options.textMergingGap || 5,
+                    maxMergeLength: options.textMergingLength || 100,
+                    minConfidence: options.textMergingConfidence || 0.7,
+                    respectAriaLabels: options.textMergingRespectAria !== false,
+                    detectIconFonts: options.textMergingDetectIcons !== false,
+                    mergeAcrossLines: options.textMergingAcrossLines || false
+                });
                 
-                // Create a new item with merged properties
-                return {
-                    ...originalItem,
-                    element: group.representativeElement,
-                    text: group.text,
-                    rects: group.boundingBox ? [{
-                        left: group.boundingBox.left,
-                        top: group.boundingBox.top,
-                        right: group.boundingBox.right,
-                        bottom: group.boundingBox.bottom,
-                        width: group.boundingBox.width,
-                        height: group.boundingBox.height,
-                        viewportPosition: 'in-viewport' // Merged items are typically visible
-                    }] : originalItem.rects,
-                    // Merged-specific properties
-                    isMergedText: group.isMerged,
-                    mergedElementCount: group.originalCount,
-                    mergedElements: group.elements,
-                    mergingConfidence: group.confidence,
-                    globalIndex: originalItem.globalIndex // Keep original index for consistency
-                };
-            }).filter(item => item !== null);
-            
-            // Replace original items with merged items
-            items = mergedItems;
-            console.log(`DEBUG: Final merged items count: ${items.length}`);
+                const mergedGroups = merger.mergeAdjacentElements(
+                    items.map(item => item.element),
+                    { enableTextMerging: true }
+                );
+                
+                console.log(`DEBUG: Merged ${items.length} items into ${mergedGroups.length} groups`);
+                
+                // Convert merged groups back to item format
+                const mergedItems = mergedGroups.map((group, mergedIndex) => {
+                    // Find the original item that corresponds to the representative element
+                    const originalItem = items.find(item => item.element === group.representativeElement);
+                    if (!originalItem) {
+                        console.warn('DEBUG: Could not find original item for merged group', group);
+                        return null;
+                    }
+                    
+                    // Create a new item with merged properties
+                    return {
+                        ...originalItem,
+                        element: group.representativeElement,
+                        text: group.text,
+                        rects: group.boundingBox ? [{
+                            left: group.boundingBox.left,
+                            top: group.boundingBox.top,
+                            right: group.boundingBox.right,
+                            bottom: group.boundingBox.bottom,
+                            width: group.boundingBox.width,
+                            height: group.boundingBox.height,
+                            viewportPosition: 'in-viewport' // Merged items are typically visible
+                        }] : originalItem.rects,
+                        // Merged-specific properties
+                        isMergedText: group.isMerged,
+                        mergedElementCount: group.originalCount,
+                        mergedElements: group.elements,
+                        mergingConfidence: group.confidence,
+                        globalIndex: originalItem.globalIndex // Keep original index for consistency
+                    };
+                }).filter(item => item !== null);
+                
+                // Replace original items with merged items
+                items = mergedItems;
+                console.log(`DEBUG: Final merged items count: ${items.length}`);
+            }
             
         } catch (mergeError) {
             console.error('DEBUG: Error during text merging, falling back to original items:', mergeError);
@@ -1295,6 +1319,9 @@ function markPage(options = {}) {
                 className: item.className,
                 elementId: item.elementId,
                 selector: selector,
+                href: item.href || "", // Add href for links
+                inputMetadata: item.inputMetadata || {}, // Add input metadata
+                formContext: item.formContext || {}, // Add form context
                 // Enhanced properties
                 hierarchy: item.hierarchy,
                 frameContext: item.frameContext || "main",
