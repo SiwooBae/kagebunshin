@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Splitting Edge Cases Test Fixtures</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 10px; border: 1px solid #ccc; }
+        .test-title { font-weight: bold; color: #333; margin-bottom: 10px; }
+        
+        /* Test 1: Simple animated text */
+        .animated-text span { 
+            display: inline-block; 
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+        .animated-text span:hover { color: blue; }
+        
+        /* Test 5: Transformed text */
+        .rotated-text span { 
+            display: inline-block; 
+            transform: rotate(15deg);
+            margin: 0 2px;
+        }
+        
+        /* Test 6: Loading dots animation */
+        .loading-dots {
+            animation: blink 1s infinite;
+        }
+        @keyframes blink { 50% { opacity: 0.5; } }
+        
+        /* Test 8: Overlapping positioning */
+        .overlap-container { 
+            position: relative; 
+            height: 30px; 
+        }
+        .overlap-container span {
+            position: absolute;
+            font-weight: bold;
+        }
+        
+        /* Test 10: Icon fonts (using Unicode symbols as proxy) */
+        .icon-font { 
+            font-family: "Segoe UI Symbol", sans-serif;
+            font-size: 20px;
+            color: green;
+        }
+        
+        /* Test 11: Performance stress styles */
+        .stress-letters { font-family: monospace; }
+        .stress-letters span { 
+            display: inline-block;
+            border: 1px solid transparent;
+        }
+        .stress-letters span:nth-child(even) { background: #f0f0f0; }
+        
+        /* Test 12: Different event handlers */
+        .handler-test span { cursor: pointer; }
+        
+        /* Test 13: Shadow DOM styles */
+        .shadow-host { border: 2px solid purple; padding: 10px; }
+        
+        /* Test 14: Pseudo-element content */
+        .pseudo-content::before { content: "→ "; color: blue; }
+        .pseudo-content::after { content: " ←"; color: red; }
+    </style>
+</head>
+<body>
+    <h1>Text Splitting Edge Cases for Browser Automation</h1>
+    
+    <!-- Test Case 1: Simple letter-by-letter splitting -->
+    <div class="test-section">
+        <div class="test-title">Test 1: Simple Letter-by-Letter Splitting</div>
+        <div id="simple-split" class="animated-text" onclick="alert('Use your location clicked')">
+            <span>U</span><span>s</span><span>e</span><span> </span>
+            <span>y</span><span>o</span><span>u</span><span>r</span><span> </span>
+            <span>l</span><span>o</span><span>c</span><span>a</span><span>t</span><span>i</span><span>o</span><span>n</span>
+        </div>
+    </div>
+
+    <!-- Test Case 2: Multi-line splits -->
+    <div class="test-section">
+        <div class="test-title">Test 2: Multi-line Text Splits</div>
+        <div id="multiline-split">
+            <span>F</span><span>i</span><span>r</span><span>s</span><span>t</span><span> </span>
+            <span>l</span><span>i</span><span>n</span><span>e</span><br>
+            <span>S</span><span>e</span><span>c</span><span>o</span><span>n</span><span>d</span><span> </span>
+            <span>l</span><span>i</span><span>n</span><span>e</span>
+        </div>
+    </div>
+
+    <!-- Test Case 3: Mixed interactions with event delegation -->
+    <div class="test-section">
+        <div class="test-title">Test 3: Mixed Interaction Patterns</div>
+        <div id="mixed-interaction" onclick="parentHandler(event)">
+            <span>C</span><span>l</span><span>i</span><span>c</span><span>k</span><span> </span>
+            <span>h</span><span>e</span><span>r</span><span>e</span><span> </span>
+            <a href="/github" onclick="event.stopPropagation()"><span>o</span><span>r</span></a><span> </span>
+            <span>c</span><span>a</span><span>n</span><span>c</span><span>e</span><span>l</span>
+        </div>
+    </div>
+
+    <!-- Test Case 4: Word boundaries with punctuation -->
+    <div class="test-section">
+        <div class="test-title">Test 4: Word Boundaries & Punctuation</div>
+        <div id="word-boundaries">
+            <span>H</span><span>e</span><span>l</span><span>l</span><span>o</span><span>,</span><span> </span>
+            <span>w</span><span>o</span><span>r</span><span>l</span><span>d</span><span>!</span><span> </span>
+            <span>H</span><span>o</span><span>w</span><span> </span>
+            <span>a</span><span>r</span><span>e</span><span> </span>
+            <span>y</span><span>o</span><span>u</span><span>?</span>
+        </div>
+    </div>
+
+    <!-- Test Case 5: Transformed/rotated text -->
+    <div class="test-section">
+        <div class="test-title">Test 5: Transformed Text</div>
+        <div id="transformed" class="rotated-text">
+            <span>R</span><span>o</span><span>t</span><span>a</span><span>t</span><span>e</span><span>d</span>
+        </div>
+    </div>
+
+    <!-- Test Case 6: Dynamic loading states -->
+    <div class="test-section">
+        <div class="test-title">Test 6: Dynamic Loading States</div>
+        <div id="loading-state">
+            <span>L</span><span>o</span><span>a</span><span>d</span>
+            <span class="loading-dots">.</span><span class="loading-dots">.</span><span class="loading-dots">.</span>
+            <span style="display:none">i</span><span style="display:none">n</span><span style="display:none">g</span>
+        </div>
+    </div>
+
+    <!-- Test Case 7: RTL and BiDi text -->
+    <div class="test-section">
+        <div class="test-title">Test 7: RTL and BiDi Text</div>
+        <div id="bidi-text">
+            <span>H</span><span>e</span><span>l</span><span>l</span><span>o</span><span> </span>
+            <span dir="rtl">ש</span><span dir="rtl">ל</span><span dir="rtl">ו</span><span dir="rtl">ם</span><span> </span>
+            <span>w</span><span>o</span><span>r</span><span>l</span><span>d</span>
+        </div>
+    </div>
+
+    <!-- Test Case 8: Overlapping absolute positioned elements -->
+    <div class="test-section">
+        <div class="test-title">Test 8: Overlapping Elements</div>
+        <div id="overlapping" class="overlap-container">
+            <span style="left: 0px; top: 0px;">O</span>
+            <span style="left: 15px; top: 0px;">v</span>
+            <span style="left: 30px; top: 0px;">e</span>
+            <span style="left: 45px; top: 0px;">r</span>
+            <span style="left: 60px; top: 0px;">l</span>
+            <span style="left: 75px; top: 0px;">a</span>
+            <span style="left: 90px; top: 0px;">p</span>
+        </div>
+    </div>
+
+    <!-- Test Case 9: Different ARIA labels -->
+    <div class="test-section">
+        <div class="test-title">Test 9: Different ARIA Labels</div>
+        <div id="aria-different">
+            <span aria-label="United States">U</span><span aria-label="United States">S</span>
+            <span aria-label="Dollar">$</span>
+            <span aria-label="Number">1</span><span aria-label="Number">0</span><span aria-label="Number">0</span>
+        </div>
+    </div>
+
+    <!-- Test Case 10: Icon fonts mixed with text -->
+    <div class="test-section">
+        <div class="test-title">Test 10: Icon Fonts + Text</div>
+        <div id="icon-text">
+            <span class="icon-font">✓</span>
+            <span>S</span><span>u</span><span>c</span><span>c</span><span>e</span><span>s</span><span>s</span>
+            <span class="icon-font">★</span>
+            <span>R</span><span>a</span><span>t</span><span>e</span><span>d</span>
+        </div>
+    </div>
+
+    <!-- Test Case 11: Performance stress test (100 spans) -->
+    <div class="test-section">
+        <div class="test-title">Test 11: Performance Stress Test</div>
+        <div id="stress-test" class="stress-letters">
+            <!-- Will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Test Case 12: Different event handler signatures -->
+    <div class="test-section">
+        <div class="test-title">Test 12: Different Handler Signatures</div>
+        <div id="handler-variations" class="handler-test">
+            <span onclick="doAction()">C</span><span onclick="doAction()">l</span><span onclick="doAction()">i</span>
+            <span onclick="() => doAction()">c</span><span onclick="() => doAction()">k</span>
+            <span onclick="function() { doAction(); }">M</span><span onclick="function() { doAction(); }">e</span>
+        </div>
+    </div>
+
+    <!-- Test Case 13: Shadow DOM boundaries -->
+    <div class="test-section">
+        <div class="test-title">Test 13: Shadow DOM Boundaries</div>
+        <div id="shadow-boundary">
+            <span>B</span><span>e</span><span>f</span><span>o</span><span>r</span><span>e</span>
+            <div id="shadow-host" class="shadow-host">Shadow content will be here</div>
+            <span>A</span><span>f</span><span>t</span><span>e</span><span>r</span>
+        </div>
+    </div>
+
+    <!-- Test Case 14: CSS pseudo-elements -->
+    <div class="test-section">
+        <div class="test-title">Test 14: Pseudo-elements</div>
+        <div id="pseudo-elements">
+            <span class="pseudo-content">
+                <span>M</span><span>i</span><span>d</span><span>d</span><span>l</span><span>e</span>
+            </span>
+        </div>
+    </div>
+
+    <!-- Test Case 15: No-merge control -->
+    <div class="test-section">
+        <div class="test-title">Test 15: Manual No-Merge Control</div>
+        <div id="no-merge-control">
+            <div data-no-merge="true">
+                <span>D</span><span>o</span><span>n</span><span>t</span>
+            </div>
+            <div>
+                <span>B</span><span>u</span><span>t</span><span> </span>
+                <span>m</span><span>e</span><span>r</span><span>g</span><span>e</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Populate stress test
+        const stressDiv = document.getElementById('stress-test');
+        const text = "The quick brown fox jumps over the lazy dog. ".repeat(5);
+        for (let i = 0; i < text.length && i < 200; i++) {
+            const span = document.createElement('span');
+            span.textContent = text[i];
+            span.setAttribute('data-index', i);
+            stressDiv.appendChild(span);
+        }
+
+        // Create shadow DOM for test 13
+        const shadowHost = document.getElementById('shadow-host');
+        const shadowRoot = shadowHost.attachShadow({ mode: 'open' });
+        shadowRoot.innerHTML = '<span>S</span><span>h</span><span>a</span><span>d</span><span>o</span><span>w</span>';
+
+        // Event handlers for testing
+        function doAction() {
+            console.log('Action performed');
+        }
+
+        function parentHandler(event) {
+            console.log('Parent handler called', event.target);
+        }
+
+        // Simulate loading completion after 2 seconds
+        setTimeout(() => {
+            const hiddenSpans = document.querySelectorAll('#loading-state span[style*="display:none"]');
+            hiddenSpans.forEach(span => span.style.display = 'inline');
+            const loadingDots = document.querySelectorAll('.loading-dots');
+            loadingDots.forEach(dot => dot.remove());
+        }, 2000);
+    </script>
+</body>
+</html>

@@ -51,6 +51,196 @@ function getColorForItem(item) {
   return TYPE_COLORS.generic;
 }
 
+// Text Fragment Merger - Simplified version for integration
+class TextFragmentMerger {
+    constructor(options = {}) {
+        this.maxGap = options.maxGap || 5;
+        this.maxMergeLength = options.maxMergeLength || 100;
+        this.minConfidence = options.minConfidence || 0.7;
+        this.maxLineHeightDiff = options.maxLineHeightDiff || 5;
+        this.respectAriaLabels = options.respectAriaLabels !== false;
+        this.detectIconFonts = options.detectIconFonts !== false;
+        this.mergeAcrossLines = options.mergeAcrossLines || false;
+        this.iconFontClasses = ['fa', 'icon', 'glyphicon', 'material-icons'];
+    }
+    
+    mergeAdjacentElements(elements, options = {}) {
+        if (!elements || elements.length === 0) return [];
+        
+        const mergeOptions = { ...this, ...options };
+        const parentGroups = this._groupByParent(elements);
+        const mergedGroups = [];
+        
+        for (const [parent, siblings] of parentGroups) {
+            const parentMerged = this._mergeSiblings(siblings, mergeOptions);
+            mergedGroups.push(...parentMerged);
+        }
+        
+        return mergedGroups.filter(group => group.confidence >= mergeOptions.minConfidence);
+    }
+    
+    _groupByParent(elements) {
+        const groups = new Map();
+        for (const element of elements) {
+            const parent = element.parentElement || document.body;
+            if (!groups.has(parent)) groups.set(parent, []);
+            groups.get(parent).push(element);
+        }
+        return groups;
+    }
+    
+    _mergeSiblings(siblings, options) {
+        if (siblings.length === 0) return [];
+        if (siblings.length === 1) return [this._createSingleElementGroup(siblings[0])];
+        
+        siblings.sort((a, b) => {
+            const position = a.compareDocumentPosition(b);
+            return position & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : position & Node.DOCUMENT_POSITION_PRECEDING ? 1 : 0;
+        });
+        
+        const groups = [];
+        let currentGroup = null;
+        
+        for (const element of siblings) {
+            if (element.hasAttribute('data-no-merge') && element.getAttribute('data-no-merge') === 'true') continue;
+            
+            if (!currentGroup) {
+                currentGroup = this._startNewGroup(element);
+            } else if (this._shouldMergeWithGroup(element, currentGroup, options)) {
+                this._addToGroup(currentGroup, element);
+            } else {
+                groups.push(this._finalizeGroup(currentGroup));
+                currentGroup = this._startNewGroup(element);
+            }
+        }
+        
+        if (currentGroup) groups.push(this._finalizeGroup(currentGroup));
+        return groups;
+    }
+    
+    _startNewGroup(element) {
+        const rect = element.getBoundingClientRect();
+        const computedStyle = window.getComputedStyle(element);
+        
+        return {
+            elements: [element],
+            boundingRects: [rect],
+            mergedText: element.textContent || element.innerText || '',
+            interactionTarget: this._getInteractionTarget(element),
+            ariaLabel: element.getAttribute('aria-label'),
+            isIconFont: this._isIconFont(element, computedStyle),
+            confidence: 1.0
+        };
+    }
+    
+    _shouldMergeWithGroup(element, group, options) {
+        const rect = element.getBoundingClientRect();
+        const lastRect = group.boundingRects[group.boundingRects.length - 1];
+        
+        // Check Y position (same line)
+        const yDiff = Math.abs(rect.top - lastRect.top);
+        if (yDiff > options.maxLineHeightDiff && !options.mergeAcrossLines) return false;
+        
+        // Check horizontal gap
+        let gap = rect.left >= lastRect.right ? rect.left - lastRect.right :
+                  rect.right <= lastRect.left ? lastRect.left - rect.right : 0;
+        if (gap > options.maxGap) return false;
+        
+        // Check text length
+        const elementText = element.textContent || element.innerText || '';
+        if ((group.mergedText.length + elementText.length) > options.maxMergeLength) return false;
+        
+        // Check interaction compatibility
+        const elementTarget = this._getInteractionTarget(element);
+        if (!elementTarget !== !group.interactionTarget) return false;
+        if (elementTarget && group.interactionTarget && elementTarget !== group.interactionTarget) {
+            if (elementTarget.href && group.interactionTarget.href) {
+                if (elementTarget.href !== group.interactionTarget.href) return false;
+            } else if (elementTarget.onclick || group.interactionTarget.onclick) {
+                return false; // Different click handlers
+            }
+        }
+        
+        // Check ARIA labels
+        if (options.respectAriaLabels) {
+            const elementAria = element.getAttribute('aria-label');
+            if (elementAria && group.ariaLabel && elementAria !== group.ariaLabel) return false;
+        }
+        
+        // Check icon font mixing
+        if (options.detectIconFonts) {
+            const style = window.getComputedStyle(element);
+            const isIcon = this._isIconFont(element, style);
+            if (isIcon !== group.isIconFont) return false;
+        }
+        
+        return true;
+    }
+    
+    _addToGroup(group, element) {
+        group.elements.push(element);
+        group.boundingRects.push(element.getBoundingClientRect());
+        group.mergedText += element.textContent || element.innerText || '';
+    }
+    
+    _finalizeGroup(group) {
+        const mergedRect = this._calculateMergedBoundingBox(group.boundingRects);
+        return {
+            elements: group.elements,
+            text: group.mergedText.trim(),
+            boundingBox: mergedRect,
+            confidence: group.confidence,
+            isMerged: group.elements.length > 1,
+            originalCount: group.elements.length,
+            representativeElement: group.elements[0],
+            interactionTarget: group.interactionTarget
+        };
+    }
+    
+    _createSingleElementGroup(element) {
+        return {
+            elements: [element],
+            text: element.textContent || element.innerText || '',
+            boundingBox: element.getBoundingClientRect(),
+            confidence: 1.0,
+            isMerged: false,
+            originalCount: 1,
+            representativeElement: element,
+            interactionTarget: this._getInteractionTarget(element)
+        };
+    }
+    
+    _getInteractionTarget(element) {
+        if (element.onclick || element.href || element.type === 'button') return element;
+        let parent = element.parentElement;
+        while (parent && parent !== document.body) {
+            if (parent.onclick || parent.href) return parent;
+            parent = parent.parentElement;
+        }
+        return null;
+    }
+    
+    _isIconFont(element, computedStyle) {
+        if (!this.detectIconFonts) return false;
+        const className = element.className || '';
+        if (this.iconFontClasses.some(cls => className.includes(cls))) return true;
+        const fontFamily = computedStyle.fontFamily.toLowerCase();
+        return ['fontawesome', 'glyphicons', 'material', 'icon'].some(font => fontFamily.includes(font));
+    }
+    
+    _calculateMergedBoundingBox(rects) {
+        if (rects.length === 0) return new DOMRect();
+        if (rects.length === 1) return rects[0];
+        
+        let minLeft = Math.min(...rects.map(r => r.left));
+        let minTop = Math.min(...rects.map(r => r.top));
+        let maxRight = Math.max(...rects.map(r => r.right));
+        let maxBottom = Math.max(...rects.map(r => r.bottom));
+        
+        return new DOMRect(minLeft, minTop, maxRight - minLeft, maxBottom - minTop);
+    }
+}
+
 function removeOverlay() {
   try {
     if (overlaySvg && overlaySvg.parentElement) {
@@ -886,6 +1076,75 @@ function markPage(options = {}) {
 
     let items = allItems.filter(item => item.rects.length > 0);
     items = items.filter((x) => !items.some((y) => x.element.contains(y.element) && !(x == y)));
+
+    // Apply text fragment merging if explicitly enabled
+    if (includeOutOfViewport && options.enableTextMerging === true) {
+        console.log(`DEBUG: Starting text merging on ${items.length} items`);
+        
+        try {
+            // Check if TextFragmentMerger is available
+            if (typeof TextFragmentMerger === 'undefined') {
+                throw new Error('TextFragmentMerger class is not available');
+            }
+            
+            const merger = new TextFragmentMerger({
+                maxGap: options.textMergingGap || 5,
+                maxMergeLength: options.textMergingLength || 100,
+                minConfidence: options.textMergingConfidence || 0.7,
+                respectAriaLabels: options.textMergingRespectAria !== false,
+                detectIconFonts: options.textMergingDetectIcons !== false,
+                mergeAcrossLines: options.textMergingAcrossLines || false
+            });
+            
+            const mergedGroups = merger.mergeAdjacentElements(
+                items.map(item => item.element),
+                { enableTextMerging: true }
+            );
+            
+            console.log(`DEBUG: Merged ${items.length} items into ${mergedGroups.length} groups`);
+            
+            // Convert merged groups back to item format
+            const mergedItems = mergedGroups.map((group, mergedIndex) => {
+                // Find the original item that corresponds to the representative element
+                const originalItem = items.find(item => item.element === group.representativeElement);
+                if (!originalItem) {
+                    console.warn('DEBUG: Could not find original item for merged group', group);
+                    return null;
+                }
+                
+                // Create a new item with merged properties
+                return {
+                    ...originalItem,
+                    element: group.representativeElement,
+                    text: group.text,
+                    rects: group.boundingBox ? [{
+                        left: group.boundingBox.left,
+                        top: group.boundingBox.top,
+                        right: group.boundingBox.right,
+                        bottom: group.boundingBox.bottom,
+                        width: group.boundingBox.width,
+                        height: group.boundingBox.height,
+                        viewportPosition: 'in-viewport' // Merged items are typically visible
+                    }] : originalItem.rects,
+                    // Merged-specific properties
+                    isMergedText: group.isMerged,
+                    mergedElementCount: group.originalCount,
+                    mergedElements: group.elements,
+                    mergingConfidence: group.confidence,
+                    globalIndex: originalItem.globalIndex // Keep original index for consistency
+                };
+            }).filter(item => item !== null);
+            
+            // Replace original items with merged items
+            items = mergedItems;
+            console.log(`DEBUG: Final merged items count: ${items.length}`);
+            
+        } catch (mergeError) {
+            console.error('DEBUG: Error during text merging, falling back to original items:', mergeError);
+            console.error('DEBUG: Error details:', mergeError.message);
+            // Continue with original items if merging fails
+        }
+    }
 
     function getRandomColor() {
         var letters = "0123456789ABCDEF";
