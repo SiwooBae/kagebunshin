@@ -10,13 +10,16 @@ import asyncio
 import logging
 from io import BytesIO
 from typing import List, Dict, Any
+import time
 
 import html2text
 import pypdf
 from bs4 import BeautifulSoup
 from playwright.async_api import Page
+from playwright.async_api import TimeoutError as PWTimeout
 
 from ..core.state import BBox, Annotation, FrameStats, TabInfo
+
 
 
 # Suppress logging warnings
@@ -605,34 +608,28 @@ async def _annotate_pdf_page(page: Page) -> Annotation:
             totalElements=0
         )
 
+async def wait_until_stable(page: Page,
+                            per_state_timeout_ms: int = 3000,
+                            states: List[str] = ["load", "domcontentloaded"]):
+    t0 = time.perf_counter()
+    last_exc = None
+    for state in states:
+        try:
+            await page.wait_for_load_state(state, timeout=per_state_timeout_ms)
+            return state, int((time.perf_counter() - t0) * 1000), None
+        except PWTimeout as e:
+            last_exc = e
+    return None, int((time.perf_counter() - t0) * 1000), last_exc
 
 async def _annotate_html_page(page: Page) -> Annotation:
     """Annotate an HTML page with bounding boxes and take a screenshot."""
     # await asyncio.sleep(0.5)  # wait for half second
     markdown = ""
-    try:
-        await page.wait_for_load_state("networkidle", timeout=3000)
-        markdown = f"Page currently in 'networkidle' state. Stable."
-    except Exception as e:
-        logger.warning(f"DEBUG: 'networkidle' failed: {e}. Trying 'load' state.")
-        try:
-            await page.wait_for_load_state("load", timeout=3000)
-            markdown = f"INFO: Waited for 'networkidle' for 3 seconds, but it failed. However, 'load' state succeeded. It should be stable for most cases."
-        except Exception as e2:
-            logger.warning(f"DEBUG: Both 'networkidle' and 'load' failed: {e2}")
-            try:
-                await page.wait_for_load_state("domcontentloaded", timeout=3000)
-                markdown = f"WARNING: both 'networkidle' and 'load' state failed after waiting 6 seconds total. However, 'domcontentloaded' state succeeded. There may be some elements that are not fully loaded."
-            except Exception as e3:
-                logger.warning(f"DEBUG: All load states (networkidle, load, domcontentloaded) failed: {e3}")
-                return Annotation(
-                    img="",
-                    bboxes=[],
-                    markdown=f"Failed to stabilize page load. Error: {e2}",
-                    viewportCategories={},
-                    frameStats={"totalFrames": 0, "accessibleFrames": 0, "maxDepth": 0},
-                    totalElements=0
-            )
+    state, elapsed_ms, err = await wait_until_stable(page)
+    if state:
+        markdown = f"Page stabilized at '{state}' in {elapsed_ms} ms."
+    else:
+        markdown = f"WARNING: No stable load state reached after {elapsed_ms} ms. Proceeding anyway. Last error: {err}"
     
     try:
         await page.evaluate(mark_page_script)
