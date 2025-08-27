@@ -26,20 +26,37 @@ from ..core.state import BBox, Annotation, FrameStats, TabInfo
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
 
-# Get the directory of the current file and load JavaScript for page marking
+# Get the directory of the current file and load JavaScript modules for page marking
 current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-text_merger_js_path = os.path.join(current_dir, "automation", "browser", "text_merger.js")
-mark_page_js_path = os.path.join(current_dir, "automation", "browser", "page_utils.js")
+browser_js_dir = os.path.join(current_dir, "automation", "browser")
 
-# Load the JavaScript files - text merger first, then page utils
-with open(text_merger_js_path) as f:
-    text_merger_script = f.read()
+# JavaScript module files in dependency order
+js_modules = [
+    "text_merger.js",      # Text fragment merging (external dependency)
+    "constants.js",        # Global variables and constants
+    "overlay.js",          # Overlay management functions
+    "utils.js",           # Viewport and utility functions
+    "element-filtering.js", # Element filtering and visibility detection
+    "element-analysis.js", # Hierarchical analysis functions
+    "iframe-processing.js", # iframe processing functions
+    "element-discovery.js", # Interactive elements discovery
+    "main.js"             # Main markPage and unmarkPage functions
+]
 
-with open(mark_page_js_path) as f:
-    page_utils_script = f.read()
+# Load and combine all JavaScript modules in dependency order
+js_scripts = []
+for module_file in js_modules:
+    module_path = os.path.join(browser_js_dir, module_file)
+    try:
+        with open(module_path) as f:
+            script_content = f.read()
+            js_scripts.append(f"// ===== {module_file} =====\n{script_content}")
+    except FileNotFoundError:
+        logger.error(f"JavaScript module not found: {module_path}")
+        raise
 
-# Combine both scripts
-mark_page_script = text_merger_script + "\n\n" + page_utils_script
+# Combine all scripts with separators for debugging
+mark_page_script = "\n\n".join(js_scripts)
 
 
 def html_to_markdown(html_content: str) -> str:
