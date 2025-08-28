@@ -652,10 +652,11 @@ async def _annotate_pdf_page(page: Page) -> Annotation:
 
         # Truncate to the first 1000 words
         words = text.split()
-        markdown = " ".join(words[:1000])
+        markdown = " ".join(words[:1000])+"...\n\n **Note:** This is a truncated version of the PDF content. Extract page content if you need the full text."
 
         screenshot = await page.screenshot()
-        await page.evaluate("unmarkPage()")
+        # Safely attempt cleanup only if injected scripts defined it
+        await page.evaluate("typeof unmarkPage === 'function' && unmarkPage();")
 
         return Annotation(
             img=base64.b64encode(screenshot).decode(),

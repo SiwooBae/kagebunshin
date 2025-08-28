@@ -115,6 +115,7 @@ class KageBunshinAgent:
 
         workflow.add_node("agent", self.call_agent)
         workflow.add_node("action", ToolNode(self.all_tools))
+        workflow.add_node("reminder", self.add_tool_call_reminder)
         if self.enable_summarization:
             workflow.add_node("summarizer", self.summarize_tool_results)
 
@@ -124,7 +125,8 @@ class KageBunshinAgent:
             "agent",
             self.should_continue,
             {
-                "continue": "action",
+                "action": "action",
+                "reminder": "reminder",
                 "end": END,
             },
         )
@@ -133,6 +135,8 @@ class KageBunshinAgent:
             workflow.add_edge("summarizer", "agent")
         else:
             workflow.add_edge("action", "agent")
+        # After a reminder is injected, route back to the agent
+        workflow.add_edge("reminder", "agent")
         
         # Compile without external checkpointer (BrowserContext is not serializable)
         self.agent = workflow.compile()
@@ -201,7 +205,7 @@ class KageBunshinAgent:
         cls._INSTANCE_COUNT += 1
         return instance
 
-    async def call_agent(self, state: KageBunshinState) -> Dict[str, List[BaseMessage]]:
+    async def call_agent(self, state: KageBunshinState) -> Dict[str, Any]:
         """
         Calls the LLM with the current state to decide the next action.
         
@@ -210,7 +214,11 @@ class KageBunshinAgent:
         """
         messages = await self._build_agent_messages(state)
         response = await self.llm_with_tools.ainvoke(messages)
-        return {"messages": [response]}
+        result: Dict[str, Any] = {"messages": [response]}
+        # Reset retry count if the agent made tool calls in this step
+        if isinstance(response, AIMessage) and response.tool_calls:
+            result["tool_call_retry_count"] = 0
+        return result
 
     def should_continue(self, state: KageBunshinState) -> str:
         """
@@ -230,10 +238,8 @@ class KageBunshinAgent:
             for tool_call in last_message.tool_calls:
                 if tool_call["name"] == "complete_task":
                     return "end"
-            
-            # Reset retry count since agent is using tools properly
-            state["tool_call_retry_count"] = 0
-            return "continue"
+            # Route to action tools
+            return "action"
         
         # No tool calls - check retry count
         retry_count = state.get("tool_call_retry_count", 0)
@@ -243,24 +249,27 @@ class KageBunshinAgent:
             # Force termination after max retries
             return "end"
         
-        # Add reminder and increment retry count
-        state["tool_call_retry_count"] = retry_count + 1
-        
+        # Ask graph to route to reminder node which will inject message and bump counter
+        return "reminder"
+
+    async def add_tool_call_reminder(self, state: KageBunshinState) -> Dict[str, Any]:
+        """Return a reminder message and increment the retry counter.
+        This is a node so that LangGraph persists the change using reducers.
+        """
+        retry_count = state.get("tool_call_retry_count", 0)
+        max_retries = 2
         reminder_message = SystemMessage(content=f"""⚠️ Tool Call Required (Attempt {retry_count + 1}/{max_retries})
 
 You haven't made any tool calls in your last response. To continue your task, you need to:
 
 1. **Make a tool call** to interact with the browser, take notes, or gather information
-2. **Use complete_task** if you have finished your mission and want to provide a final answer
+2. **Use `complete_task` tool call** if you have finished your mission and want to provide a final answer to the user
 
-If you continue without tool calls, the session will automatically terminate after {max_retries} attempts.
-
-Current available tools include: click, type_text, scroll, browser_goto, extract_page_content, take_note, complete_task, and others.""")
-        
-        # Add reminder to conversation
-        state["messages"].append(reminder_message)
-        
-        return "continue"
+If you continue without tool calls, the session will automatically terminate after {max_retries} attempts.""")
+        return {
+            "messages": [reminder_message],
+            "tool_call_retry_count": retry_count + 1,
+        }
 
     async def ainvoke(self, user_query: str) -> str:
         """
