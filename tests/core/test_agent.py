@@ -249,3 +249,186 @@ class TestKageBunshinAgent:
         count = kage_agent.get_action_count()
         
         assert count == 5
+
+
+class TestAgentTermination:
+    """Test suite for the new termination logic with complete_task tool."""
+    
+    def test_should_continue_returns_end_when_complete_task_called(self, kage_agent):
+        """Test that should_continue returns 'end' when complete_task tool is called."""
+        from kagebunshin.core.state import KageBunshinState
+        from langchain_core.messages import AIMessage, ToolCall
+        
+        # Mock AI message with complete_task tool call
+        tool_call = ToolCall(name="complete_task", args={"status": "success", "result": "Task done"}, id="test_call_1")
+        ai_message = AIMessage(content="", tool_calls=[tool_call])
+        
+        state = {
+            "messages": [ai_message],
+            "tool_call_retry_count": 0
+        }
+        
+        result = kage_agent.should_continue(state)
+        
+        assert result == "end"
+    
+    def test_should_continue_returns_continue_for_other_tool_calls(self, kage_agent):
+        """Test that should_continue returns 'continue' for non-complete_task tool calls."""
+        from langchain_core.messages import AIMessage, ToolCall
+        
+        # Mock AI message with regular tool call
+        tool_call = ToolCall(name="click", args={"bbox_id": 1}, id="test_call_2")
+        ai_message = AIMessage(content="", tool_calls=[tool_call])
+        
+        state = {
+            "messages": [ai_message],
+            "tool_call_retry_count": 1
+        }
+        
+        result = kage_agent.should_continue(state)
+        
+        assert result == "continue"
+        # Should reset retry count when tool call is made
+        assert state["tool_call_retry_count"] == 0
+    
+    def test_should_continue_adds_reminder_on_missing_tool_call(self, kage_agent):
+        """Test that should_continue adds reminder message when no tool call is made."""
+        from langchain_core.messages import AIMessage, SystemMessage
+        
+        # Mock AI message without tool calls
+        ai_message = AIMessage(content="I'm thinking about this task...")
+        
+        state = {
+            "messages": [ai_message],
+            "tool_call_retry_count": 0
+        }
+        
+        result = kage_agent.should_continue(state)
+        
+        assert result == "continue"
+        assert state["tool_call_retry_count"] == 1
+        
+        # Check that reminder message was added
+        assert len(state["messages"]) == 2
+        reminder_msg = state["messages"][1]
+        assert isinstance(reminder_msg, SystemMessage)
+        assert "Tool Call Required" in reminder_msg.content
+        assert "complete_task" in reminder_msg.content
+    
+    def test_should_continue_terminates_after_max_retries(self, kage_agent):
+        """Test that should_continue returns 'end' after reaching max retry limit."""
+        from langchain_core.messages import AIMessage
+        
+        # Mock AI message without tool calls
+        ai_message = AIMessage(content="I'm still thinking...")
+        
+        state = {
+            "messages": [ai_message],
+            "tool_call_retry_count": 2  # At max retries
+        }
+        
+        result = kage_agent.should_continue(state)
+        
+        assert result == "end"
+    
+    def test_extract_final_answer_handles_complete_task_tool_calls(self, kage_agent):
+        """Test _extract_final_answer extracts data from complete_task tool calls."""
+        from langchain_core.messages import AIMessage, ToolCall
+        
+        # Mock complete_task tool call
+        tool_call = ToolCall(
+            name="complete_task", 
+            args={
+                "status": "success", 
+                "result": "Found 3 Python frameworks", 
+                "confidence": 0.9
+            },
+            id="test_call_3"
+        )
+        ai_message = AIMessage(content="", tool_calls=[tool_call])
+        
+        # Mock state manager with messages
+        kage_agent.state_manager.current_state = {"messages": [ai_message]}
+        
+        result = kage_agent._extract_final_answer()
+        
+        assert result == "[SUCCESS] (confidence: 90%) Found 3 Python frameworks"
+    
+    def test_extract_final_answer_handles_complete_task_without_confidence(self, kage_agent):
+        """Test _extract_final_answer handles complete_task without confidence score."""
+        from langchain_core.messages import AIMessage, ToolCall
+        
+        # Mock complete_task tool call without confidence
+        tool_call = ToolCall(
+            name="complete_task", 
+            args={
+                "status": "partial", 
+                "result": "Collected data from 2 of 3 sites"
+            },
+            id="test_call_4"
+        )
+        ai_message = AIMessage(content="", tool_calls=[tool_call])
+        
+        # Mock state manager with messages
+        kage_agent.state_manager.current_state = {"messages": [ai_message]}
+        
+        result = kage_agent._extract_final_answer()
+        
+        assert result == "[PARTIAL] Collected data from 2 of 3 sites"
+    
+    def test_extract_final_answer_falls_back_to_state_manager_data(self, kage_agent):
+        """Test _extract_final_answer uses state manager completion data as fallback."""
+        from langchain_core.messages import HumanMessage
+        
+        # Mock state with no complete_task tool calls
+        kage_agent.state_manager.current_state = {"messages": [HumanMessage(content="test")]}
+        
+        # Mock completion data in state manager
+        kage_agent.state_manager.completion_data = {
+            "status": "blocked",
+            "result": "Authentication required",
+            "confidence": 1.0
+        }
+        
+        result = kage_agent._extract_final_answer()
+        
+        assert result == "[BLOCKED] (confidence: 100%) Authentication required"
+    
+    def test_extract_final_answer_supports_legacy_markers(self, kage_agent):
+        """Test _extract_final_answer still supports legacy [FINAL ANSWER] markers."""
+        from langchain_core.messages import AIMessage
+        
+        # Mock AI message with legacy marker
+        ai_message = AIMessage(content="[FINAL ANSWER] Task completed successfully")
+        
+        # Mock state manager with messages
+        kage_agent.state_manager.current_state = {"messages": [ai_message]}
+        
+        result = kage_agent._extract_final_answer()
+        
+        assert result == "Task completed successfully"
+    
+    def test_extract_final_answer_supports_legacy_final_message_marker(self, kage_agent):
+        """Test _extract_final_answer supports legacy [FINAL MESSAGE] markers."""
+        from langchain_core.messages import AIMessage
+        
+        # Mock AI message with legacy marker
+        ai_message = AIMessage(content="[FINAL MESSAGE] Mission accomplished")
+        
+        # Mock state manager with messages
+        kage_agent.state_manager.current_state = {"messages": [ai_message]}
+        
+        result = kage_agent._extract_final_answer()
+        
+        assert result == "Mission accomplished"
+    
+    def test_extract_final_answer_returns_default_when_no_content(self, kage_agent):
+        """Test _extract_final_answer returns default message when no suitable content found."""
+        from langchain_core.messages import HumanMessage
+        
+        # Mock state with only human messages (no AI responses)
+        kage_agent.state_manager.current_state = {"messages": [HumanMessage(content="test")]}
+        
+        result = kage_agent._extract_final_answer()
+        
+        assert result == "Task completed, but no specific answer was provided."

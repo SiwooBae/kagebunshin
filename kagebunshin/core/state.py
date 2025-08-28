@@ -119,6 +119,8 @@ class KageBunshinState(TypedDict):
     # current_page_index: int                 # Which tab is currently active (0-based)
     # Clone hierarchy tracking
     clone_depth: int                        # Current depth in delegation hierarchy (0 = root agent)
+    # Termination tracking
+    tool_call_retry_count: int              # Number of times reminded to make tool call
 
 class Annotation(BaseModel):
     img: str = Field(description="Base64 encoded image of the current page")

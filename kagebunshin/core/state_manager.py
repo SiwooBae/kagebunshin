@@ -2608,6 +2608,76 @@ class KageBunshinStateManager:
             """
             return self.reset_performance_cache()
 
+        @tool
+        async def complete_task(status: str, result: str, confidence: Optional[float] = None) -> str:
+            """Complete the current task with structured output and terminate the agent workflow.
+            
+            This tool provides explicit, intentional task completion with structured metadata.
+            Use this tool when you have finished your mission, encountered an insurmountable obstacle,
+            or need to provide a final answer to the user.
+            
+            ## Purpose & Use Cases
+            
+            **Primary Completion Scenarios:**
+            - Successfully completed the user's request
+            - Task partially completed with clear limitations
+            - Unable to continue due to technical barriers
+            - Blocked by authentication, permissions, or access issues
+            
+            **Structured Reporting Benefits:**
+            - Clear success/failure indication for downstream systems
+            - Confidence scoring for quality assessment
+            - Prevents accidental termination from forgotten tool calls
+            - Enables automated task result processing
+            
+            ## Arguments
+            
+            **status** (str, required):
+            - "success": Task completed successfully as requested
+            - "partial": Task partially completed with limitations
+            - "failure": Task failed due to technical issues
+            - "blocked": Unable to proceed due to external constraints
+            
+            **result** (str, required):
+            - Final answer, explanation, or summary of outcomes
+            - Should be comprehensive and user-facing
+            - Include relevant data, findings, or completed actions
+            - Explain any limitations or next steps if applicable
+            
+            **confidence** (float, optional):
+            - Confidence score between 0.0 (low) and 1.0 (high)
+            - Only provide if you can meaningfully assess certainty
+            - Consider factors like data completeness, verification level
+            - Omit if confidence assessment isn't applicable
+            
+            ## Returns
+            
+            **Confirmation message** and terminates the agent workflow.
+            The structured completion data is stored in the conversation state
+            for extraction by the orchestrator and downstream systems.
+            """
+            # Validate status
+            valid_statuses = {"success", "partial", "failure", "blocked"}
+            if status not in valid_statuses:
+                return f"Error: status must be one of {valid_statuses}, got '{status}'"
+            
+            # Validate confidence if provided
+            if confidence is not None:
+                if not isinstance(confidence, (int, float)) or not (0.0 <= confidence <= 1.0):
+                    return f"Error: confidence must be a number between 0.0 and 1.0, got {confidence}"
+            
+            # Store completion data in state for extraction
+            self.completion_data = {
+                "status": status,
+                "result": result,
+                "confidence": confidence,
+                "completed_at": time.time()
+            }
+            
+            # Format confirmation message
+            confidence_text = f" (confidence: {confidence:.0%})" if confidence is not None else ""
+            return f"Task completed with status '{status}'{confidence_text}. Result: {result}"
+
         return [
             click,
             type_text,
@@ -2628,5 +2698,6 @@ class KageBunshinStateManager:
             close_tab,
             take_note,
             get_performance_stats,
-            reset_performance_cache
+            reset_performance_cache,
+            complete_task
         ]

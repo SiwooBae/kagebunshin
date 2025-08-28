@@ -216,13 +216,51 @@ class KageBunshinAgent:
         """
         Determines whether the agent should continue or end the process.
         
-        If the last message from the agent has tool calls, we continue to the action node.
-        Otherwise, we end the execution.
+        Explicit termination conditions:
+        1. If complete_task tool is called -> END
+        2. If no tool calls and max retries reached -> END
+        
+        Otherwise, continue or add reminder for missing tool calls.
         """
         last_message = state["messages"][-1]
+        
+        # Check if agent has tool calls
         if isinstance(last_message, AIMessage) and last_message.tool_calls:
+            # Check for explicit completion via complete_task tool
+            for tool_call in last_message.tool_calls:
+                if tool_call["name"] == "complete_task":
+                    return "end"
+            
+            # Reset retry count since agent is using tools properly
+            state["tool_call_retry_count"] = 0
             return "continue"
-        return "end"
+        
+        # No tool calls - check retry count
+        retry_count = state.get("tool_call_retry_count", 0)
+        max_retries = 2  # Give agent 2 chances to make tool call
+        
+        if retry_count >= max_retries:
+            # Force termination after max retries
+            return "end"
+        
+        # Add reminder and increment retry count
+        state["tool_call_retry_count"] = retry_count + 1
+        
+        reminder_message = SystemMessage(content=f"""⚠️ Tool Call Required (Attempt {retry_count + 1}/{max_retries})
+
+You haven't made any tool calls in your last response. To continue your task, you need to:
+
+1. **Make a tool call** to interact with the browser, take notes, or gather information
+2. **Use complete_task** if you have finished your mission and want to provide a final answer
+
+If you continue without tool calls, the session will automatically terminate after {max_retries} attempts.
+
+Current available tools include: click, type_text, scroll, browser_goto, extract_page_content, take_note, complete_task, and others.""")
+        
+        # Add reminder to conversation
+        state["messages"].append(reminder_message)
+        
+        return "continue"
 
     async def ainvoke(self, user_query: str) -> str:
         """
@@ -243,6 +281,7 @@ class KageBunshinAgent:
             messages=[*self.persistent_messages, HumanMessage(content=user_query)],
             context=self.initial_context,
             clone_depth=self.clone_depth,
+            tool_call_retry_count=0,
         )
         
         # The graph will execute until it hits an END state
@@ -278,6 +317,7 @@ class KageBunshinAgent:
             messages=initial_messages,
             context=self.initial_context,
             clone_depth=self.clone_depth,
+            tool_call_retry_count=0,
         )
 
         # Accumulate the full conversation history during streaming updates
@@ -306,6 +346,7 @@ class KageBunshinAgent:
                 messages=accumulated_messages,
                 context=self.initial_context,
                 clone_depth=self.clone_depth,
+                tool_call_retry_count=0,
             )
             self.state_manager.set_state(final_state)
             self.persistent_messages = accumulated_messages
@@ -509,20 +550,49 @@ class KageBunshinAgent:
         except Exception:
             return "Task completed, but no specific answer was provided."
 
-        # 1) Prefer explicit final markers produced by the agent (AI messages only)
+        # 1) Look for structured completion via complete_task tool calls first (highest priority)
+        for msg in reversed(messages):
+            if isinstance(msg, AIMessage) and msg.tool_calls:
+                for tool_call in msg.tool_calls:
+                    if tool_call["name"] == "complete_task":
+                        args = tool_call.get("args", {})
+                        status = args.get("status", "unknown")
+                        result = args.get("result", "")
+                        confidence = args.get("confidence")
+                        
+                        # Format structured response
+                        status_text = f"[{status.upper()}]"
+                        confidence_text = f" (confidence: {confidence:.0%})" if confidence is not None else ""
+                        return f"{status_text}{confidence_text} {result}"
+
+        # 2) Fallback to completion data stored in state manager
+        if hasattr(self.state_manager, 'completion_data') and self.state_manager.completion_data:
+            data = self.state_manager.completion_data
+            status = data.get("status", "unknown")
+            result = data.get("result", "")
+            confidence = data.get("confidence")
+            
+            status_text = f"[{status.upper()}]"
+            confidence_text = f" (confidence: {confidence:.0%})" if confidence is not None else ""
+            return f"{status_text}{confidence_text} {result}"
+
+        # 3) Legacy support: Look for explicit markers (backward compatibility)
         for msg in reversed(messages):
             if isinstance(msg, AIMessage) and getattr(msg, "content", None):
                 content_text = normalize_chat_content(msg.content)
                 if "[FINAL ANSWER]" in content_text:
                     return content_text.replace("[FINAL ANSWER]", "").strip()
+                if "[FINAL MESSAGE]" in content_text:
+                    return content_text.replace("[FINAL MESSAGE]", "").strip()
 
-        # 2) Otherwise, pick the most recent AI message with substantive content
+        # 4) Otherwise, pick the most recent AI message with substantive content
         for msg in reversed(messages):
             if isinstance(msg, AIMessage) and getattr(msg, "content", None):
                 content_text = normalize_chat_content(msg.content).strip()
-                return content_text
+                if content_text:  # Only return non-empty content
+                    return content_text
 
-        # 3) If nothing suitable is found, return a safe default
+        # 5) If nothing suitable is found, return a safe default
         return "Task completed, but no specific answer was provided."
     
     async def get_current_url(self) -> str:

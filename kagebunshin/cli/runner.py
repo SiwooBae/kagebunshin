@@ -74,14 +74,54 @@ class KageBunshinRunner:
         print()
 
     def _print_final_answer(self, answer: str) -> None:
-        """Print the final answer with special formatting"""
-        self._print_banner("🎯 FINAL ANSWER", Colors.OKGREEN)
-        print(f"{Colors.OKGREEN}{Colors.BOLD}")
+        """Print the final answer with special formatting, supporting structured status indicators"""
         import textwrap
-        for line in textwrap.wrap(answer.strip(), width=70):
-            print(f"  {line}")
-        print(f"{Colors.ENDC}")
-        self._print_banner("🏁 MISSION COMPLETED", Colors.OKGREEN)
+        import re
+        
+        # Check if answer has structured format [STATUS] or [STATUS] (confidence: XX%)
+        status_pattern = r'^\[([A-Z]+)\](?:\s*\(confidence:\s*(\d+%)\))?\s*(.*)$'
+        match = re.match(status_pattern, answer.strip(), re.DOTALL)
+        
+        if match:
+            status, confidence, result = match.groups()
+            
+            # Status-specific formatting
+            status_config = {
+                "SUCCESS": ("🎯 TASK COMPLETED", Colors.OKGREEN, "🏁 MISSION ACCOMPLISHED"),
+                "PARTIAL": ("⚠️  TASK PARTIALLY COMPLETED", Colors.WARNING, "📋 PARTIAL COMPLETION"),
+                "FAILURE": ("❌ TASK FAILED", Colors.FAIL, "💥 EXECUTION FAILED"),
+                "BLOCKED": ("🚫 TASK BLOCKED", Colors.FAIL, "🔒 ACCESS BLOCKED")
+            }
+            
+            banner_text, color, completion_banner = status_config.get(
+                status, ("🎯 TASK RESULT", Colors.OKGREEN, "🏁 TASK FINISHED")
+            )
+            
+            self._print_banner(banner_text, color)
+            
+            # Print confidence if available
+            if confidence:
+                print(f"{color}{Colors.BOLD}Confidence: {confidence}{Colors.ENDC}")
+                print()
+            
+            # Print result
+            print(f"{color}{Colors.BOLD}")
+            if result.strip():
+                for line in textwrap.wrap(result.strip(), width=70):
+                    print(f"  {line}")
+            else:
+                print("  No additional details provided.")
+            print(f"{Colors.ENDC}")
+            
+            self._print_banner(completion_banner, color)
+        else:
+            # Legacy format - no structured status
+            self._print_banner("🎯 FINAL ANSWER", Colors.OKGREEN)
+            print(f"{Colors.OKGREEN}{Colors.BOLD}")
+            for line in textwrap.wrap(answer.strip(), width=70):
+                print(f"  {line}")
+            print(f"{Colors.ENDC}")
+            self._print_banner("🏁 MISSION COMPLETED", Colors.OKGREEN)
 
     async def run(self, user_query: str):
         """Run KageBunshin using the simplified stateless orchestrator approach"""

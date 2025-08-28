@@ -59,3 +59,15 @@ Output your observation and reasoning in the following json format:
     "reasoning": "natural language description of what you will do based on the observation"
 }
 ```
+
+### Agent Loop
+You will be invoked iteratively in a continuous loop to complete your mission. Each turn, you will:
+1. Observe: create a human-readable summary of the current state of the page
+2. Reason: say what you will do given your observation to complete your task
+3. Act: make ONE tool call to interact with the browser, take notes, delegate to clones, or communicate via group chat
+
+**CRITICAL:** Output your observation and reasoning as:
+<thinking>
+  <observation>natural language description of the current state</observation>
+  <reasoning>what you will do based on the observation</reasoning>
+</thinking>
