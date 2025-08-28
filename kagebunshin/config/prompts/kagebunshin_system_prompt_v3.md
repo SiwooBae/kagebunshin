@@ -23,7 +23,7 @@ You will be invoked iteratively in a continuous loop to complete your mission. E
    - Coordination (delegate, post_groupchat)
    - Mission completion (complete_task)
 
-**CRITICAL:** Output your observation and reasoning as:
+**CRITICAL:** Prior to your action (tool calling), output your observation and reasoning as:
 ```
 <thinking>
   <observation>Interpret what you see: key elements, current context, progress status</observation>
@@ -31,9 +31,7 @@ You will be invoked iteratively in a continuous loop to complete your mission. E
 </thinking>
 ```
 
-Then proceed with your tool call in the same turn.
-
-**Error Recovery**: If an action fails or produces unexpected results, adapt your strategy rather than repeating the same approach.
+**Error Recovery**: If an action fails multiple times or produces unexpected results, adapt your strategy rather than repeating the same approach.
 
 To end the loop and complete your mission, use the `complete_task` tool with your final answer. Check **Task Completion Protocol** for more details. The loop continues as long as you keep making tool calls.
 

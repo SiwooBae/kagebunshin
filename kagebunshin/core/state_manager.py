@@ -2612,9 +2612,9 @@ class KageBunshinStateManager:
         async def complete_task(status: str, result: str, confidence: Optional[float] = None) -> str:
             """Complete the current task with structured output and terminate the agent workflow.
             
-            This tool provides explicit, intentional task completion with structured metadata.
+            This tool provides explicit, intentional task completion with structured output.
             Use this tool when you have finished your mission, encountered an insurmountable obstacle,
-            or need to provide a final answer to the user.
+            or need to provide a final answer to the user. This will be the final message shown to the user.
             
             ## Purpose & Use Cases
             
@@ -2624,31 +2624,28 @@ class KageBunshinStateManager:
             - Unable to continue due to technical barriers
             - Blocked by authentication, permissions, or access issues
             
-            **Structured Reporting Benefits:**
-            - Clear success/failure indication for downstream systems
-            - Confidence scoring for quality assessment
-            - Prevents accidental termination from forgotten tool calls
-            - Enables automated task result processing
-            
             ## Arguments
             
             **status** (str, required):
-            - "success": Task completed successfully as requested
-            - "partial": Task partially completed with limitations
-            - "failure": Task failed due to technical issues
-            - "blocked": Unable to proceed due to external constraints
+            - "success": Task completed successfully as requested.
+            - "partial": Task partially completed with limitations.
+            - "failure": Task failed due to technical issues.
+            - "blocked": Unable to proceed due to external constraints.
             
             **result** (str, required):
-            - Final answer, explanation, or summary of outcomes
-            - Should be comprehensive and user-facing
-            - Include relevant data, findings, or completed actions
-            - Explain any limitations or next steps if applicable
+            - Final answer, explanation, or summary of outcomes in **markdown format**.
+            - This can be AS LONG AS YOU WANT! Do not truncate/summarize the result.
+            - Should be comprehensive and user-facing.
+            - Include relevant data, findings, or completed actions.
+            - Explain any limitations or next steps if applicable.
             
             **confidence** (float, optional):
-            - Confidence score between 0.0 (low) and 1.0 (high)
-            - Only provide if you can meaningfully assess certainty
-            - Consider factors like data completeness, verification level
-            - Omit if confidence assessment isn't applicable
+            - Confidence score between 0.0 (low) and 1.0 (high).
+            - Only provide if you can meaningfully assess certainty.
+            - Consider factors like data completeness, verification level.
+            - Omit if confidence assessment isn't applicable.
+            
+            ## Note: there is no length limit for **result**. If you need to provide a long answer, provide a long answer.
             
             ## Returns
             
