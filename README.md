@@ -34,11 +34,24 @@ Please let me know if you have any questions or comments. Thank you!
 
 ## Installation
 
-### Using uv (Recommended)
-
-Kagebunshin uses `uv` for dependency and runtime management.
+### From PyPI (Recommended)
 
 ```bash
+# Using uv (recommended)
+uv add kagebunshin
+uv run playwright install chromium
+
+# Or using pip
+pip install kagebunshin
+playwright install chromium
+```
+
+### Development Installation
+
+For development or to get the latest features:
+
+```bash
+# Using uv
 git clone https://github.com/SiwooBae/kagebunshin.git
 cd kagebunshin
 uv python install 3.13
@@ -46,11 +59,8 @@ uv venv -p 3.13
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 uv sync
 uv run playwright install chromium
-```
 
-### Using pip
-
-```bash
+# Using pip
 git clone https://github.com/SiwooBae/kagebunshin.git
 cd kagebunshin
 pip install -e .
