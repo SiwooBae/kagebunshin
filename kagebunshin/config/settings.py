@@ -21,6 +21,41 @@ LLM_TEMPERATURE = 1
 # Enable/disable summarizer node (default off)
 ENABLE_SUMMARIZATION = os.environ.get("KAGE_ENABLE_SUMMARIZATION", "0") == "1"
 
+# Filesystem Sandbox Configuration
+# Master switch to enable/disable all filesystem operations
+FILESYSTEM_ENABLED = os.environ.get("KAGE_FILESYSTEM_ENABLED", "1") == "1"
+
+# Base directory for the filesystem sandbox - all file operations are restricted to this directory
+# If None, defaults to ~/.kagebunshin/workspace
+FILESYSTEM_SANDBOX_BASE = os.environ.get("KAGE_FILESYSTEM_SANDBOX", None)
+if FILESYSTEM_SANDBOX_BASE is None:
+    FILESYSTEM_SANDBOX_BASE = str(Path.home() / ".kagebunshin" / "workspace")
+
+# Maximum file size in bytes that can be read or written (default: 10MB)
+# This prevents agents from creating or reading extremely large files that could exhaust system resources
+FILESYSTEM_MAX_FILE_SIZE = int(os.environ.get("KAGE_FILESYSTEM_MAX_FILE_SIZE", str(10 * 1024 * 1024)))
+
+# Whitelist of allowed file extensions (without dots)
+# Only files with these extensions can be created or read for security
+# Can be overridden via KAGE_FILESYSTEM_ALLOWED_EXTENSIONS as comma-separated list
+FILESYSTEM_ALLOWED_EXTENSIONS = os.environ.get("KAGE_FILESYSTEM_ALLOWED_EXTENSIONS", 
+    "txt,md,json,csv,xml,html,css,js,py,yaml,yml,log,rst,ini,cfg,conf").split(",")
+
+# Whether to allow overwriting existing files (default: True)
+# Set to False to prevent accidental data loss
+FILESYSTEM_ALLOW_OVERWRITE = os.environ.get("KAGE_FILESYSTEM_ALLOW_OVERWRITE", "1") == "1"
+
+# Whether to automatically create the sandbox directory if it doesn't exist (default: True)
+FILESYSTEM_CREATE_SANDBOX = os.environ.get("KAGE_FILESYSTEM_CREATE_SANDBOX", "1") == "1"
+
+# Whether to log all filesystem operations for security auditing (default: True)
+# Recommended to keep enabled for security monitoring
+FILESYSTEM_LOG_OPERATIONS = os.environ.get("KAGE_FILESYSTEM_LOG_OPERATIONS", "1") == "1"
+
+# Maximum number of concurrent filesystem operations per agent (default: 10)
+# Prevents agents from overwhelming the filesystem with too many simultaneous operations
+FILESYSTEM_MAX_CONCURRENT_OPERATIONS = int(os.environ.get("KAGE_FILESYSTEM_MAX_CONCURRENT", "10"))
+
 # Browser Configuration
 # Set to your Chrome executable path to use a specific installation.
 # If None, Playwright will use its bundled browser or the specified channel.

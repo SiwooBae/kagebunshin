@@ -10,6 +10,7 @@ from typing import Any, List, Optional, Annotated
 import logging
 import asyncio
 import json
+from pathlib import Path
 
 from langchain_core.tools import tool
 from langchain_core.messages import HumanMessage, BaseMessage, SystemMessage, AIMessage, ToolMessage
@@ -17,7 +18,7 @@ from langchain.chat_models.base import init_chat_model
 from langgraph.prebuilt import InjectedState
 from playwright.async_api import BrowserContext
 
-from ..core.agent import KageBunshinAgent
+# Avoid circular import - import KageBunshinAgent inside function where needed
 from ..core.state import KageBunshinState
 from ..automation.fingerprinting import apply_fingerprint_profile_to_context
 from ..config.settings import (
@@ -30,7 +31,10 @@ from ..config.settings import (
     ACTUAL_VIEWPORT_WIDTH,
     ACTUAL_VIEWPORT_HEIGHT,
     LLM_TEMPERATURE,
-    ENABLE_SUMMARIZATION
+    ENABLE_SUMMARIZATION,
+    # Filesystem configuration for cloned agents
+    FILESYSTEM_ENABLED,
+    FILESYSTEM_SANDBOX_BASE,
 )
 from ..communication.group_chat import GroupChatClient
 from ..utils import generate_agent_name, normalize_chat_content
@@ -166,6 +170,9 @@ def get_additional_tools(context: BrowserContext, username: Optional[str] = None
         - Data collection from multiple websites simultaneously  
         - Comparative analysis requiring parallel evaluation
         - Complex automation where different components need independent browser sessions
+        - Data processing tasks where clones can read/write separate datasets
+        - Report generation where clones create different sections simultaneously
+        - File organization and analysis across multiple data sources
 
         **Swarm Intelligence Benefits:**
         - Parallel execution dramatically reduces total task completion time
@@ -204,9 +211,10 @@ def get_additional_tools(context: BrowserContext, username: Optional[str] = None
         **Clone Creation Process:**
         1. Creates fresh incognito BrowserContext for each task (complete isolation)
         2. Generates unique agent name for each clone
-        3. Summarizes parent's conversation history using lightweight LLM
-        4. Injects context briefing with parent summary and specific mission
-        5. Spawns clone with full tool access including delegation capabilities
+        3. Sets up isolated filesystem sandbox (if filesystem enabled)
+        4. Summarizes parent's conversation history using lightweight LLM
+        5. Injects context briefing with parent summary and specific mission
+        6. Spawns clone with full tool access including delegation and filesystem capabilities
 
         **Resource Management:**
         - Automatic cleanup: contexts closed and agents disposed after completion
@@ -219,6 +227,14 @@ def get_additional_tools(context: BrowserContext, username: Optional[str] = None
         - Summary includes initial user request, key actions, and current status
         - Clone depth tracking prevents excessive nesting
         - Each clone can access group chat for coordination
+        
+        **Filesystem Sandbox Isolation:**
+        - Each clone gets its own isolated filesystem sandbox directory
+        - Sandbox structure: `main_sandbox/agent_parent/clones/agent_clone_name/`
+        - Complete isolation prevents clones from accessing each other's files
+        - Full filesystem capabilities: read, write, create, delete, list operations
+        - Security restrictions apply: file size limits, extension filtering, path validation
+        - Clones can create, organize, and manage their own file hierarchies
 
         ## Important Notes
 
@@ -298,6 +314,9 @@ def get_additional_tools(context: BrowserContext, username: Optional[str] = None
             conversation_summary = f"Parent agent {parent_name} was working on tasks (summary unavailable)."
 
         async def run_single_task(task_str: str) -> dict:
+            # Import here to avoid circular import
+            from ..core.agent import KageBunshinAgent
+            
             created_context: Optional[BrowserContext] = None
             clone: Optional[KageBunshinAgent] = None
             try:
@@ -328,6 +347,33 @@ def get_additional_tools(context: BrowserContext, username: Optional[str] = None
 
                 child_name = generate_agent_name()
                 clone_tools = get_additional_tools(created_context, username=child_name, group_room=group_room)
+                
+                # Create isolated filesystem sandbox for this clone
+                # Each clone gets its own subdirectory to prevent interference
+                clone_filesystem_enabled = FILESYSTEM_ENABLED
+                clone_sandbox_base = None
+                
+                if FILESYSTEM_ENABLED:
+                    try:
+                        # Create clone-specific sandbox path: parent_sandbox/clones/clone_name
+                        parent_sandbox = Path(FILESYSTEM_SANDBOX_BASE)
+                        
+                        # Get the parent agent's name from state for sandbox isolation
+                        # This ensures each clone family has its own space
+                        parent_agent_name = parent_name or "unknown_parent"
+                        
+                        # Create hierarchical sandbox structure: 
+                        # main_sandbox/agent_parent/clones/clone_child_name
+                        clone_sandbox_path = parent_sandbox / f"agent_{parent_agent_name}" / "clones" / f"agent_{child_name}"
+                        clone_sandbox_base = str(clone_sandbox_path)
+                        
+                        logger.info(f"Clone {child_name} will use filesystem sandbox: {clone_sandbox_path}")
+                        
+                    except Exception as e:
+                        logger.warning(f"Failed to setup clone filesystem sandbox: {e}")
+                        # Disable filesystem for this clone if setup fails
+                        clone_filesystem_enabled = False
+                
                 try:
                     clone = await KageBunshinAgent.create(
                         created_context,
@@ -336,20 +382,33 @@ def get_additional_tools(context: BrowserContext, username: Optional[str] = None
                         username=child_name,
                         enable_summarization=ENABLE_SUMMARIZATION,
                         clone_depth=current_depth + 1,
+                        # Pass filesystem configuration to clone
+                        filesystem_enabled=clone_filesystem_enabled,
+                        filesystem_sandbox_base=clone_sandbox_base,
                     )
                 except RuntimeError as e:
                     return {"task": task_str, "status": "denied", "error": f"Delegation denied: {e}"}
 
                 # Create context-aware task message for the clone
-                clone_context_message = f"""🧬 CLONE BRIEFING: You are a shadow clone of {parent_name} (Depth: {current_depth + 1})! 
+                filesystem_status = "ENABLED" if clone_filesystem_enabled else "DISABLED"
+                filesystem_info = ""
+                if clone_filesystem_enabled and clone_sandbox_base:
+                    filesystem_info = f"\n🗂️  FILESYSTEM: You have access to a private filesystem sandbox for reading, writing, and organizing files. All file operations are isolated to your sandbox for security."
+                
+                clone_context_message = f"""🧬 CLONE BRIEFING: You are a shadow clone of {parent_name} (Depth: {current_depth + 1})!
 
 PARENT CONTEXT: {conversation_summary}
 
 YOUR MISSION: {task_str}
 
-IMPORTANT: You have FULL delegation capabilities! If your task would benefit from parallelization, don't hesitate to create your own clones using the delegate tool. You are NOT limited by being a clone yourself - the swarm intelligence philosophy applies at every level.
+🛠️  CAPABILITIES:
+• DELEGATION: You have FULL delegation capabilities! Create your own clones if parallelization would help
+• GROUP CHAT: Use post_groupchat tool to coordinate with parent and sibling agents
+• WEB AUTOMATION: Full browser control for navigation, interaction, and data extraction{filesystem_info}
 
-Coordination: Use the group chat to coordinate with your parent and other agents. Think strategically about when to parallelize vs. when to work sequentially."""
+IMPORTANT: You are NOT limited by being a clone - the swarm intelligence philosophy applies at every level. Think strategically about when to parallelize vs. work sequentially.
+
+Coordination Strategy: Share progress updates, coordinate to avoid duplicate work, and leverage collective intelligence through the group chat system."""
 
                 result = await clone.ainvoke(clone_context_message)
                 return {"task": task_str, "status": "ok", "result": result}

@@ -5,6 +5,7 @@ by coordinating with the stateless state manager.
 """
 import logging
 import asyncio
+from pathlib import Path
 from typing import Dict, Any, List, Optional, AsyncGenerator
 
 from langchain_core.messages import SystemMessage, HumanMessage, BaseMessage, AIMessage, ToolMessage
@@ -28,9 +29,19 @@ from ..config.settings import (
     MAX_KAGEBUNSHIN_INSTANCES,
     ENABLE_SUMMARIZATION,
     RECURSION_LIMIT,
+    # Filesystem configuration
+    FILESYSTEM_ENABLED,
+    FILESYSTEM_SANDBOX_BASE,
+    FILESYSTEM_MAX_FILE_SIZE,
+    FILESYSTEM_ALLOWED_EXTENSIONS,
+    FILESYSTEM_ALLOW_OVERWRITE,
+    FILESYSTEM_CREATE_SANDBOX,
+    FILESYSTEM_LOG_OPERATIONS,
+    FILESYSTEM_MAX_CONCURRENT_OPERATIONS,
 )
 from ..utils import format_img_context, format_bbox_context, format_text_context, format_tab_context, format_unified_context, generate_agent_name, normalize_chat_content, strip_openai_reasoning_items
 from ..communication.group_chat import GroupChatClient
+from ..tools.filesystem import get_filesystem_tools, FilesystemConfig
 
 logger = logging.getLogger(__name__)
 
@@ -61,7 +72,10 @@ class KageBunshinAgent:
                  summarizer_provider: str = SUMMARIZER_PROVIDER,
                  summarizer_reasoning_effort: str = SUMMARIZER_REASONING_EFFORT,
                  # Optional workflow configuration
-                 recursion_limit: int = RECURSION_LIMIT):
+                 recursion_limit: int = RECURSION_LIMIT,
+                 # Optional filesystem configuration
+                 filesystem_enabled: Optional[bool] = None,
+                 filesystem_sandbox_base: Optional[str] = None):
         """Initializes the orchestrator with browser context and state manager."""
         
         self.initial_context = context
@@ -100,11 +114,51 @@ class KageBunshinAgent:
         self.main_llm_img_message_type = HumanMessage if "gemini" in llm_model or llm_reasoning_effort is not None else SystemMessage
         self.summarizer_llm_img_message_type = HumanMessage if "gemini" in summarizer_model or summarizer_reasoning_effort is not None else SystemMessage
         web_browsing_tools = self.state_manager.get_tools_for_llm()
-        self.all_tools = web_browsing_tools + (additional_tools or [])
+        
+        # Set username first since we need it for filesystem setup
+        self.username = username or generate_agent_name()
+        
+        # Initialize filesystem tools if enabled
+        filesystem_tools = []
+        
+        # Use provided filesystem configuration or fall back to global settings
+        fs_enabled = filesystem_enabled if filesystem_enabled is not None else FILESYSTEM_ENABLED
+        fs_sandbox_base = filesystem_sandbox_base if filesystem_sandbox_base is not None else FILESYSTEM_SANDBOX_BASE
+        
+        if fs_enabled:
+            try:
+                # Create filesystem sandbox configuration for this agent
+                # Each agent gets its own subdirectory within the main sandbox for isolation
+                # This prevents agents from interfering with each other's files
+                agent_sandbox_path = Path(fs_sandbox_base) / f"agent_{self.username}"
+                
+                filesystem_config = FilesystemConfig(
+                    sandbox_base=str(agent_sandbox_path),
+                    max_file_size=FILESYSTEM_MAX_FILE_SIZE,
+                    allowed_extensions=FILESYSTEM_ALLOWED_EXTENSIONS.copy(),  # Copy to avoid shared reference
+                    enabled=fs_enabled,
+                    allow_overwrite=FILESYSTEM_ALLOW_OVERWRITE,
+                    create_sandbox=FILESYSTEM_CREATE_SANDBOX,
+                    log_operations=FILESYSTEM_LOG_OPERATIONS
+                )
+                
+                filesystem_tools = get_filesystem_tools(filesystem_config)
+                logger.info(f"Filesystem tools enabled for agent {self.username} with sandbox: {agent_sandbox_path}")
+                
+            except Exception as e:
+                # Log the error but don't fail agent initialization
+                # The agent can still function without filesystem tools
+                logger.error(f"Failed to initialize filesystem tools for agent {self.username}: {e}")
+                filesystem_tools = []
+        else:
+            logger.info(f"Filesystem tools disabled for agent {self.username}")
+        
+        # Combine all tools: web browsing + filesystem + additional tools
+        self.all_tools = web_browsing_tools + filesystem_tools + (additional_tools or [])
 
         # Group chat setup
         self.group_room = group_room or GROUPCHAT_ROOM
-        self.username = username or generate_agent_name()
+        # username already set above for filesystem initialization
         self.group_client = GroupChatClient()
         
         # Bind tools to the LLM so it knows what functions it can call
@@ -189,8 +243,45 @@ class KageBunshinAgent:
                      summarizer_reasoning_effort: str = SUMMARIZER_REASONING_EFFORT,
                      # Optional workflow configuration
                      recursion_limit: int = RECURSION_LIMIT,
+                     # Optional filesystem configuration
+                     filesystem_enabled: Optional[bool] = None,
+                     filesystem_sandbox_base: Optional[str] = None,
                      **kwargs):  # Allow additional kwargs for future extensibility
-        """Factory method to create a KageBunshinAgent with async initialization."""
+        """
+        Factory method to create a KageBunshinAgent with async initialization.
+        
+        This factory method creates a fully initialized KageBunshinAgent with all
+        configured capabilities including web automation, delegation, group chat,
+        and optional filesystem operations.
+        
+        Args:
+            context (BrowserContext): Playwright browser context for web automation
+            additional_tools (List[Any], optional): Extra tools to add to the agent
+            system_prompt (str): System prompt template for the agent
+            enable_summarization (bool): Whether to enable action summarization
+            group_room (str, optional): Group chat room name
+            username (str, optional): Agent username (auto-generated if None)
+            clone_depth (int): Current delegation depth (0 for parent agents)
+            llm (Any, optional): Pre-configured LLM instance
+            llm_model (str): LLM model name
+            llm_provider (str): LLM provider name
+            llm_reasoning_effort (str): LLM reasoning effort level
+            llm_temperature (float): LLM temperature setting
+            summarizer_llm (Any, optional): Pre-configured summarizer LLM
+            summarizer_model (str): Summarizer model name
+            summarizer_provider (str): Summarizer provider name
+            summarizer_reasoning_effort (str): Summarizer reasoning effort
+            recursion_limit (int): Maximum workflow recursion depth
+            filesystem_enabled (bool, optional): Override global filesystem setting
+            filesystem_sandbox_base (str, optional): Override sandbox base directory
+            **kwargs: Additional configuration parameters
+            
+        Returns:
+            KageBunshinAgent: Fully initialized agent instance
+            
+        Raises:
+            RuntimeError: If maximum agent instance limit is exceeded
+        """
         # Enforce a maximum number of instances per-process
         if cls._INSTANCE_COUNT >= MAX_KAGEBUNSHIN_INSTANCES:
             raise RuntimeError(
@@ -215,7 +306,9 @@ class KageBunshinAgent:
             summarizer_model=summarizer_model,
             summarizer_provider=summarizer_provider,
             summarizer_reasoning_effort=summarizer_reasoning_effort,
-            recursion_limit=recursion_limit
+            recursion_limit=recursion_limit,
+            filesystem_enabled=filesystem_enabled,
+            filesystem_sandbox_base=filesystem_sandbox_base
         )
         cls._INSTANCE_COUNT += 1
         return instance
