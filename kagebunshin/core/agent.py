@@ -395,6 +395,10 @@ If you continue without tool calls, the session will automatically terminate aft
         Orchestrates loading, reasoning, and web automation by running the graph.
         """
         logger.info(f"Processing query: {user_query}")
+        
+        # Clear any completion data from previous queries (REPL mode)
+        if hasattr(self.state_manager, 'completion_data'):
+            self.state_manager.completion_data = None
         # Announce task to group chat
         try:
             await self.group_client.connect()
@@ -480,6 +484,10 @@ If you continue without tool calls, the session will automatically terminate aft
                   ]
                 }
         """
+        # Clear any completion data from previous queries (REPL mode)
+        if hasattr(self.state_manager, 'completion_data'):
+            self.state_manager.completion_data = None
+            
         # Announce task to group chat (streaming entry)
         try:
             await self.group_client.connect()
