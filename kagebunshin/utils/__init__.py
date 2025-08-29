@@ -14,6 +14,7 @@ from .formatting import (
     format_unified_context,
     annotate_page,
     normalize_chat_content,
+    strip_openai_reasoning_items,
 )
 
 from .naming import generate_agent_name
@@ -30,6 +31,7 @@ __all__ = [
     "format_unified_context",
     "annotate_page",
     "normalize_chat_content",
+    "strip_openai_reasoning_items",
     "generate_agent_name",
     "log_with_timestamp",
 ]

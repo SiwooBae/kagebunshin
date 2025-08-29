@@ -147,6 +147,49 @@ def normalize_chat_content(content: Any, include_placeholders: bool = False) -> 
         return str(content)
 
 
+def strip_openai_reasoning_items(content: Any) -> Any:
+    """Remove OpenAI Responses API 'reasoning' items from message content.
+
+    Some OpenAI models (e.g., GPT-5 family) may return structured content parts
+    including a part with {"type": "reasoning", "id": "rs_*", ...}.
+    Those parts are output-only and must NOT be sent back as input on subsequent
+    requests. This function removes such parts while preserving other content.
+
+    The function is intentionally tolerant of unknown shapes and will recurse
+    into lists/dicts, filtering out any dict with type == "reasoning" and any
+    dict that looks like a reasoning artifact (id starting with "rs_").
+    """
+    try:
+        # Drop entire dicts that explicitly mark reasoning
+        if isinstance(content, dict):
+            ctype = content.get("type")
+            cid = content.get("id")
+            if ctype == "reasoning":
+                return None
+            if isinstance(cid, str) and cid.startswith("rs_"):
+                return None
+            # Recurse into values
+            cleaned: Dict[str, Any] = {}
+            for k, v in content.items():
+                cv = strip_openai_reasoning_items(v)
+                if cv is not None:
+                    cleaned[k] = cv
+            return cleaned
+        # For lists, filter out any None entries after recursion
+        if isinstance(content, list):
+            cleaned_list = []
+            for part in content:
+                cp = strip_openai_reasoning_items(part)
+                if cp is None:
+                    continue
+                cleaned_list.append(cp)
+            return cleaned_list
+        # Primitive types are safe
+        return content
+    except Exception:
+        # Fail-open: if anything odd happens, return original content
+        return content
+
 def format_text_context(markdown_content: str) -> str:
     """Format markdown text into a human-readable context string with deduplication."""
     if not markdown_content:

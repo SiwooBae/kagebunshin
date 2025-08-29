@@ -29,7 +29,7 @@ from ..config.settings import (
     ENABLE_SUMMARIZATION,
     RECURSION_LIMIT,
 )
-from ..utils import format_img_context, format_bbox_context, format_text_context, format_tab_context, format_unified_context, generate_agent_name, normalize_chat_content
+from ..utils import format_img_context, format_bbox_context, format_text_context, format_tab_context, format_unified_context, generate_agent_name, normalize_chat_content, strip_openai_reasoning_items
 from ..communication.group_chat import GroupChatClient
 
 logger = logging.getLogger(__name__)
@@ -131,10 +131,25 @@ class KageBunshinAgent:
             },
         )
         if self.enable_summarization:
-            workflow.add_edge("action", "summarizer")
+            workflow.add_conditional_edges(
+                "action",
+                self.route_after_action,
+                {
+                    "end": END,
+                    "summarizer": "summarizer",
+                    "agent": "agent",
+                },
+            )
             workflow.add_edge("summarizer", "agent")
         else:
-            workflow.add_edge("action", "agent")
+            workflow.add_conditional_edges(
+                "action",
+                self.route_after_action,
+                {
+                    "end": END,
+                    "agent": "agent",
+                },
+            )
         # After a reminder is injected, route back to the agent
         workflow.add_edge("reminder", "agent")
         
@@ -234,11 +249,7 @@ class KageBunshinAgent:
         
         # Check if agent has tool calls
         if isinstance(last_message, AIMessage) and last_message.tool_calls:
-            # Check for explicit completion via complete_task tool
-            for tool_call in last_message.tool_calls:
-                if tool_call["name"] == "complete_task":
-                    return "end"
-            # Route to action tools
+            # Always execute tools via the action node so tool outputs are appended
             return "action"
         
         # No tool calls - check retry count
@@ -252,6 +263,20 @@ class KageBunshinAgent:
         # Ask graph to route to reminder node which will inject message and bump counter
         return "reminder"
 
+    def route_after_action(self, state: KageBunshinState) -> str:
+        """Route after the action node.
+
+        If the complete_task tool was executed, the state manager will contain
+        completion_data. In that case, end the workflow. Otherwise route to
+        summarizer (if enabled) or back to agent.
+        """
+        try:
+            if getattr(self.state_manager, "completion_data", None):
+                return "end"
+        except Exception:
+            pass
+        return "summarizer" if self.enable_summarization else "agent"
+
     async def add_tool_call_reminder(self, state: KageBunshinState) -> Dict[str, Any]:
         """Return a reminder message and increment the retry counter.
         This is a node so that LangGraph persists the change using reducers.
@@ -262,8 +287,8 @@ class KageBunshinAgent:
 
 You haven't made any tool calls in your last response. To continue your task, you need to:
 
-1. **Make a tool call** to interact with the browser, take notes, or gather information
-2. **Use `complete_task` tool call** if you have finished your mission and want to provide a final answer to the user
+- If you wanted to take an action, **Make a tool call** to interact with the browser, take notes, or gather information
+- If you wanted to end the session and send a message to the user, **Use `complete_task` tool call**. The user did not receive your message!
 
 If you continue without tool calls, the session will automatically terminate after {max_retries} attempts.""")
         return {
@@ -380,7 +405,18 @@ If you continue without tool calls, the session will automatically terminate aft
         self.state_manager.set_state(state)
         
         messages = [SystemMessage(content=self.system_prompt)]
-        messages.extend(state["messages"])
+        # Sanitize prior messages to avoid re-sending OpenAI 'reasoning' items
+        for msg in state["messages"]:
+            try:
+                if hasattr(msg, "content") and msg.content is not None:
+                    cleaned = strip_openai_reasoning_items(msg.content)
+                    # Replace content in a shallow copy to preserve message type
+                    msg_copy = type(msg)(**{**msg.__dict__, "content": cleaned})
+                    messages.append(msg_copy)
+                else:
+                    messages.append(msg)
+            except Exception:
+                messages.append(msg)
         
         # Create page context and store it for the summarizer
         page_data = await self.state_manager.get_current_page_data()
