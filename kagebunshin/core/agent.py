@@ -333,10 +333,59 @@ If you continue without tool calls, the session will automatically terminate aft
         
     async def astream(self, user_query: str) -> AsyncGenerator[Dict, None]:
         """
-        Stream the intermediate steps of the agent's execution.
+        Stream the agent's intermediate steps and tool results as structured chunks.
         
-        This method is useful for observing the agent's thought process and actions
-        in real-time. It yields the output of each node in the graph as it executes.
+        This returns an async generator of streaming "update" chunks emitted by the
+        underlying LangGraph as nodes execute. Each yielded chunk is a dictionary that
+        preserves the original node updates and also includes a normalized `tools`
+        array for convenient consumption of tool results.
+        
+        Parameters:
+            user_query: The user's task or instruction to execute.
+        
+        Yields:
+            A dictionary (StreamChunk) that may contain the following keys:
+            - agent (optional): { "messages": List[BaseMessage] }
+              Messages produced by the agent node (e.g., `AIMessage` with `tool_calls`).
+            - action (optional): { "messages": List[ToolMessage] }
+              Tool execution outputs produced by the action node (LangGraph ToolNode).
+            - summarizer (optional): { "messages": List[BaseMessage] }
+              Summaries produced when summarization is enabled.
+            - tools (optional): List of normalized tool result events synthesized from
+              the action node's `ToolMessage`s and the corresponding prior tool calls.
+              Each element has the shape:
+                {
+                  "id": Optional[str],         # tool_call_id if available
+                  "name": str,                 # tool name (e.g., "click")
+                  "args": Optional[Dict],      # arguments passed when tool was called (if matchable)
+                  "result": str                # normalized textual result/observation
+                }
+        
+        Notes:
+        - The `tools` array is additive; existing node update shapes are preserved.
+        - `tools.args` may be `None` if a `ToolMessage` could not be matched to a prior
+          `AIMessage.tool_calls` entry (e.g., missing or unknown `tool_call_id`).
+        - `tools.result` is normalized plain text (see `normalize_chat_content`).
+        - Additional top-level keys may be present when added by LangGraph; they are
+          passed through unchanged.
+        
+        Example:
+            A chunk when the agent proposes a tool call:
+                {
+                  "agent": {
+                    "messages": [AIMessage(content="", tool_calls=[{"id": "abc123", "name": "click", "args": {"bbox_id": 12}}])]
+                  }
+                }
+            
+            A subsequent chunk when the tool finishes:
+                {
+                  "action": {
+                    "messages": [ToolMessage(content="Clicked element #12", tool_call_id="abc123")]
+                  },
+                  "tools": [
+                    {"id": "abc123", "name": "click", "args": {"bbox_id": 12}, "result": "Clicked element #12"}
+                  ]
+                }
         """
         # Announce task to group chat (streaming entry)
         try:
@@ -356,10 +405,67 @@ If you continue without tool calls, the session will automatically terminate aft
 
         # Accumulate the full conversation history during streaming updates
         accumulated_messages: List[BaseMessage] = list(initial_messages)
+        # Map tool_call_id -> {name, args} captured from prior AI tool calls
+        tool_call_index: Dict[str, Dict[str, Any]] = {}
 
         async for chunk in self.agent.astream(initial_state, stream_mode="updates", config={"recursion_limit": self.recursion_limit}):
-            # Yield upstream for observers/CLI
-            yield chunk
+            # Enhance chunks to include normalized tool result events
+            tools_events: List[Dict[str, Any]] = []
+
+            try:
+                # First, capture any newly announced tool calls from the agent node
+                agent_update = chunk.get("agent") or {}
+                for msg in agent_update.get("messages", []) or []:
+                    try:
+                        if isinstance(msg, AIMessage) and getattr(msg, "tool_calls", None):
+                            for tc in getattr(msg, "tool_calls", []) or []:
+                                if isinstance(tc, dict):
+                                    tc_id = tc.get("id")
+                                    tc_name = tc.get("name", "tool")
+                                    tc_args = tc.get("args", {})
+                                else:
+                                    tc_id = getattr(tc, "id", None)
+                                    tc_name = getattr(tc, "name", "tool")
+                                    tc_args = getattr(tc, "args", {})
+                                if tc_id:
+                                    tool_call_index[tc_id] = {"name": tc_name, "args": tc_args}
+                    except Exception:
+                        # Do not let malformed tool_calls break the stream
+                        pass
+
+                # Then, collect tool results from the action node
+                action_update = chunk.get("action") or {}
+                for tmsg in action_update.get("messages", []) or []:
+                    try:
+                        if isinstance(tmsg, ToolMessage):
+                            tool_call_id = getattr(tmsg, "tool_call_id", None)
+                            mapped = tool_call_index.get(tool_call_id, {}) if tool_call_id else {}
+                            tool_name = (
+                                getattr(tmsg, "name", None)
+                                or getattr(tmsg, "tool_name", None)
+                                or mapped.get("name")
+                                or "tool"
+                            )
+                            tool_args = mapped.get("args")
+                            tool_result = normalize_chat_content(getattr(tmsg, "content", ""))
+                            tools_events.append({
+                                "id": tool_call_id,
+                                "name": tool_name,
+                                "args": tool_args,
+                                "result": tool_result,
+                            })
+                    except Exception:
+                        # Continue on any unexpected tool message shape
+                        pass
+            except Exception:
+                # Never let streaming observers break enrichment
+                pass
+
+            # Yield enriched chunk (original keys plus optional 'tools')
+            out_chunk = dict(chunk)
+            if tools_events:
+                out_chunk["tools"] = tools_events
+            yield out_chunk
 
             # Merge any new messages from nodes into our accumulated history
             try:
@@ -367,7 +473,6 @@ If you continue without tool calls, the session will automatically terminate aft
                     node_update = chunk.get(node_key) or {}
                     new_msgs = node_update.get("messages", [])
                     if new_msgs:
-                        # Ensure type correctness; they are BaseMessage instances in updates
                         accumulated_messages.extend(new_msgs)  # type: ignore[arg-type]
             except Exception:
                 # Never let streaming observers break accumulation

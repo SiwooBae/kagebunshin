@@ -196,6 +196,14 @@ class KageBunshinRunner:
                                     name = call.get('name', 'unknown')
                                     args = call.get('args', {})
                                     self._print_step('TOOL', f"{name}({args})", Colors.WARNING)
+                    # Tool results (normalized)
+                    if 'tools' in chunk:
+                        for evt in chunk['tools']:
+                            name = evt.get('name', 'tool')
+                            args = evt.get('args')
+                            result = evt.get('result', '')
+                            args_str = f"{args}" if args is not None else "{}"
+                            self._print_step('OBSERVATION', f"{name}{args_str} -> {result}", Colors.OKCYAN)
                     # Summarizer messages
                     if 'summarizer' in chunk:
                         for msg in chunk['summarizer'].get('messages', []):
@@ -305,6 +313,14 @@ class KageBunshinRunner:
                                         name = call.get('name', 'unknown')
                                         args = call.get('args', {})
                                         self._print_step('TOOL', f"{name}({args})", Colors.WARNING)
+                        # Tool results (normalized)
+                        if 'tools' in chunk:
+                            for evt in chunk['tools']:
+                                name = evt.get('name', 'tool')
+                                args = evt.get('args')
+                                result = evt.get('result', '')
+                                args_str = f"{args}" if args is not None else "{}"
+                                self._print_step('OBSERVATION', f"{name}{args_str} -> {result}", Colors.OKCYAN)
                         if 'summarizer' in chunk:
                             for msg in chunk['summarizer'].get('messages', []):
                                 if hasattr(msg, 'content') and msg.content:
