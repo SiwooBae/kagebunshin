@@ -38,10 +38,13 @@ from ..config.settings import (
     FILESYSTEM_CREATE_SANDBOX,
     FILESYSTEM_LOG_OPERATIONS,
     FILESYSTEM_MAX_CONCURRENT_OPERATIONS,
+    FILESYSTEM_CLEANUP_ENABLED,
+    FILESYSTEM_CLEANUP_MAX_AGE_DAYS,
+    FILESYSTEM_CLEANUP_MAX_SIZE,
 )
 from ..utils import format_img_context, format_bbox_context, format_text_context, format_tab_context, format_unified_context, generate_agent_name, normalize_chat_content, strip_openai_reasoning_items
 from ..communication.group_chat import GroupChatClient
-from ..tools.filesystem import get_filesystem_tools, FilesystemConfig
+from ..tools.filesystem import get_filesystem_tools, FilesystemConfig, cleanup_workspace
 
 logger = logging.getLogger(__name__)
 
@@ -127,6 +130,22 @@ class KageBunshinAgent:
         
         if fs_enabled:
             try:
+                # Perform workspace cleanup before initializing agent
+                if FILESYSTEM_CLEANUP_ENABLED:
+                    try:
+                        cleanup_result = cleanup_workspace(
+                            workspace_base=fs_sandbox_base,
+                            max_age_days=FILESYSTEM_CLEANUP_MAX_AGE_DAYS,
+                            max_size_bytes=FILESYSTEM_CLEANUP_MAX_SIZE,
+                            log_operations=FILESYSTEM_LOG_OPERATIONS
+                        )
+                        if cleanup_result.get("directories_removed", 0) > 0:
+                            logger.info(f"Workspace cleanup: removed {cleanup_result['directories_removed']} "
+                                       f"old agent directories, freed {cleanup_result['space_freed']:,} bytes")
+                    except Exception as cleanup_error:
+                        # Log cleanup error but don't fail agent initialization
+                        logger.warning(f"Workspace cleanup failed but continuing: {cleanup_error}")
+                
                 # Create filesystem sandbox configuration for this agent
                 # Each agent gets its own subdirectory within the main sandbox for isolation
                 # This prevents agents from interfering with each other's files

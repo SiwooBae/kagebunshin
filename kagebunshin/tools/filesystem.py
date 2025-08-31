@@ -50,9 +50,10 @@ import hashlib
 import tempfile
 import shutil
 import stat
+import time
 from pathlib import Path
 from typing import Dict, Any, List, Optional, Union
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from langchain_core.tools import tool
 from dataclasses import dataclass
 
@@ -1199,3 +1200,175 @@ def create_test_sandbox(base_path: str = None) -> FilesystemSandbox:
     )
     
     return FilesystemSandbox(config)
+
+
+def cleanup_workspace(workspace_base: str, 
+                     max_age_days: int = 30,
+                     max_size_bytes: int = 100 * 1024 * 1024,
+                     log_operations: bool = True) -> Dict[str, Any]:
+    """
+    Clean up old agent directories from the workspace.
+    
+    This function performs automatic cleanup of the KageBunshin workspace by:
+    1. Removing agent directories older than max_age_days
+    2. If workspace still exceeds max_size_bytes, removes oldest directories first
+    3. Logs all cleanup operations for transparency
+    
+    Args:
+        workspace_base (str): Path to the workspace root directory
+        max_age_days (int): Maximum age in days before cleanup (default: 30)
+        max_size_bytes (int): Maximum total workspace size (default: 100MB)
+        log_operations (bool): Whether to log cleanup operations (default: True)
+        
+    Returns:
+        Dict[str, Any]: Cleanup results with statistics
+    """
+    try:
+        workspace_path = Path(workspace_base)
+        
+        if not workspace_path.exists():
+            result = {
+                "status": "success",
+                "workspace_path": workspace_base,
+                "message": "Workspace does not exist, no cleanup needed",
+                "directories_removed": 0,
+                "space_freed": 0,
+                "timestamp": datetime.now(timezone.utc).isoformat()
+            }
+            if log_operations:
+                logger.info(f"Workspace cleanup: {json.dumps(result)}")
+            return result
+        
+        if not workspace_path.is_dir():
+            result = {
+                "status": "error",
+                "error_type": "not_a_directory",
+                "error_message": f"Workspace path is not a directory: {workspace_base}",
+                "workspace_path": workspace_base
+            }
+            if log_operations:
+                logger.warning(f"Workspace cleanup failed: {json.dumps(result)}")
+            return result
+        
+        # Collect all agent directories with metadata
+        agent_dirs = []
+        current_time = time.time()
+        cutoff_time = current_time - (max_age_days * 24 * 60 * 60)
+        
+        for item in workspace_path.iterdir():
+            if item.is_dir() and item.name.startswith("agent_"):
+                try:
+                    stat_info = item.stat()
+                    dir_size = _get_directory_size(item)
+                    
+                    agent_dirs.append({
+                        "path": item,
+                        "name": item.name,
+                        "modified_time": stat_info.st_mtime,
+                        "size": dir_size,
+                        "age_days": (current_time - stat_info.st_mtime) / (24 * 60 * 60)
+                    })
+                except OSError as e:
+                    if log_operations:
+                        logger.warning(f"Could not stat agent directory {item}: {e}")
+                    continue
+        
+        # Phase 1: Remove directories older than max_age_days
+        dirs_to_remove = []
+        for agent_dir in agent_dirs:
+            if agent_dir["modified_time"] < cutoff_time:
+                dirs_to_remove.append(agent_dir)
+        
+        # Phase 2: If still over size limit, remove oldest first
+        remaining_dirs = [d for d in agent_dirs if d not in dirs_to_remove]
+        current_size = sum(d["size"] for d in remaining_dirs)
+        
+        if current_size > max_size_bytes:
+            # Sort remaining directories by age (oldest first)
+            remaining_dirs.sort(key=lambda x: x["modified_time"])
+            
+            for agent_dir in remaining_dirs:
+                if current_size <= max_size_bytes:
+                    break
+                dirs_to_remove.append(agent_dir)
+                current_size -= agent_dir["size"]
+        
+        # Perform cleanup
+        directories_removed = 0
+        space_freed = 0
+        removed_dirs = []
+        
+        for agent_dir in dirs_to_remove:
+            try:
+                shutil.rmtree(agent_dir["path"])
+                directories_removed += 1
+                space_freed += agent_dir["size"]
+                removed_dirs.append({
+                    "name": agent_dir["name"],
+                    "age_days": round(agent_dir["age_days"], 1),
+                    "size": agent_dir["size"]
+                })
+                
+                if log_operations:
+                    logger.info(f"Removed agent directory: {agent_dir['name']} "
+                              f"(age: {agent_dir['age_days']:.1f} days, "
+                              f"size: {agent_dir['size']:,} bytes)")
+                              
+            except OSError as e:
+                if log_operations:
+                    logger.error(f"Failed to remove agent directory {agent_dir['name']}: {e}")
+                continue
+        
+        result = {
+            "status": "success",
+            "workspace_path": workspace_base,
+            "directories_removed": directories_removed,
+            "space_freed": space_freed,
+            "removed_directories": removed_dirs,
+            "remaining_directories": len(agent_dirs) - directories_removed,
+            "max_age_days": max_age_days,
+            "max_size_bytes": max_size_bytes,
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+        
+        if log_operations:
+            logger.info(f"Workspace cleanup completed: {json.dumps(result, default=str)}")
+        
+        return result
+        
+    except Exception as e:
+        result = {
+            "status": "error",
+            "error_type": "unexpected_error",
+            "error_message": f"Unexpected error during workspace cleanup: {e}",
+            "workspace_path": workspace_base
+        }
+        if log_operations:
+            logger.error(f"Workspace cleanup failed: {json.dumps(result)}")
+        return result
+
+
+def _get_directory_size(directory: Path) -> int:
+    """
+    Calculate total size of a directory and all its contents.
+    
+    Args:
+        directory (Path): Directory to measure
+        
+    Returns:
+        int: Total size in bytes
+    """
+    total_size = 0
+    try:
+        for item in directory.rglob('*'):
+            if item.is_file():
+                try:
+                    total_size += item.stat().st_size
+                except OSError:
+                    # Skip files we can't stat
+                    continue
+    except OSError:
+        # If we can't access the directory, return 0
+        pass
+    
+    return total_size

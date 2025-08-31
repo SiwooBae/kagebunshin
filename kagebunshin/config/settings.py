@@ -52,6 +52,16 @@ FILESYSTEM_CREATE_SANDBOX = os.environ.get("KAGE_FILESYSTEM_CREATE_SANDBOX", "1"
 # Recommended to keep enabled for security monitoring
 FILESYSTEM_LOG_OPERATIONS = os.environ.get("KAGE_FILESYSTEM_LOG_OPERATIONS", "1") == "1"
 
+# Filesystem cleanup configuration
+# Maximum age in days for agent directories before cleanup (default: 30 days)
+FILESYSTEM_CLEANUP_MAX_AGE_DAYS = int(os.environ.get("KAGE_FILESYSTEM_CLEANUP_MAX_AGE_DAYS", "30"))
+
+# Maximum total workspace size in bytes before cleanup (default: 100MB)
+FILESYSTEM_CLEANUP_MAX_SIZE = int(os.environ.get("KAGE_FILESYSTEM_CLEANUP_MAX_SIZE", str(100 * 1024 * 1024)))
+
+# Whether to enable automatic cleanup on agent initialization (default: True)
+FILESYSTEM_CLEANUP_ENABLED = os.environ.get("KAGE_FILESYSTEM_CLEANUP_ENABLED", "1") == "1"
+
 # Maximum number of concurrent filesystem operations per agent (default: 10)
 # Prevents agents from overwhelming the filesystem with too many simultaneous operations
 FILESYSTEM_MAX_CONCURRENT_OPERATIONS = int(os.environ.get("KAGE_FILESYSTEM_MAX_CONCURRENT", "10"))

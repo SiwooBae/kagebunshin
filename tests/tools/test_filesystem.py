@@ -27,7 +27,7 @@ from unittest.mock import Mock, AsyncMock, patch, MagicMock
 from typing import Dict, Any, List
 
 # Import the classes we're testing
-from kagebunshin.tools.filesystem import get_filesystem_tools, FilesystemSandbox, FilesystemConfig, FilesystemSecurityError
+from kagebunshin.tools.filesystem import get_filesystem_tools, FilesystemSandbox, FilesystemConfig, FilesystemSecurityError, cleanup_workspace
 
 
 class TestFilesystemSandboxSecurity:
@@ -973,3 +973,237 @@ DANGEROUS_EXTENSIONS = [
     "exe", "bat", "cmd", "sh", "ps1", "vbs", "scr", "com", "pif",
     "dll", "sys", "msi", "jar", "class", "php", "jsp", "asp"
 ]
+
+
+class TestWorkspaceCleanup:
+    """
+    Test cases for workspace cleanup functionality.
+    
+    Tests automatic cleanup of old agent directories based on age and size limits.
+    Ensures cleanup operations are safe and provide detailed logging.
+    """
+    
+    def test_should_cleanup_old_agent_directories(self, tmp_path):
+        """Test removing agent directories older than max age."""
+        workspace = tmp_path / "workspace"
+        workspace.mkdir()
+        
+        # Create mock agent directories with different ages
+        import time
+        current_time = time.time()
+        
+        # Recent directory (1 day old)
+        recent_dir = workspace / "agent_recent"
+        recent_dir.mkdir()
+        (recent_dir / "file.txt").write_text("recent content")
+        os.utime(recent_dir, (current_time - 86400, current_time - 86400))  # 1 day old
+        
+        # Old directory (45 days old)
+        old_dir = workspace / "agent_old"
+        old_dir.mkdir()
+        (old_dir / "file.txt").write_text("old content")
+        old_age = current_time - (45 * 24 * 60 * 60)  # 45 days old
+        os.utime(old_dir, (old_age, old_age))
+        
+        # Run cleanup with 30-day limit
+        result = cleanup_workspace(
+            workspace_base=str(workspace),
+            max_age_days=30,
+            max_size_bytes=1024 * 1024,  # 1MB
+            log_operations=False
+        )
+        
+        # Verify results
+        assert result["status"] == "success"
+        assert result["directories_removed"] == 1
+        assert result["space_freed"] > 0
+        assert len(result["removed_directories"]) == 1
+        assert result["removed_directories"][0]["name"] == "agent_old"
+        
+        # Verify filesystem state
+        assert recent_dir.exists()
+        assert not old_dir.exists()
+    
+    def test_should_cleanup_by_size_limit(self, tmp_path):
+        """Test removing oldest directories when size limit exceeded."""
+        workspace = tmp_path / "workspace"
+        workspace.mkdir()
+        
+        import time
+        current_time = time.time()
+        
+        # Create multiple agent directories, all recent but different sizes
+        for i, (name, content_size, age_days) in enumerate([
+            ("agent_large", 1024, 1),   # Large, recent
+            ("agent_medium", 512, 2),   # Medium, slightly older
+            ("agent_small", 256, 3),    # Small, oldest
+        ]):
+            agent_dir = workspace / name
+            agent_dir.mkdir()
+            # Create file with specified size
+            (agent_dir / "data.txt").write_text("X" * content_size)
+            # Set modification time
+            file_time = current_time - (age_days * 24 * 60 * 60)
+            os.utime(agent_dir, (file_time, file_time))
+        
+        # Run cleanup with small size limit (total size is 1792, limit is 1600)
+        # Should keep only the largest (1024) to stay under limit
+        result = cleanup_workspace(
+            workspace_base=str(workspace),
+            max_age_days=30,  # All directories are recent
+            max_size_bytes=1600,  # Should keep large + medium (1536 total)
+            log_operations=False
+        )
+        
+        # Verify results
+        assert result["status"] == "success"
+        assert result["directories_removed"] == 1
+        assert result["removed_directories"][0]["name"] == "agent_small"  # Oldest removed first
+        
+        # Verify filesystem state
+        assert (workspace / "agent_large").exists()
+        assert (workspace / "agent_medium").exists()
+        assert not (workspace / "agent_small").exists()
+    
+    def test_should_handle_nonexistent_workspace(self):
+        """Test cleanup behavior when workspace doesn't exist."""
+        result = cleanup_workspace(
+            workspace_base="/nonexistent/path",
+            max_age_days=30,
+            max_size_bytes=1024 * 1024,
+            log_operations=False
+        )
+        
+        assert result["status"] == "success"
+        assert result["directories_removed"] == 0
+        assert result["space_freed"] == 0
+        assert "does not exist" in result["message"]
+    
+    def test_should_handle_workspace_as_file(self, tmp_path):
+        """Test cleanup behavior when workspace path is a file."""
+        workspace_file = tmp_path / "workspace_file"
+        workspace_file.write_text("not a directory")
+        
+        result = cleanup_workspace(
+            workspace_base=str(workspace_file),
+            max_age_days=30,
+            max_size_bytes=1024 * 1024,
+            log_operations=False
+        )
+        
+        assert result["status"] == "error"
+        assert result["error_type"] == "not_a_directory"
+        assert "not a directory" in result["error_message"]
+    
+    def test_should_ignore_non_agent_directories(self, tmp_path):
+        """Test that cleanup only affects agent_* directories."""
+        workspace = tmp_path / "workspace"
+        workspace.mkdir()
+        
+        import time
+        current_time = time.time()
+        old_time = current_time - (45 * 24 * 60 * 60)
+        
+        # Create directories with different naming patterns
+        agent_dir = workspace / "agent_old"
+        agent_dir.mkdir()
+        (agent_dir / "file.txt").write_text("agent content")
+        os.utime(agent_dir, (old_time, old_time))
+        
+        other_dir = workspace / "other_old"
+        other_dir.mkdir()
+        (other_dir / "file.txt").write_text("other content")
+        os.utime(other_dir, (old_time, old_time))
+        
+        regular_file = workspace / "regular.txt"
+        regular_file.write_text("regular file")
+        
+        # Run cleanup
+        result = cleanup_workspace(
+            workspace_base=str(workspace),
+            max_age_days=30,
+            max_size_bytes=1024 * 1024,
+            log_operations=False
+        )
+        
+        # Verify only agent directory was removed
+        assert result["directories_removed"] == 1
+        assert not agent_dir.exists()
+        assert other_dir.exists()  # Non-agent directory preserved
+        assert regular_file.exists()  # Regular file preserved
+    
+    def test_should_provide_detailed_cleanup_statistics(self, tmp_path):
+        """Test that cleanup returns comprehensive statistics."""
+        workspace = tmp_path / "workspace"
+        workspace.mkdir()
+        
+        import time
+        current_time = time.time()
+        
+        # Create agent directories
+        for i in range(3):
+            agent_dir = workspace / f"agent_test_{i}"
+            agent_dir.mkdir()
+            (agent_dir / "data.txt").write_text(f"content {i}" * 100)
+            old_time = current_time - (45 * 24 * 60 * 60)
+            os.utime(agent_dir, (old_time, old_time))
+        
+        # Run cleanup
+        result = cleanup_workspace(
+            workspace_base=str(workspace),
+            max_age_days=30,
+            max_size_bytes=1024 * 1024,
+            log_operations=True
+        )
+        
+        # Verify comprehensive result structure
+        required_fields = [
+            "status", "workspace_path", "directories_removed", "space_freed",
+            "removed_directories", "remaining_directories", "max_age_days",
+            "max_size_bytes", "timestamp"
+        ]
+        
+        for field in required_fields:
+            assert field in result, f"Missing required field: {field}"
+        
+        assert result["status"] == "success"
+        assert result["directories_removed"] == 3
+        assert result["space_freed"] > 0
+        assert len(result["removed_directories"]) == 3
+        assert result["remaining_directories"] == 0
+        
+        # Verify removed directory details
+        for removed_dir in result["removed_directories"]:
+            assert "name" in removed_dir
+            assert "age_days" in removed_dir
+            assert "size" in removed_dir
+            assert removed_dir["age_days"] > 30
+    
+    def test_should_handle_permission_errors_gracefully(self, tmp_path):
+        """Test cleanup behavior when directories can't be removed."""
+        workspace = tmp_path / "workspace"
+        workspace.mkdir()
+        
+        import time
+        current_time = time.time()
+        old_time = current_time - (45 * 24 * 60 * 60)
+        
+        # Create agent directory
+        agent_dir = workspace / "agent_protected"
+        agent_dir.mkdir()
+        (agent_dir / "file.txt").write_text("protected content")
+        os.utime(agent_dir, (old_time, old_time))
+        
+        # Mock shutil.rmtree to simulate permission error
+        with patch('kagebunshin.tools.filesystem.shutil.rmtree', side_effect=OSError("Permission denied")):
+            result = cleanup_workspace(
+                workspace_base=str(workspace),
+                max_age_days=30,
+                max_size_bytes=1024 * 1024,
+                log_operations=True
+            )
+        
+        # Should handle error gracefully
+        assert result["status"] == "success"  # Overall operation succeeds
+        assert result["directories_removed"] == 0  # But no directories removed
+        assert agent_dir.exists()  # Directory still exists
