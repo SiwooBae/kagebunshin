@@ -63,6 +63,86 @@ async def apply_fingerprint_profile(page: Page, seed=HUMAN_BEHAVIOR_SEED):
           get: () => false,
         }});
 
+        // --- JavaScript Environment Hardening ---
+        // Override toString for native functions to hide automation
+        try {{
+            const nativeFunctions = [
+                window.chrome,
+                navigator.permissions && navigator.permissions.query,
+                navigator.webdriver,
+                window.RTCPeerConnection
+            ];
+            nativeFunctions.forEach(func => {{
+                if (func && typeof func === 'function') {{
+                    const originalToString = func.toString;
+                    func.toString = function() {{
+                        return originalToString.call(this).replace(/\\{{[^}}]*\\}}/g, '{{ [native code] }}');
+                    }};
+                }}
+            }});
+        }} catch (e) {{ /* ignore */ }}
+
+        // Sanitize stack traces to remove automation signatures
+        const originalError = Error;
+        window.Error = function(...args) {{
+            const err = new originalError(...args);
+            if (err.stack) {{
+                err.stack = err.stack.replace(/phantomjs|selenium|webdriver|puppeteer|playwright|chrome-devtools/gi, 'chrome');
+            }}
+            return err;
+        }};
+        Error.prototype = originalError.prototype;
+        Error.captureStackTrace = originalError.captureStackTrace;
+
+        // Clean console methods to avoid automation detection
+        ['log', 'warn', 'error', 'info', 'debug'].forEach(method => {{
+            const original = console[method];
+            console[method] = function(...args) {{
+                const cleanedArgs = args.filter(arg => {{
+                    const str = String(arg);
+                    return !str.match(/webdriver|selenium|puppeteer|playwright|chrome-devtools/i);
+                }});
+                if (cleanedArgs.length > 0) {{
+                    original.apply(console, cleanedArgs);
+                }}
+            }};
+        }});
+
+        // --- CDP Detection & Masking ---
+        // Block CDP runtime detection
+        if (window.chrome && window.chrome.runtime) {{
+            Object.defineProperty(window.chrome, 'runtime', {{
+                get: () => ({{
+                    sendMessage: undefined,
+                    connect: undefined,
+                    onConnect: undefined
+                }})
+            }});
+        }}
+
+        // Override CDP execution context indicators
+        Object.defineProperty(window, '__playwright', {{ get: () => undefined }});
+        Object.defineProperty(window, '__puppeteer', {{ get: () => undefined }});
+
+        // Remove automation extensions and CDP artifacts dynamically
+        Object.keys(window).forEach(key => {{
+            if (key.startsWith('cdc_')) {{
+                try {{
+                    delete window[key];
+                    Object.defineProperty(window, key, {{ get: () => undefined }});
+                }} catch (e) {{ /* ignore */ }}
+            }}
+        }});
+        
+        // Also prevent new CDP artifacts from being created
+        const cdpPatterns = ['cdc_', '__webdriver', '__selenium', '__fxdriver'];
+        cdpPatterns.forEach(pattern => {{
+            Object.defineProperty(window, pattern + 'blocked', {{ 
+                get: () => undefined,
+                set: () => {{}} 
+            }});
+        }});
+
         // --- Spoofing from Profile ---
         // Screen properties
         Object.defineProperty(screen, 'width', {{ get: () => {screen_config['width']} }});
@@ -104,10 +184,23 @@ async def apply_fingerprint_profile(page: Page, seed=HUMAN_BEHAVIOR_SEED):
         try {{
             const originalGetParameter = WebGLRenderingContext.prototype.getParameter;
             WebGLRenderingContext.prototype.getParameter = function(parameter) {{
-                // UNMASKED_VENDOR_WEBGL
-                if (parameter === 37445) {{ return 'Intel Open Source Technology Center'; }}
-                // UNMASKED_RENDERER_WEBGL
-                if (parameter === 37446) {{ return 'Mesa DRI Intel(R) Ivybridge Mobile '; }}
+                // UNMASKED_VENDOR_WEBGL - randomized vendors
+                if (parameter === 37445) {{ 
+                    const vendors = ['Intel Open Source Technology Center', 'Google Inc.', 'Mozilla', 'Apple Inc.'];
+                    return vendors[Math.floor(Math.random() * vendors.length)];
+                }}
+                // UNMASKED_RENDERER_WEBGL - randomized renderers
+                if (parameter === 37446) {{ 
+                    const renderers = [
+                        'Intel(R) HD Graphics 620',
+                        'Intel(R) UHD Graphics 630', 
+                        'Intel(R) Iris(R) Plus Graphics',
+                        'NVIDIA GeForce GTX 1060',
+                        'AMD Radeon RX 580',
+                        'Mesa DRI Intel(R) HD Graphics'
+                    ];
+                    return renderers[Math.floor(Math.random() * renderers.length)];
+                }}
                 return originalGetParameter.apply(this, arguments);
             }};
         }} catch (e) {{ /* ignore */ }}
@@ -126,6 +219,114 @@ async def apply_fingerprint_profile(page: Page, seed=HUMAN_BEHAVIOR_SEED):
             }};
             return analyser;
         }};
+
+        // Plugin array spoofing
+        Object.defineProperty(navigator, 'plugins', {{
+            get: () => [
+                {{ name: 'Chrome PDF Plugin', filename: 'internal-pdf-viewer' }},
+                {{ name: 'Chrome PDF Viewer', filename: 'mhjfbmdgcfjbbpaeojofohoefgiehjai' }},
+                {{ name: 'Native Client', filename: 'internal-nacl-plugin' }}
+            ],
+        }});
+
+        // --- Core Fingerprint Randomization ---
+        // WebRTC leak prevention and spoofing
+        const originalRTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
+        if (originalRTCPeerConnection) {{
+            window.RTCPeerConnection = function(...args) {{
+                const pc = new originalRTCPeerConnection(...args);
+                
+                // Override createDataChannel to prevent fingerprinting
+                const originalCreateDataChannel = pc.createDataChannel;
+                pc.createDataChannel = function() {{
+                    return {{
+                        close: () => {{}},
+                        send: () => {{}},
+                        addEventListener: () => {{}}
+                    }};
+                }};
+                
+                // Override createOffer to prevent fingerprinting
+                const originalCreateOffer = pc.createOffer;
+                pc.createOffer = function() {{
+                    return Promise.resolve({{
+                        type: 'offer',
+                        sdp: 'v=0\\r\\no=- 0 0 IN IP4 127.0.0.1\\r\\ns=-\\r\\nt=0 0\\r\\n'
+                    }});
+                }};
+                
+                return pc;
+            }};
+            
+            // Copy static properties
+            Object.setPrototypeOf(window.RTCPeerConnection, originalRTCPeerConnection);
+            window.RTCPeerConnection.prototype = originalRTCPeerConnection.prototype;
+        }}
+
+        // Battery API spoofing with randomized values
+        if (navigator.getBattery) {{
+            Object.defineProperty(navigator, 'getBattery', {{
+                get: () => () => Promise.resolve({{
+                    charging: Math.random() > 0.5,
+                    chargingTime: Math.random() > 0.5 ? 0 : Math.floor(Math.random() * 7200),
+                    dischargingTime: Math.random() > 0.5 ? Infinity : Math.floor(Math.random() * 14400),
+                    level: Math.random() * 0.4 + 0.6, // 60-100%
+                    addEventListener: () => {{}},
+                    removeEventListener: () => {{}}
+                }})
+            }});
+        }}
+
+        // Permissions API masking
+        if (navigator.permissions && navigator.permissions.query) {{
+            const originalQuery = navigator.permissions.query;
+            navigator.permissions.query = function(params) {{
+                // Return plausible permission states to avoid fingerprinting
+                const permission = params && params.name;
+                const commonStates = ['granted', 'denied', 'prompt'];
+                
+                switch (permission) {{
+                    case 'notifications':
+                        return Promise.resolve({{ state: 'denied', onchange: null }});
+                    case 'geolocation':
+                        return Promise.resolve({{ state: 'prompt', onchange: null }});
+                    case 'camera':
+                    case 'microphone':
+                        return Promise.resolve({{ state: 'prompt', onchange: null }});
+                    case 'midi':
+                        return Promise.resolve({{ state: 'denied', onchange: null }});
+                    default:
+                        // For unknown permissions, return a random but consistent state
+                        const state = commonStates[Math.floor(Math.random() * commonStates.length)];
+                        return Promise.resolve({{ state, onchange: null }});
+                }}
+            }};
+        }}
+
+        // MediaDevices API spoofing
+        if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {{
+            const originalEnumerateDevices = navigator.mediaDevices.enumerateDevices;
+            navigator.mediaDevices.enumerateDevices = function() {{
+                // Generate randomized but realistic device IDs
+                const generateDeviceId = () => 'device_' + Math.random().toString(36).substr(2, 9);
+                const generateGroupId = () => 'group_' + Math.random().toString(36).substr(2, 8);
+                
+                return Promise.resolve([
+                    {{
+                        deviceId: generateDeviceId(),
+                        groupId: generateGroupId(),
+                        kind: 'audioinput',
+                        label: Math.random() > 0.5 ? '' : 'Built-in Microphone'
+                    }},
+                    {{
+                        deviceId: generateDeviceId(), 
+                        groupId: generateGroupId(),
+                        kind: 'audiooutput',
+                        label: Math.random() > 0.5 ? '' : 'Built-in Output'
+                    }}
+                ]);
+            }};
+        }}
 
         // Plugin array spoofing
         Object.defineProperty(navigator, 'plugins', {{
@@ -184,6 +385,86 @@ async def apply_fingerprint_profile_to_context(
 
     await context.add_init_script(f"""
         Object.defineProperty(navigator, 'webdriver', {{ get: () => false }});
+
+        // --- JavaScript Environment Hardening ---
+        // Override toString for native functions to hide automation
+        try {{
+            const nativeFunctions = [
+                window.chrome,
+                navigator.permissions && navigator.permissions.query,
+                navigator.webdriver,
+                window.RTCPeerConnection
+            ];
+            nativeFunctions.forEach(func => {{
+                if (func && typeof func === 'function') {{
+                    const originalToString = func.toString;
+                    func.toString = function() {{
+                        return originalToString.call(this).replace(/\\{{[^}}]*\\}}/g, '{{ [native code] }}');
+                    }};
+                }}
+            }});
+        }} catch (e) {{ /* ignore */ }}
+
+        // Sanitize stack traces to remove automation signatures
+        const originalError = Error;
+        window.Error = function(...args) {{
+            const err = new originalError(...args);
+            if (err.stack) {{
+                err.stack = err.stack.replace(/phantomjs|selenium|webdriver|puppeteer|playwright|chrome-devtools/gi, 'chrome');
+            }}
+            return err;
+        }};
+        Error.prototype = originalError.prototype;
+        Error.captureStackTrace = originalError.captureStackTrace;
+
+        // Clean console methods to avoid automation detection
+        ['log', 'warn', 'error', 'info', 'debug'].forEach(method => {{
+            const original = console[method];
+            console[method] = function(...args) {{
+                const cleanedArgs = args.filter(arg => {{
+                    const str = String(arg);
+                    return !str.match(/webdriver|selenium|puppeteer|playwright|chrome-devtools/i);
+                }});
+                if (cleanedArgs.length > 0) {{
+                    original.apply(console, cleanedArgs);
+                }}
+            }};
+        }});
+
+        // --- CDP Detection & Masking ---
+        // Block CDP runtime detection
+        if (window.chrome && window.chrome.runtime) {{
+            Object.defineProperty(window.chrome, 'runtime', {{
+                get: () => ({{
+                    sendMessage: undefined,
+                    connect: undefined,
+                    onConnect: undefined
+                }})
+            }});
+        }}
+
+        // Override CDP execution context indicators
+        Object.defineProperty(window, '__playwright', {{ get: () => undefined }});
+        Object.defineProperty(window, '__puppeteer', {{ get: () => undefined }});
+
+        // Remove automation extensions and CDP artifacts dynamically
+        Object.keys(window).forEach(key => {{
+            if (key.startsWith('cdc_')) {{
+                try {{
+                    delete window[key];
+                    Object.defineProperty(window, key, {{ get: () => undefined }});
+                }} catch (e) {{ /* ignore */ }}
+            }}
+        }});
+        
+        // Also prevent new CDP artifacts from being created
+        const cdpPatterns = ['cdc_', '__webdriver', '__selenium', '__fxdriver'];
+        cdpPatterns.forEach(pattern => {{
+            Object.defineProperty(window, pattern + 'blocked', {{ 
+                get: () => undefined,
+                set: () => {{}} 
+            }});
+        }});
         Object.defineProperty(screen, 'width', {{ get: () => {screen_config['width']} }});
         Object.defineProperty(screen, 'height', {{ get: () => {screen_config['height']} }});
         Object.defineProperty(screen, 'availWidth', {{ get: () => {screen_config['width']} }});
@@ -238,6 +519,114 @@ async def apply_fingerprint_profile_to_context(
             return analyser;
         }};
 
+        Object.defineProperty(navigator, 'plugins', {{
+            get: () => [
+                {{ name: 'Chrome PDF Plugin', filename: 'internal-pdf-viewer' }},
+                {{ name: 'Chrome PDF Viewer', filename: 'mhjfbmdgcfjbbpaeojofohoefgiehjai' }},
+                {{ name: 'Native Client', filename: 'internal-nacl-plugin' }}
+            ],
+        }});
+
+        // --- Core Fingerprint Randomization ---
+        // WebRTC leak prevention and spoofing
+        const originalRTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
+        if (originalRTCPeerConnection) {{
+            window.RTCPeerConnection = function(...args) {{
+                const pc = new originalRTCPeerConnection(...args);
+                
+                // Override createDataChannel to prevent fingerprinting
+                const originalCreateDataChannel = pc.createDataChannel;
+                pc.createDataChannel = function() {{
+                    return {{
+                        close: () => {{}},
+                        send: () => {{}},
+                        addEventListener: () => {{}}
+                    }};
+                }};
+                
+                // Override createOffer to prevent fingerprinting
+                const originalCreateOffer = pc.createOffer;
+                pc.createOffer = function() {{
+                    return Promise.resolve({{
+                        type: 'offer',
+                        sdp: 'v=0\\r\\no=- 0 0 IN IP4 127.0.0.1\\r\\ns=-\\r\\nt=0 0\\r\\n'
+                    }});
+                }};
+                
+                return pc;
+            }};
+            
+            // Copy static properties
+            Object.setPrototypeOf(window.RTCPeerConnection, originalRTCPeerConnection);
+            window.RTCPeerConnection.prototype = originalRTCPeerConnection.prototype;
+        }}
+
+        // Battery API spoofing with randomized values
+        if (navigator.getBattery) {{
+            Object.defineProperty(navigator, 'getBattery', {{
+                get: () => () => Promise.resolve({{
+                    charging: Math.random() > 0.5,
+                    chargingTime: Math.random() > 0.5 ? 0 : Math.floor(Math.random() * 7200),
+                    dischargingTime: Math.random() > 0.5 ? Infinity : Math.floor(Math.random() * 14400),
+                    level: Math.random() * 0.4 + 0.6, // 60-100%
+                    addEventListener: () => {{}},
+                    removeEventListener: () => {{}}
+                }})
+            }});
+        }}
+
+        // Permissions API masking
+        if (navigator.permissions && navigator.permissions.query) {{
+            const originalQuery = navigator.permissions.query;
+            navigator.permissions.query = function(params) {{
+                // Return plausible permission states to avoid fingerprinting
+                const permission = params && params.name;
+                const commonStates = ['granted', 'denied', 'prompt'];
+                
+                switch (permission) {{
+                    case 'notifications':
+                        return Promise.resolve({{ state: 'denied', onchange: null }});
+                    case 'geolocation':
+                        return Promise.resolve({{ state: 'prompt', onchange: null }});
+                    case 'camera':
+                    case 'microphone':
+                        return Promise.resolve({{ state: 'prompt', onchange: null }});
+                    case 'midi':
+                        return Promise.resolve({{ state: 'denied', onchange: null }});
+                    default:
+                        // For unknown permissions, return a random but consistent state
+                        const state = commonStates[Math.floor(Math.random() * commonStates.length)];
+                        return Promise.resolve({{ state, onchange: null }});
+                }}
+            }};
+        }}
+
+        // MediaDevices API spoofing
+        if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {{
+            const originalEnumerateDevices = navigator.mediaDevices.enumerateDevices;
+            navigator.mediaDevices.enumerateDevices = function() {{
+                // Generate randomized but realistic device IDs
+                const generateDeviceId = () => 'device_' + Math.random().toString(36).substr(2, 9);
+                const generateGroupId = () => 'group_' + Math.random().toString(36).substr(2, 8);
+                
+                return Promise.resolve([
+                    {{
+                        deviceId: generateDeviceId(),
+                        groupId: generateGroupId(),
+                        kind: 'audioinput',
+                        label: Math.random() > 0.5 ? '' : 'Built-in Microphone'
+                    }},
+                    {{
+                        deviceId: generateDeviceId(), 
+                        groupId: generateGroupId(),
+                        kind: 'audiooutput',
+                        label: Math.random() > 0.5 ? '' : 'Built-in Output'
+                    }}
+                ]);
+            }};
+        }}
+
+        // Plugin array spoofing
         Object.defineProperty(navigator, 'plugins', {{
             get: () => [
                 {{ name: 'Chrome PDF Plugin', filename: 'internal-pdf-viewer' }},
