@@ -45,24 +45,29 @@ function getInteractiveElements(contextDocument, documentOffset = { x: 0, y: 0 }
           const textContent = element.textContent ? element.textContent.trim() : "";
           const hasSignificantText = textContent.length > 5; // At least 6 characters
           
-          // Include content elements: headings, paragraphs, text containers
-          includeAsContent = (
-            (tagName.match(/^h[1-6]$/) && hasSignificantText) || // Headings
-            (tagName === 'p' && hasSignificantText) || // Paragraphs
-            (tagName === 'span' && hasSignificantText && textContent.length > 20) || // Significant spans
-            (tagName === 'div' && hasSignificantText && textContent.length > 30) || // Significant divs
-            (tagName === 'li' && hasSignificantText) || // List items
-            (tagName === 'td' && hasSignificantText) || // Table cells
-            (tagName === 'th' && hasSignificantText) || // Table headers
-            (tagName === 'section') || // Semantic sections
-            (tagName === 'article') || // Articles
-            (tagName === 'nav') || // Navigation
-            (tagName === 'header') || // Headers
-            (tagName === 'footer') || // Footers
-            (tagName === 'aside') || // Asides
-            (tagName === 'main') || // Main content
-            (tagName === 'img' && element.alt) // Images with alt text
-          );
+          // Smart container filtering: check if this is just a wrapper for interactive elements
+          const shouldSkipAsWrapper = isWrapperContainer(element, tagName, textContent);
+          
+          if (!shouldSkipAsWrapper) {
+            // Include content elements: headings, paragraphs, text containers
+            includeAsContent = (
+              (tagName.match(/^h[1-6]$/) && hasSignificantText) || // Headings
+              (tagName === 'p' && hasSignificantText) || // Paragraphs
+              (tagName === 'span' && hasSignificantText && textContent.length > 20 && hasUniqueContent(element)) || // Significant spans with unique content
+              (tagName === 'div' && hasSignificantText && textContent.length > 30 && hasUniqueContent(element)) || // Significant divs with unique content
+              (tagName === 'li' && hasSignificantText) || // List items
+              (tagName === 'td' && hasSignificantText) || // Table cells
+              (tagName === 'th' && hasSignificantText) || // Table headers
+              (tagName === 'section' && hasUniqueContent(element)) || // Semantic sections with unique content
+              (tagName === 'article' && hasUniqueContent(element)) || // Articles with unique content
+              (tagName === 'nav' && hasInteractiveChildren(element)) || // Navigation with interactive elements
+              (tagName === 'header' && hasUniqueContent(element)) || // Headers with unique content
+              (tagName === 'footer' && hasUniqueContent(element)) || // Footers with unique content
+              (tagName === 'aside' && hasUniqueContent(element)) || // Asides with unique content
+              (tagName === 'main' && hasUniqueContent(element)) || // Main content with unique content
+              (tagName === 'img' && element.alt) // Images with alt text
+            );
+          }
         }
         
         // Skip if neither interactive nor content
@@ -613,4 +618,215 @@ function createErrorElementItem(element, frameContext) {
     semanticSection: null,
     focused: false
   };
+}
+
+/**
+ * Smart Container Filtering Helper Functions
+ * These functions help identify wrapper containers that should not be annotated
+ * when their interactive children will be annotated instead
+ */
+
+/**
+ * Determines if an element is just a wrapper container for interactive elements
+ * 
+ * @param {Element} element - The element to check
+ * @param {string} tagName - The element's tag name
+ * @param {string} textContent - The element's text content
+ * @returns {boolean} True if this is likely a wrapper that should be skipped
+ */
+function isWrapperContainer(element, tagName, textContent) {
+  // Don't skip semantic elements that provide structure
+  if (tagName.match(/^h[1-6]|p|li|td|th|img$/)) {
+    return false;
+  }
+  
+  // Check if this container primarily exists to wrap interactive elements
+  if (tagName === 'div' || tagName === 'span' || tagName === 'section' || 
+      tagName === 'article' || tagName === 'nav' || tagName === 'header' || 
+      tagName === 'footer' || tagName === 'aside' || tagName === 'main') {
+    
+    // Get immediate interactive children
+    const interactiveChildren = getImmediateInteractiveChildren(element);
+    
+    // If container has interactive children and limited unique text
+    if (interactiveChildren.length > 0) {
+      const uniqueTextLength = getUniqueTextLength(element);
+      const interactiveTextLength = interactiveChildren.reduce((sum, child) => 
+        sum + (child.textContent ? child.textContent.trim().length : 0), 0
+      );
+      
+      // If most of the text comes from interactive children, this is likely a wrapper
+      if (uniqueTextLength < 20 || (interactiveTextLength / textContent.length) > 0.7) {
+        return true;
+      }
+    }
+    
+    // Check for common wrapper patterns in class names
+    const className = element.className ? element.className.toLowerCase() : '';
+    const wrapperPatterns = [
+      'wrapper', 'container', 'wrap', 'inner', 'outer', 'box', 'holder',
+      'group', 'row', 'col', 'grid', 'flex', 'layout', 'content-wrapper'
+    ];
+    
+    if (className && wrapperPatterns.some(pattern => className.includes(pattern))) {
+      // If it has wrapper-like class and minimal unique content, likely a wrapper
+      const uniqueTextLength = getUniqueTextLength(element);
+      if (uniqueTextLength < 30) {
+        return true;
+      }
+    }
+  }
+  
+  return false;
+}
+
+/**
+ * Checks if an element has unique content that isn't just inherited from children
+ * 
+ * @param {Element} element - The element to check
+ * @returns {boolean} True if the element has unique/meaningful content
+ */
+function hasUniqueContent(element) {
+  const uniqueTextLength = getUniqueTextLength(element);
+  return uniqueTextLength > 10; // At least 10 characters of unique content
+}
+
+/**
+ * Calculates the length of text content that is unique to this element
+ * (not inherited from child elements)
+ * 
+ * @param {Element} element - The element to analyze
+ * @returns {number} Length of unique text content
+ */
+function getUniqueTextLength(element) {
+  if (!element || !element.textContent) {
+    return 0;
+  }
+  
+  const totalText = element.textContent.trim();
+  let childText = '';
+  
+  // Collect text from direct child elements
+  for (const child of element.children) {
+    if (child.textContent) {
+      childText += child.textContent.trim() + ' ';
+    }
+  }
+  
+  // Text that appears in the element but not in children is unique
+  let uniqueText = totalText;
+  if (childText.trim()) {
+    // Simple heuristic: text unique to this element
+    const childWords = new Set(childText.toLowerCase().split(/\s+/).filter(w => w.length > 2));
+    const uniqueWords = totalText.toLowerCase().split(/\s+/).filter(word => 
+      word.length > 2 && !childWords.has(word)
+    );
+    uniqueText = uniqueWords.join(' ');
+  }
+  
+  return uniqueText.length;
+}
+
+/**
+ * Gets immediate interactive children of an element
+ * 
+ * @param {Element} element - The parent element
+ * @returns {Array} Array of immediate interactive child elements
+ */
+function getImmediateInteractiveChildren(element) {
+  if (!element || !element.children) {
+    return [];
+  }
+  
+  const interactiveChildren = [];
+  
+  for (const child of element.children) {
+    if (isElementInteractive(child)) {
+      interactiveChildren.push(child);
+    }
+  }
+  
+  return interactiveChildren;
+}
+
+/**
+ * Checks if an element has any interactive children (at any level)
+ * 
+ * @param {Element} element - The element to check
+ * @returns {boolean} True if the element has interactive descendants
+ */
+function hasInteractiveChildren(element) {
+  if (!element) {
+    return false;
+  }
+  
+  try {
+    const interactiveSelectors = [
+      'button', 'input', 'textarea', 'select', 'a[href]', 
+      '[onclick]', '[tabindex]', '[role="button"]', '[role="link"]',
+      '[role="menuitem"]', '[role="tab"]', '[role="checkbox"]', '[role="radio"]'
+    ];
+    
+    for (const selector of interactiveSelectors) {
+      if (element.querySelector(selector)) {
+        return true;
+      }
+    }
+    
+    // Check for elements with cursor: pointer
+    const allChildren = element.querySelectorAll('*');
+    for (const child of allChildren) {
+      try {
+        const style = window.getComputedStyle(child);
+        if (style.cursor === 'pointer') {
+          return true;
+        }
+      } catch (e) {
+        // Ignore style access errors
+      }
+    }
+  } catch (e) {
+    // Ignore query errors
+  }
+  
+  return false;
+}
+
+/**
+ * Quick check if an element is interactive
+ * 
+ * @param {Element} element - The element to check
+ * @returns {boolean} True if the element is interactive
+ */
+function isElementInteractive(element) {
+  if (!element || element.nodeType !== 1) {
+    return false;
+  }
+  
+  const tagName = element.tagName.toLowerCase();
+  
+  // Common interactive elements
+  if (tagName.match(/^(button|input|textarea|select|a)$/)) {
+    return true;
+  }
+  
+  // Elements with interactive attributes
+  if (element.onclick || element.getAttribute('onclick') || 
+      element.getAttribute('tabindex') !== null ||
+      element.getAttribute('role') === 'button' ||
+      element.getAttribute('role') === 'link') {
+    return true;
+  }
+  
+  // Elements with pointer cursor
+  try {
+    const style = window.getComputedStyle(element);
+    if (style.cursor === 'pointer') {
+      return true;
+    }
+  } catch (e) {
+    // Ignore style access errors
+  }
+  
+  return false;
 }

@@ -35,11 +35,12 @@ js_modules = [
     "text_merger.js",      # Text fragment merging (external dependency)
     "constants.js",        # Global variables and constants
     "overlay.js",          # Overlay management functions
-    "utils.js",           # Viewport and utility functions
+    "utils.js",           # Viewport and utility functions (includes z-index analysis)
     "element-filtering.js", # Element filtering and visibility detection
     "element-analysis.js", # Hierarchical analysis functions
     "iframe-processing.js", # iframe processing functions
     "element-discovery.js", # Interactive elements discovery
+    "overlap-detection.js", # Overlap detection and deduplication
     "main.js"             # Main markPage and unmarkPage functions
 ]
 

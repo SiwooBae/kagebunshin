@@ -65,7 +65,16 @@ function markPage(options = {}) {
 
     // Filter out contained elements and empty rects
     let items = allItems.filter(item => item.rects.length > 0);
+    
+    // Basic containment filtering (keep existing logic for backwards compatibility)
     items = items.filter((x) => !items.some((y) => x.element.contains(y.element) && !(x == y)));
+    
+    // Apply advanced overlap detection and deduplication
+    items = applyOverlapDetection(items, {
+        iouThreshold: 0.7,        // 70% IoU threshold for grouping overlapping elements
+        overlapThreshold: 0.8,     // 80% overlap threshold for smaller element containment
+        preserveInteractive: true  // Always preserve interactive elements when possible
+    });
 
     // Apply text fragment merging if enabled
     if (includeOutOfViewport && options.enableTextMerging === true) {
