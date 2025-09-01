@@ -195,6 +195,41 @@ class TestKageBunshinStateManager:
                 assert state_manager._action_count > 0
 
     @pytest.mark.asyncio
+    async def test_should_not_double_click_when_new_tab_opens(self, state_manager, mock_page, sample_state, sample_bbox):
+        """Test that clicking element that opens new tab doesn't trigger fallback click."""
+        state_manager.set_state(sample_state)
+        state_manager.current_bboxes = [sample_bbox]
+        
+        # Mock a new page being created (simulating target="_blank" click)
+        mock_new_page = AsyncMock(spec=Page)
+        initial_pages = [mock_page]
+        pages_with_new_tab = [mock_page, mock_new_page]
+        
+        # Mock context to simulate pages increase
+        mock_context = state_manager.get_context()
+        mock_context.pages = initial_pages
+        
+        with patch.object(state_manager, 'get_current_page', return_value=mock_page):
+            with patch.object(state_manager, '_capture_page_state') as mock_capture:
+                # Page state doesn't change (typical for target="_blank")
+                mock_capture.return_value = ("url1", "hash1", 1)
+                
+                with patch.object(state_manager, '_click_native') as mock_native_click:
+                    with patch.object(state_manager, '_click_human_like') as mock_human_click:
+                        # Simulate new tab being created after native click
+                        def simulate_new_tab(*args, **kwargs):
+                            mock_context.pages = pages_with_new_tab
+                        mock_native_click.side_effect = simulate_new_tab
+                        
+                        result = await state_manager.click(0)
+                        
+                        # Verify native click was called but human-like was NOT
+                        mock_native_click.assert_called_once_with(0)
+                        mock_human_click.assert_not_called()
+                        assert "Successfully clicked" in result
+                        assert state_manager._action_count > 0
+
+    @pytest.mark.asyncio
     async def test_should_type_text_in_element(self, state_manager, mock_page, sample_state, sample_bbox):
         """Test typing text in an element."""
         state_manager.set_state(sample_state)

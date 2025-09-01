@@ -73,9 +73,11 @@ def html_to_markdown(html_content: str) -> str:
 
     # Remove elements with display: none or visibility: hidden
     for el in soup.find_all(style=True):
-        style = el['style'].lower()
-        if 'display:none' in style or 'visibility:hidden' in style:
-            el.decompose()
+        style_attr = el.get('style')
+        if style_attr:
+            style = style_attr.lower()
+            if 'display:none' in style or 'visibility:hidden' in style:
+                el.decompose()
 
     # Convert the cleaned HTML to markdown
     h = html2text.HTML2Text()

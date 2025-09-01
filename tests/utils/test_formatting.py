@@ -64,6 +64,19 @@ class TestHtmlToMarkdown:
         assert "    " not in result.strip()
         assert "Text with" in result
 
+    def test_should_handle_elements_with_null_style_attrs(self):
+        """Test handling of elements where style attribute access might fail."""
+        # This simulates the case where BeautifulSoup finds elements with style=True
+        # but the actual attrs dictionary is None or the style key doesn't exist
+        html = '<div style="display:none">Hidden content</div><p>Visible content</p>'
+        
+        # This should not raise a TypeError
+        result = html_to_markdown(html)
+        
+        # Hidden content should be removed, visible content should remain
+        assert "Hidden content" not in result
+        assert "Visible content" in result
+
 
 class TestFormatTextContext:
     """Test suite for text context formatting."""

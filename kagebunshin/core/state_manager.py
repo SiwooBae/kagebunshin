@@ -464,12 +464,17 @@ class KageBunshinStateManager:
                     await asyncio.sleep(0.5)  # Allow DOM changes to settle
                     
                 after_state = await self._capture_page_state()
+                after_pages = self.get_context().pages
+                new_tab_opened = len(after_pages) > len(before_pages)
 
-                if before_state != after_state:
+                if before_state != after_state or new_tab_opened:
                     native_success = True
                     self.increment_action_count()
-                    await self._check_for_new_tabs(before_pages)
-                    logger.info(f"Native click on bbox_id {bbox_id} successful and caused a page change.")
+                    if new_tab_opened:
+                        await self._check_for_new_tabs(before_pages)
+                        logger.info(f"Native click on bbox_id {bbox_id} successful and opened a new tab.")
+                    else:
+                        logger.info(f"Native click on bbox_id {bbox_id} successful and caused a page change.")
                     
                     # Record successful interaction
                     if self.performance_enabled:
