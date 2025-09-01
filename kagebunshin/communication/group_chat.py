@@ -20,6 +20,8 @@ from ..config.settings import (
     REDIS_HOST,
     REDIS_PORT,
     REDIS_DB,
+    REDIS_PASSWORD,
+    REDIS_USERNAME,
     GROUPCHAT_PREFIX,
     GROUPCHAT_MAX_MESSAGES,
 )
@@ -55,12 +57,16 @@ class GroupChatClient:
         host: str = REDIS_HOST,
         port: int = REDIS_PORT,
         db: int = REDIS_DB,
+        password: Optional[str] = REDIS_PASSWORD,
+        username: Optional[str] = REDIS_USERNAME,
         key_prefix: str = GROUPCHAT_PREFIX,
         max_messages: int = GROUPCHAT_MAX_MESSAGES,
     ) -> None:
         self.host = host
         self.port = port
         self.db = db
+        self.password = password
+        self.username = username
         self.key_prefix = key_prefix.rstrip(":")
         self.max_messages = max_messages
 
@@ -78,11 +84,26 @@ class GroupChatClient:
             # Lazy import to avoid hard dependency if unused
             from redis import asyncio as aioredis  # type: ignore
 
-            self._redis = aioredis.Redis(host=self.host, port=self.port, db=self.db, decode_responses=True)
+            # Build Redis connection parameters
+            redis_params = {
+                "host": self.host,
+                "port": self.port,
+                "db": self.db,
+                "decode_responses": True
+            }
+            
+            # Add authentication if provided
+            if self.password:
+                redis_params["password"] = self.password
+            if self.username:
+                redis_params["username"] = self.username
+
+            self._redis = aioredis.Redis(**redis_params)
             # Simple ping to verify connection
             await self._redis.ping()
             self._connected = True
-            logger.info(f"GroupChatClient connected to Redis at {self.host}:{self.port}/{self.db}")
+            auth_info = f" (auth: {self.username})" if self.username else ""
+            logger.info(f"GroupChatClient connected to Redis at {self.host}:{self.port}/{self.db}{auth_info}")
         except Exception as e:
             self._redis = None
             self._connected = False

@@ -327,6 +327,8 @@ STEALTH_ARGS = [
 REDIS_HOST = os.environ.get("KAGE_REDIS_HOST", "127.0.0.1")
 REDIS_PORT = int(os.environ.get("KAGE_REDIS_PORT", "6379"))
 REDIS_DB = int(os.environ.get("KAGE_REDIS_DB", "0"))
+REDIS_PASSWORD = os.environ.get("KAGE_REDIS_PASSWORD")
+REDIS_USERNAME = os.environ.get("KAGE_REDIS_USERNAME")
 
 # Group chat settings
 GROUPCHAT_PREFIX = os.environ.get("KAGE_GROUPCHAT_PREFIX", "kagebunshin:groupchat")
