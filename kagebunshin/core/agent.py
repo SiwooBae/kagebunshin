@@ -6,6 +6,7 @@ by coordinating with the stateless state manager.
 
 import logging
 import asyncio
+import time
 from pathlib import Path
 from typing import Dict, Any, List, Optional, AsyncGenerator
 
@@ -60,7 +61,7 @@ from ..utils import (
     strip_openai_reasoning_items,
 )
 from ..communication.group_chat import GroupChatClient
-from ..tools.filesystem import get_filesystem_tools, FilesystemConfig, cleanup_workspace
+from ..tools.filesystem import get_filesystem_tools, FilesystemConfig, FilesystemSandbox, cleanup_workspace
 
 logger = logging.getLogger(__name__)
 
@@ -108,6 +109,12 @@ class KageBunshinAgent:
         self.recursion_limit = recursion_limit
         # Simple in-process memory of message history across turns
         self.persistent_messages: List[BaseMessage] = []
+        
+        # Filesystem context tracking
+        self.filesystem_sandbox: Optional[FilesystemSandbox] = None
+        self.filesystem_config: Optional[FilesystemConfig] = None
+        self.filesystem_context_cache: Optional[str] = None
+        self.filesystem_cache_time: float = 0
 
         # Use provided LLM or create from configuration
         if llm is not None:
@@ -204,6 +211,10 @@ class KageBunshinAgent:
                     log_operations=FILESYSTEM_LOG_OPERATIONS,
                 )
 
+                # Store filesystem references for context building
+                self.filesystem_config = filesystem_config
+                self.filesystem_sandbox = FilesystemSandbox(filesystem_config)
+                
                 filesystem_tools = get_filesystem_tools(filesystem_config)
                 logger.info(
                     f"Filesystem tools enabled for agent {self.username} with sandbox: {agent_sandbox_path}"
@@ -768,6 +779,12 @@ If you continue without tool calls, the session will automatically terminate aft
         except Exception:
             pass
 
+        # Add filesystem context if enabled
+        if self.filesystem_sandbox:
+            fs_context = self._build_filesystem_context()
+            if fs_context:
+                messages.append(SystemMessage(content=f"Filesystem Context:\n{fs_context}"))
+
         messages.extend(page_context)
         return messages
 
@@ -875,6 +892,55 @@ If you continue without tool calls, the session will automatically terminate aft
             logger.error(f"Error during summarization: {e}")
             # Continue without summary if it fails
             return state
+
+    def _build_filesystem_context(self) -> str:
+        """Build simple filesystem context for agent awareness."""
+        if not self.filesystem_sandbox:
+            return ""
+        
+        # Check cache validity (10 second TTL)
+        if self.filesystem_context_cache and (time.time() - self.filesystem_cache_time < 10):
+            return self.filesystem_context_cache
+        
+        try:
+            # Get workspace state
+            result = self.filesystem_sandbox.list_directory(".")
+            if result.get("status") != "success":
+                return ""
+            
+            lines = [f"Workspace: {self.filesystem_config.sandbox_base}"]
+            
+            # List files (sorted by modification time)
+            files = [f for f in result.get("files", []) if f.get("type") == "file"]
+            if files:
+                # Sort by modification time, most recent first
+                files.sort(key=lambda x: x.get("modified_time", ""), reverse=True)
+                lines.append("Files:")
+                for f in files:
+                    lines.append(f.get('name', ''))
+            
+            # List directories
+            dirs = [f for f in result.get("files", []) if f.get("type") == "directory"]
+            if dirs:
+                lines.append("\nDirectories:")
+                for d in dirs:
+                    lines.append(f"{d.get('name', '')}/")
+            
+            # Simple summary
+            lines.append(f"\nTotal: {len(files)} files, {len(dirs)} directories")
+            
+            context = "\n".join(lines)
+            
+            # Update cache
+            self.filesystem_context_cache = context
+            self.filesystem_cache_time = time.time()
+            
+            return context
+            
+        except Exception as e:
+            # Log error but don't fail context building
+            logger.debug(f"Error building filesystem context: {e}")
+            return ""
 
     async def _build_page_context(
         self,
