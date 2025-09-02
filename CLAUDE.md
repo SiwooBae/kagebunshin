@@ -383,3 +383,8 @@ As of the latest update:
   - LLM-aware testing for non-deterministic summarization outputs
   - Proper Redis client mocking with `decode_responses=True`
   - Correct Langchain ToolCall objects with required fields
+
+## Additional Guidelines
+- It is OKAY to make comments! Just be clear and concise.
+- If you cannot infer any information within your capability, Don't hestitate to ask me clarifying questions.
+- Do not create anything outside of what I asked for. Think of Occam's Razor or mimimum description length; try to generate only necessary code while making sure it has all the functionalities and following software engineering principles (extensibility, readability, etc.).
