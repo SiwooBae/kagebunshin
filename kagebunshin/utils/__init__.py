@@ -15,6 +15,7 @@ from .formatting import (
     annotate_page,
     normalize_chat_content,
     strip_openai_reasoning_items,
+    build_page_context,
 )
 
 from .naming import generate_agent_name
@@ -32,6 +33,7 @@ __all__ = [
     "annotate_page",
     "normalize_chat_content",
     "strip_openai_reasoning_items",
+    "build_page_context",
     "generate_agent_name",
     "log_with_timestamp",
 ]

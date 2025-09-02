@@ -9,7 +9,7 @@ import base64
 import asyncio
 import logging
 from io import BytesIO
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 import time
 
 import html2text
@@ -19,6 +19,7 @@ from playwright.async_api import Page
 from playwright.async_api import TimeoutError as PWTimeout
 
 from ..core.state import BBox, Annotation, FrameStats, TabInfo
+from langchain_core.messages import SystemMessage, BaseMessage
 
 
 
@@ -823,3 +824,88 @@ async def annotate_page(page: Page) -> Annotation:
         )
 
     return await _annotate_html_page(page)
+
+
+def build_page_context(
+    page_data: Annotation,
+    message_type: type = SystemMessage,
+    current_url: Optional[str] = None,
+    tabs: Optional[List[TabInfo]] = None,
+    current_tab_index: Optional[int] = None,
+) -> List[BaseMessage]:
+    """Build a consolidated page context message for LLMs.
+
+    This mirrors the message construction used by agents, combining:
+    - Optional tab context (when multiple tabs are present)
+    - Current URL line
+    - Unified page context (interactive + content structure) or fallback markdown
+    - Optional screenshot image content when available
+
+    Args:
+        page_data: Current page annotation snapshot
+        message_type: Message class to instantiate (SystemMessage or HumanMessage)
+        current_url: The current page URL string
+        tabs: Optional list of tab infos to include
+        current_tab_index: Active tab index corresponding to tabs
+
+    Returns:
+        List[BaseMessage]: A single consolidated message with text and optional image
+    """
+    context_parts: List[str] = []
+
+    # Tab information (only when meaningful)
+    try:
+        if tabs and len(tabs) > 1 and current_tab_index is not None:
+            tab_context = format_tab_context(tabs, current_tab_index)
+            context_parts.append(tab_context)
+    except Exception:
+        # Never fail context on tab issues
+        pass
+
+    # Page state information
+    if getattr(page_data, "img", None) and getattr(page_data, "bboxes", None):
+        context_parts.append("Current state of the page:\n\n")
+
+    # Current URL
+    if current_url:
+        context_parts.append(f"Current URL: {current_url}")
+
+    # Unified page context or fallback text
+    try:
+        if page_data.bboxes:
+            unified_context = format_unified_context(
+                page_data.bboxes, detail_level="full_hierarchy"
+            )
+            context_parts.append(unified_context)
+        elif page_data.markdown:
+            text_context = format_text_context(page_data.markdown)
+            context_parts.append(text_context)
+    except Exception:
+        # Keep going even if formatting fails
+        pass
+
+    # Build consolidated content
+    if context_parts or getattr(page_data, "img", None):
+        consolidated_content: List[Dict[str, Any]] | str
+
+        # Add text content
+        text_block = "\n\n".join(context_parts) if context_parts else ""
+
+        # Return single message with mixed content if we have an image, otherwise just text
+        if getattr(page_data, "img", None):
+            consolidated: List[Dict[str, Any]] = []
+            if text_block:
+                consolidated.append({"type": "text", "text": text_block})
+            img_content = format_img_context(page_data.img)
+            consolidated.append(img_content)
+            consolidated.append(
+                {
+                    "type": "text",
+                    "text": "\n\nBased on the current state of the page and the context, take the best action to fulfill the user's request.",
+                }
+            )
+            return [message_type(content=consolidated)]
+        else:
+            return [message_type(content=text_block)]
+
+    return []

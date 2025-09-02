@@ -21,6 +21,16 @@ LLM_TEMPERATURE = 1
 # Enable/disable summarizer node (default off)
 ENABLE_SUMMARIZATION = os.environ.get("KAGE_ENABLE_SUMMARIZATION", "0") == "1"
 
+# Blind and Lame Architecture Configuration
+BLIND_MODEL = os.environ.get("KAGE_BLIND_MODEL", "gpt-5")
+BLIND_PROVIDER = os.environ.get("KAGE_BLIND_PROVIDER", "openai")
+BLIND_REASONING_EFFORT = os.environ.get("KAGE_BLIND_REASONING_EFFORT", "medium")
+BLIND_TEMPERATURE = float(os.environ.get("KAGE_BLIND_TEMPERATURE", "1.0"))
+
+LAME_MODEL = os.environ.get("KAGE_LAME_MODEL", "gpt-5-nano")
+LAME_PROVIDER = os.environ.get("KAGE_LAME_PROVIDER", "openai")
+LAME_TEMPERATURE = float(os.environ.get("KAGE_LAME_TEMPERATURE", "1.0"))
+
 # Filesystem Sandbox Configuration
 # Master switch to enable/disable all filesystem operations
 FILESYSTEM_ENABLED = os.environ.get("KAGE_FILESYSTEM_ENABLED", "1") == "1"

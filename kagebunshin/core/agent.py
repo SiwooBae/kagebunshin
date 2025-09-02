@@ -56,12 +56,14 @@ from ..utils import (
     format_text_context,
     format_tab_context,
     format_unified_context,
+    build_page_context,
     generate_agent_name,
     normalize_chat_content,
     strip_openai_reasoning_items,
 )
 from ..communication.group_chat import GroupChatClient
 from ..tools.filesystem import get_filesystem_tools, FilesystemConfig, FilesystemSandbox, cleanup_workspace
+from ..tools.workflow import take_note, complete_task
 
 logger = logging.getLogger(__name__)
 
@@ -230,9 +232,10 @@ class KageBunshinAgent:
         else:
             logger.info(f"Filesystem tools disabled for agent {self.username}")
 
-        # Combine all tools: web browsing + filesystem + additional tools
+        # Combine all tools: web browsing + filesystem + workflow + additional tools
+        workflow_tools = [take_note, complete_task]
         self.all_tools = (
-            web_browsing_tools + filesystem_tools + (additional_tools or [])
+            web_browsing_tools + filesystem_tools + workflow_tools + (additional_tools or [])
         )
 
         # Group chat setup
@@ -456,12 +459,12 @@ class KageBunshinAgent:
     def route_after_action(self, state: KageBunshinState) -> str:
         """Route after the action node.
 
-        If the complete_task tool was executed, the state manager will contain
+        If the complete_task tool was executed, the state will contain
         completion_data. In that case, end the workflow. Otherwise route to
         summarizer (if enabled) or back to agent.
         """
         try:
-            if getattr(self.state_manager, "completion_data", None):
+            if state.get("completion_data") is not None:
                 return "end"
         except Exception:
             pass
@@ -497,8 +500,7 @@ If you continue without tool calls, the session will automatically terminate aft
         logger.info(f"Processing query: {user_query}")
 
         # Clear any completion data from previous queries (REPL mode)
-        if hasattr(self.state_manager, "completion_data"):
-            self.state_manager.completion_data = None
+        # Note: completion_data is now managed in the workflow state, not state_manager
         # Announce task to group chat
         try:
             await self.group_client.connect()
@@ -513,6 +515,7 @@ If you continue without tool calls, the session will automatically terminate aft
             context=self.initial_context,
             clone_depth=self.clone_depth,
             tool_call_retry_count=0,
+            completion_data=None,
         )
 
         # The graph will execute until it hits an END state
@@ -587,8 +590,7 @@ If you continue without tool calls, the session will automatically terminate aft
                 }
         """
         # Clear any completion data from previous queries (REPL mode)
-        if hasattr(self.state_manager, "completion_data"):
-            self.state_manager.completion_data = None
+        # Note: completion_data is now managed in the workflow state, not state_manager
 
         # Announce task to group chat (streaming entry)
         try:
@@ -604,6 +606,7 @@ If you continue without tool calls, the session will automatically terminate aft
             context=self.initial_context,
             clone_depth=self.clone_depth,
             tool_call_retry_count=0,
+            completion_data=None,
         )
 
         # Accumulate the full conversation history during streaming updates
@@ -950,63 +953,17 @@ If you continue without tool calls, the session will automatically terminate aft
         message_type: type = SystemMessage,
         tab_info_override: Optional[List[TabInfo]] = None,
     ) -> List[BaseMessage]:
-        """Add current page state to the context as a single consolidated SystemMessage."""
-
-        # Collect all text content parts
-        context_parts = []
-
-        # Tab information
+        """Add current page state to the context using shared builder."""
         tabs = tab_info_override or await self.state_manager.get_tabs()
-        if len(tabs) > 1:
-            current_tab_index = await self.state_manager.get_current_tab_index()
-            tab_context = format_tab_context(tabs, current_tab_index)
-            context_parts.append(tab_context)
-
-        # Page state information
-        if page_data.img and page_data.bboxes:
-            context_parts.append("Current state of the page:\n\n")
-
-        # current url
+        current_tab_index = await self.state_manager.get_current_tab_index()
         current_url = await self.get_current_url()
-        context_parts.append(f"Current URL: {current_url}")
-
-        # Unified page context (combines interactive elements and content structure)
-        if page_data.bboxes:
-            unified_context = format_unified_context(
-                page_data.bboxes, detail_level="full_hierarchy"
-            )
-            context_parts.append(unified_context)
-
-        # Additional page content if available (fallback for cases without bboxes)
-        elif page_data.markdown:
-            text_context = format_text_context(page_data.markdown)
-            context_parts.append(text_context)
-
-        # Build consolidated content
-        if context_parts or page_data.img:
-            consolidated_content = []
-
-            # Add all text content as one block
-            if context_parts:
-                consolidated_content.append(
-                    {"type": "text", "text": "\n\n".join(context_parts)}
-                )
-
-            # Return single SystemMessage with mixed content if we have an image, otherwise just text
-            if page_data.img:
-                img_content = format_img_context(page_data.img)
-                consolidated_content.append(img_content)
-                consolidated_content.append(
-                    {
-                        "type": "text",
-                        "text": "\n\nBased on the current state of the page and the context, take the best action to fulfill the user's request.",
-                    }
-                )
-                return [message_type(content=consolidated_content)]
-            else:
-                return [message_type(content="\n\n".join(context_parts))]
-
-        return []
+        return build_page_context(
+            page_data=page_data,
+            message_type=message_type,
+            current_url=current_url,
+            tabs=tabs,
+            current_tab_index=current_tab_index,
+        )
 
     def _extract_final_answer(self) -> str:
         """Extract the final answer from the conversation."""
@@ -1034,12 +991,10 @@ If you continue without tool calls, the session will automatically terminate aft
                         )
                         return f"{status_text}{confidence_text} {result}"
 
-        # 2) Fallback to completion data stored in state manager
-        if (
-            hasattr(self.state_manager, "completion_data")
-            and self.state_manager.completion_data
-        ):
-            data = self.state_manager.completion_data
+        # 2) Fallback to completion data stored in workflow state
+        completion_data = self.state_manager.current_state.get("completion_data")
+        if completion_data:
+            data = completion_data
             status = data.get("status", "unknown")
             result = data.get("result", "")
             confidence = data.get("confidence")

@@ -254,8 +254,8 @@ class TestKageBunshinAgent:
 class TestAgentTermination:
     """Test suite for the new termination logic with complete_task tool."""
     
-    def test_should_continue_returns_end_when_complete_task_called(self, kage_agent):
-        """Test that should_continue returns 'end' when complete_task tool is called."""
+    def test_should_continue_returns_action_when_complete_task_called(self, kage_agent):
+        """Test that should_continue returns 'action' when complete_task tool is called (tools must execute first)."""
         from kagebunshin.core.state import KageBunshinState
         from langchain_core.messages import AIMessage, ToolCall
         
@@ -270,7 +270,7 @@ class TestAgentTermination:
         
         result = kage_agent.should_continue(state)
         
-        assert result == "end"
+        assert result == "action"
     
     def test_should_continue_returns_continue_for_other_tool_calls(self, kage_agent):
         """Test that should_continue returns 'continue' for non-complete_task tool calls."""
@@ -287,9 +287,7 @@ class TestAgentTermination:
         
         result = kage_agent.should_continue(state)
         
-        assert result == "continue"
-        # Should reset retry count when tool call is made
-        assert state["tool_call_retry_count"] == 0
+        assert result == "action"
     
     def test_should_continue_adds_reminder_on_missing_tool_call(self, kage_agent):
         """Test that should_continue adds reminder message when no tool call is made."""
@@ -305,15 +303,7 @@ class TestAgentTermination:
         
         result = kage_agent.should_continue(state)
         
-        assert result == "continue"
-        assert state["tool_call_retry_count"] == 1
-        
-        # Check that reminder message was added
-        assert len(state["messages"]) == 2
-        reminder_msg = state["messages"][1]
-        assert isinstance(reminder_msg, SystemMessage)
-        assert "Tool Call Required" in reminder_msg.content
-        assert "complete_task" in reminder_msg.content
+        assert result == "reminder"
     
     def test_should_continue_terminates_after_max_retries(self, kage_agent):
         """Test that should_continue returns 'end' after reaching max retry limit."""
@@ -376,18 +366,18 @@ class TestAgentTermination:
         
         assert result == "[PARTIAL] Collected data from 2 of 3 sites"
     
-    def test_extract_final_answer_falls_back_to_state_manager_data(self, kage_agent):
-        """Test _extract_final_answer uses state manager completion data as fallback."""
+    def test_extract_final_answer_falls_back_to_state_data(self, kage_agent):
+        """Test _extract_final_answer uses workflow state completion data as fallback."""
         from langchain_core.messages import HumanMessage
         
-        # Mock state with no complete_task tool calls
-        kage_agent.state_manager.current_state = {"messages": [HumanMessage(content="test")]}
-        
-        # Mock completion data in state manager
-        kage_agent.state_manager.completion_data = {
-            "status": "blocked",
-            "result": "Authentication required",
-            "confidence": 1.0
+        # Mock state with no complete_task tool calls but with completion_data
+        kage_agent.state_manager.current_state = {
+            "messages": [HumanMessage(content="test")],
+            "completion_data": {
+                "status": "blocked",
+                "result": "Authentication required",
+                "confidence": 1.0
+            }
         }
         
         result = kage_agent._extract_final_answer()

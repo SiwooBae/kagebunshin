@@ -307,6 +307,9 @@ class KageBunshinState(TypedDict):
     agent_id: Optional[str]                 # Unique identifier for this agent instance  
     parent_agent_id: Optional[str]          # ID of parent agent (for clones)
     sandbox_path: Optional[str]             # Path to this agent's filesystem sandbox
+    
+    # Workflow completion tracking
+    completion_data: Optional[Dict[str, Any]]  # Task completion data (status, result, confidence, timestamp)
 
 class Annotation(BaseModel):
     img: str = Field(description="Base64 encoded image of the current page")
