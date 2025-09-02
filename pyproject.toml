@@ -1,6 +1,6 @@
 [project]
 name = "kagebunshin"
-version = "0.1.4"
+version = "0.1.5"
 description = "AI web automation agent swarm with self-cloning capabilities"
 readme = "README.md"
 license = {text = "MIT"}
