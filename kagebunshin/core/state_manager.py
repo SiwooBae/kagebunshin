@@ -822,6 +822,22 @@ class KageBunshinStateManager:
                 logger.error("Page content is None, cannot extract content")
                 return "Error: Unable to extract page content - page content is None"
             
+            # Heuristic anti-bot/consent page detection (e.g., Google SERP consent/anti-bot)
+            antibot_signals = [
+                "unusual traffic from your computer network",
+                "sorry, but your computer or network may be sending automated queries",
+                "recaptcha",
+                "g-recaptcha",
+                "hcaptcha",
+                "data-sitekey",
+                "consent.google.com",
+                "before you continue to google",
+                "verify that you are not a robot",
+                "to continue, please type the characters",
+            ]
+            content_lc = html_content.lower()
+            antibot_detected = any(sig in content_lc for sig in antibot_signals)
+            
             # Check if this is a PDF page using the same logic as annotate_page
             is_pdf = 'type="application/pdf"' in html_content or 'class="pdf' in html_content
             
@@ -856,8 +872,15 @@ class KageBunshinStateManager:
                 if cleaned_markdown is None:
                     logger.warning("html_to_markdown returned None, using empty string")
                     cleaned_markdown = ""
-
-                output = f"URL: {url}\nTitle: {title}\n\n{cleaned_markdown}"
+                
+                prefix_note = ""
+                if antibot_detected:
+                    prefix_note = (
+                        "[Note] Potential anti-bot/consent page detected. "
+                        "Content may be limited or obfuscated.\n\n"
+                    )
+                
+                output = f"URL: {url}\nTitle: {title}\n\n{prefix_note}{cleaned_markdown}"
                 return output
 
         except ValueError as e:

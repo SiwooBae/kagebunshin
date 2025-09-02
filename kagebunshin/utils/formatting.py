@@ -60,31 +60,50 @@ mark_page_script = "\n\n".join(js_scripts)
 
 
 def html_to_markdown(html_content: str) -> str:
-    """Convert visible HTML content to markdown, preserving links."""
+    """Convert visible HTML content to markdown, preserving links. Robust to parser errors."""
     if not html_content:
         return ""
-
-    # Parse and clean HTML using BeautifulSoup
-    soup = BeautifulSoup(html_content, "html.parser")
-
-    # Remove elements that are not visible
-    for tag in soup(['style', 'script', 'head', 'title', 'meta', '[document]']):
-        tag.decompose()
-
-    # Remove elements with display: none or visibility: hidden
-    for el in soup.find_all(style=True):
-        style_attr = el.get('style')
-        if style_attr:
-            style = style_attr.lower()
-            if 'display:none' in style or 'visibility:hidden' in style:
-                el.decompose()
-
-    # Convert the cleaned HTML to markdown
-    h = html2text.HTML2Text()
-    h.ignore_links = False  # Set to True if you want to ignore links
-    h.ignore_images = True
-    h.body_width = 0  # Prevent line wrapping
-    return h.handle(str(soup))
+    try:
+        soup = BeautifulSoup(html_content, "html.parser")
+        # Remove elements that are not visible
+        for tag in soup(['style', 'script', 'head', 'title', 'meta', '[document]']):
+            try:
+                tag.decompose()
+            except Exception:
+                # Ignore elements that cannot be decomposed
+                continue
+        # Remove elements with display: none or visibility: hidden
+        for el in soup.find_all(style=True):
+            try:
+                style_attr = el.get('style')
+                if style_attr:
+                    style = style_attr.lower()
+                    if 'display:none' in style or 'visibility:hidden' in style:
+                        el.decompose()
+            except Exception:
+                # Never let a malformed node break conversion
+                continue
+        try:
+            h = html2text.HTML2Text()
+            h.ignore_links = False
+            h.ignore_images = True
+            h.body_width = 0
+            return h.handle(str(soup))
+        except Exception:
+            # Fallback to plain text if html2text chokes on odd markup
+            try:
+                text = soup.get_text(separator=" ", strip=True)
+                return text or ""
+            except Exception:
+                return ""
+    except Exception:
+        # Last-resort fallback: strip tags crudely
+        try:
+            import re
+            cleaned = re.sub(r"<[^>]+>", " ", html_content)
+            return " ".join(cleaned.split())
+        except Exception:
+            return str(html_content)
 
 
 def normalize_chat_content(content: Any, include_placeholders: bool = False) -> str:

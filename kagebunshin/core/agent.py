@@ -406,13 +406,15 @@ class KageBunshinAgent:
 
         # Add agent_id to response's additional_kwargs for backend server
         if isinstance(response, AIMessage):
-            enhanced_response = AIMessage(
-                content=response.content,
-                tool_calls=getattr(response, "tool_calls", None),
-                additional_kwargs={
-                    "agent_id": self.username,
-                    **response.additional_kwargs,
-                },
+            # Safely copy all fields and only modify additional_kwargs to preserve internal structure
+            enhanced_response = type(response)(
+                **{
+                    **response.__dict__,
+                    "additional_kwargs": {
+                        "agent_id": self.username,
+                        **response.additional_kwargs,
+                    }
+                }
             )
             result: Dict[str, Any] = {"messages": [enhanced_response]}
             # Reset retry count if the agent made tool calls in this step
