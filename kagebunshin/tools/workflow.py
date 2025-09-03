@@ -13,9 +13,6 @@ from typing import Annotated, Dict, Any, Optional
 from langchain_core.tools import tool
 from langgraph.prebuilt import InjectedState
 
-from ..core.state import KageBunshinState
-
-
 logger = logging.getLogger(__name__)
 
 
