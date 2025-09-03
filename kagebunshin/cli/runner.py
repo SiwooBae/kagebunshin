@@ -9,6 +9,7 @@ from playwright.async_api import async_playwright
 
 from ..config.settings import BROWSER_EXECUTABLE_PATH, USER_DATA_DIR, DEFAULT_PERMISSIONS, ACTUAL_VIEWPORT_WIDTH, ACTUAL_VIEWPORT_HEIGHT, ENABLE_SUMMARIZATION
 from ..core.agent import KageBunshinAgent
+from ..core.blind_and_lame.blind_agent import BlindAgent
 from ..tools.delegation import get_additional_tools
 from ..config.settings import GROUPCHAT_ROOM
 from ..utils import generate_agent_name, normalize_chat_content
@@ -36,9 +37,10 @@ class Colors:
 class KageBunshinRunner:
     """Simplified KageBunshin runner using the stateless orchestrator pattern"""
 
-    def __init__(self):
+    def __init__(self, architecture: str = "kagebunshin"):
         self.orchestrator: Optional[KageBunshinAgent] = None
         self.step_count = 0
+        self.architecture = architecture
 
     def _get_timestamp(self) -> str:
         """Get current timestamp for logging"""
@@ -125,7 +127,9 @@ class KageBunshinRunner:
 
     async def run(self, user_query: str):
         """Run KageBunshin using the simplified stateless orchestrator approach"""
-        self._print_banner("🌐 KageBunshin (Stateless Orchestrator)", Colors.HEADER)
+        arch_name = "Blind & Lame" if self.architecture == "blindlame" else "KageBunshin"
+        self._print_banner(f"🌐 {arch_name} (Stateless Orchestrator)", Colors.HEADER)
+        print(f"{Colors.OKCYAN}Architecture: {Colors.BOLD}{arch_name}{Colors.ENDC}")
         print(f"{Colors.OKCYAN}Query: {Colors.BOLD}{user_query}{Colors.ENDC}\n")
 
         async with async_playwright() as p:
@@ -169,15 +173,28 @@ class KageBunshinRunner:
             # Initialize orchestrator with additional tools (including delegate) and group chat identity
             agent_name = generate_agent_name()
             extra_tools = get_additional_tools(context, username=agent_name, group_room=GROUPCHAT_ROOM)
-            self.orchestrator = await KageBunshinAgent.create(
-                context,
-                additional_tools=extra_tools,
-                group_room=GROUPCHAT_ROOM,
-                username=agent_name,
-                enable_summarization=ENABLE_SUMMARIZATION,
-            )
-            self._print_step("INIT", "Stateless KageBunshin Orchestrator created successfully!", Colors.OKGREEN)
-            self._print_step("INIT", "Starting web automation with stateless ReAct agent...", Colors.OKCYAN)
+            
+            # Choose architecture based on parameter
+            if self.architecture == "blindlame":
+                self.orchestrator = await BlindAgent.create(
+                    context,
+                    additional_tools=extra_tools,
+                    group_room=GROUPCHAT_ROOM,
+                    username=agent_name,
+                    enable_summarization=ENABLE_SUMMARIZATION,
+                )
+                self._print_step("INIT", "Stateless Blind & Lame Orchestrator created successfully!", Colors.OKGREEN)
+                self._print_step("INIT", "Starting web automation with blind-and-lame architecture...", Colors.OKCYAN)
+            else:
+                self.orchestrator = await KageBunshinAgent.create(
+                    context,
+                    additional_tools=extra_tools,
+                    group_room=GROUPCHAT_ROOM,
+                    username=agent_name,
+                    enable_summarization=ENABLE_SUMMARIZATION,
+                )
+                self._print_step("INIT", "Stateless KageBunshin Orchestrator created successfully!", Colors.OKGREEN)
+                self._print_step("INIT", "Starting web automation with stateless ReAct agent...", Colors.OKCYAN)
 
             try:
                 self._print_step("PHASE", "Starting streaming automation...", Colors.OKCYAN)
@@ -243,7 +260,9 @@ class KageBunshinRunner:
         thread_id so the LangGraph MemorySaver preserves message history across turns.
         Type an empty line or /exit to quit.
         """
-        self._print_banner("🌐 KageBunshin (Stateful Session)", Colors.HEADER)
+        arch_name = "Blind & Lame" if self.architecture == "blindlame" else "KageBunshin"
+        self._print_banner(f"🌐 {arch_name} (Stateful Session)", Colors.HEADER)
+        print(f"{Colors.OKCYAN}Architecture: {Colors.BOLD}{arch_name}{Colors.ENDC}")
         if first_query:
             print(f"{Colors.OKCYAN}First Query: {Colors.BOLD}{first_query}{Colors.ENDC}\n")
 
@@ -287,13 +306,24 @@ class KageBunshinRunner:
             # Initialize orchestrator once for the session (preserves MemorySaver) with group chat identity
             agent_name = generate_agent_name()
             extra_tools = get_additional_tools(context, username=agent_name, group_room=GROUPCHAT_ROOM)
-            self.orchestrator = await KageBunshinAgent.create(
-                context,
-                additional_tools=extra_tools,
-                group_room=GROUPCHAT_ROOM,
-                username=agent_name,
-            )
-            self._print_step("INIT", "Stateful KageBunshin Orchestrator created successfully!", Colors.OKGREEN)
+            
+            # Choose architecture based on parameter
+            if self.architecture == "blindlame":
+                self.orchestrator = await BlindAgent.create(
+                    context,
+                    additional_tools=extra_tools,
+                    group_room=GROUPCHAT_ROOM,
+                    username=agent_name,
+                )
+                self._print_step("INIT", "Stateful Blind & Lame Orchestrator created successfully!", Colors.OKGREEN)
+            else:
+                self.orchestrator = await KageBunshinAgent.create(
+                    context,
+                    additional_tools=extra_tools,
+                    group_room=GROUPCHAT_ROOM,
+                    username=agent_name,
+                )
+                self._print_step("INIT", "Stateful KageBunshin Orchestrator created successfully!", Colors.OKGREEN)
             self._print_step("INIT", f"Session thread: {thread_id}", Colors.OKCYAN)
 
             try:
@@ -315,12 +345,22 @@ class KageBunshinRunner:
                                         self._print_step('TOOL', f"{name}({args})", Colors.WARNING)
                         # Tool results (normalized)
                         if 'tools' in chunk:
-                            for evt in chunk['tools']:
-                                name = evt.get('name', 'tool')
-                                args = evt.get('args')
-                                result = evt.get('result', '')
-                                args_str = f"{args}" if args is not None else "{}"
-                                self._print_step('OBSERVATION', f"{name}{args_str} -> {result}", Colors.OKCYAN)
+                            tools_data = chunk['tools']
+                            # Handle different formats between KageBunshinAgent and BlindAgent
+                            if isinstance(tools_data, dict) and 'messages' in tools_data:
+                                # BlindAgent format: {'tools': {'messages': [ToolMessage objects]}}
+                                for msg in tools_data.get('messages', []):
+                                    if hasattr(msg, 'name') and hasattr(msg, 'content'):
+                                        self._print_step('OBSERVATION', f"{msg.name} -> {msg.content}", Colors.OKCYAN)
+                            elif isinstance(tools_data, list):
+                                # KageBunshinAgent format: {'tools': [{'name': ..., 'args': ..., 'result': ...}]}
+                                for evt in tools_data:
+                                    if isinstance(evt, dict):
+                                        name = evt.get('name', 'tool')
+                                        args = evt.get('args')
+                                        result = evt.get('result', '')
+                                        args_str = f"{args}" if args is not None else "{}"
+                                        self._print_step('OBSERVATION', f"{name}{args_str} -> {result}", Colors.OKCYAN)
                         if 'summarizer' in chunk:
                             for msg in chunk['summarizer'].get('messages', []):
                                 if hasattr(msg, 'content') and msg.content:
@@ -364,12 +404,12 @@ class KageBunshinRunner:
 
 
 # CLI entry point
-async def main(user_query:str) -> None:
+async def main(user_query: str, architecture: str = "kagebunshin") -> None:
     dotenv.load_dotenv()
     # One-shot mode (classic colored stream)
     if not user_query:
         user_query = "Open google.com and summarize the page"
-    runner = KageBunshinRunner()
+    runner = KageBunshinRunner(architecture=architecture)
     await runner.run(user_query)
 
 def _resolve_query_from_file(file_ref: str) -> str:
@@ -410,6 +450,8 @@ def run() -> None:
     parser.add_argument("query", nargs="?", help="User task for the agent to execute")
     parser.add_argument("-r", "--reference", help="Reference a markdown file using @path/to/file.md syntax")
     parser.add_argument("--repl", action="store_true", help="Run classic colored stream with persistent memory (REPL)")
+    parser.add_argument("--arch", choices=["kagebunshin", "blindlame"], default="kagebunshin", 
+                       help="Choose agent architecture: kagebunshin (default) or blindlame")
     args = parser.parse_args()
     
     # Handle file reference
@@ -429,6 +471,6 @@ def run() -> None:
     
     if args.repl:
         # Classic colored stream with persistent memory
-        asyncio.run(KageBunshinRunner().run_loop(query or None, thread_id="cli-session"))
+        asyncio.run(KageBunshinRunner(architecture=args.arch).run_loop(query or None, thread_id="cli-session"))
     else:
-        asyncio.run(main(query))
+        asyncio.run(main(query, architecture=args.arch))

@@ -7,6 +7,7 @@ Tests cover:
 - Task completion detection and workflow management
 - Streaming capabilities
 - Integration with LameAgent
+- Drop-in compatibility with KageBunshinAgent interface
 """
 
 import pytest
@@ -14,10 +15,13 @@ import asyncio
 from unittest.mock import AsyncMock, Mock, patch
 from pathlib import Path
 
-from kagebunshin.core.blind_and_lame.blind_agent import BlindAgent, BlindAgentState
+from kagebunshin.core.blind_and_lame.blind_agent import BlindAgent
 from kagebunshin.core.blind_and_lame.lame_agent import LameAgent
+from kagebunshin.core.agent import KageBunshinAgent
+from kagebunshin.core.state_manager import KageBunshinStateManager
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage, ToolMessage
 from langchain_core.tools import tool
+from playwright.async_api import BrowserContext
 
 
 @pytest.fixture
@@ -93,378 +97,293 @@ class TestBlindAgentInitialization:
                 assert call_kwargs['reasoning'] == {'effort': 'medium'}
 
 
-class TestBlindAgentWorkflow:
-    """Test LangGraph workflow execution and routing."""
-    
+# NOTE: The following tests are commented out as they test the old BlindAgent architecture
+# The new BlindAgent uses KageBunshinAgent-compatible interface and ReAct agent internally
+# See TestBlindAgentKageBunshinCompatibility for the new interface tests
+
+# class TestBlindAgentWorkflow:
+#     """Test LangGraph workflow execution and routing."""
+#     (Tests commented out - see new compatibility tests below)
+
+
+# NOTE: The following test classes are commented out as they test the old BlindAgent architecture
+# The new BlindAgent uses KageBunshinAgent-compatible interface and ReAct agent internally
+# See TestBlindAgentKageBunshinCompatibility for the new interface tests
+
+# class TestBlindAgentExecution:
+# class TestBlindAgentAnswerExtraction:
+# class TestBlindAgentIntegration:
+# class TestBlindAgentEdgeCases:
+# (All commented out - see new compatibility tests below)
+
+
+class TestBlindAgentKageBunshinCompatibility:
+    """Test BlindAgent's drop-in compatibility with KageBunshinAgent interface."""
+
     @pytest.fixture
-    def blind_agent_with_mocks(self, mock_lame_agent):
-        """Create BlindAgent with mocked LLM for testing."""
-        with patch('kagebunshin.core.blind_and_lame.blind_agent.init_chat_model') as mock_init_llm:
-            mock_llm = Mock()
-            mock_llm.bind_tools.return_value = Mock()
-            mock_init_llm.return_value = mock_llm
-            
-            blind_agent = BlindAgent(mock_lame_agent)
-            
-            # Mock the LLM with tools for testing
-            blind_agent.llm_with_tools = AsyncMock()
-            
-            return blind_agent
-    
-    @pytest.mark.asyncio
-    async def test_call_agent_should_format_messages_correctly(self, blind_agent_with_mocks):
-        """Test that call_agent formats messages with system prompt and conversation history."""
-        mock_response = AIMessage(content="I need to navigate to the website first.")
-        blind_agent_with_mocks.llm_with_tools.ainvoke.return_value = mock_response
-        
-        test_state = BlindAgentState(
-            input="Find information about transformers",
-            messages=[HumanMessage(content="Find information about transformers")],
-            task_completed=False
-        )
-        
-        result = await blind_agent_with_mocks.call_agent(test_state)
-        
-        # Verify LLM was called with system prompt and user message
-        call_args = blind_agent_with_mocks.llm_with_tools.ainvoke.call_args[0][0]
-        assert len(call_args) == 2  # System message + user message
-        assert isinstance(call_args[0], SystemMessage)
-        assert "blind agent" in call_args[0].content.lower()
-        assert isinstance(call_args[1], HumanMessage)
-        assert "transformers" in call_args[1].content.lower()
-        
-        # Verify return format
-        assert result == {"messages": [mock_response]}
-    
-    def test_should_continue_with_tool_calls(self, blind_agent_with_mocks):
-        """Test routing when AI message has tool calls."""
-        test_state = BlindAgentState(
-            input="test",
-            messages=[
-                HumanMessage(content="test"),
-                AIMessage(content="", tool_calls=[{"id": "1", "name": "act", "args": {"command": "test"}}])
-            ],
-            task_completed=False
-        )
-        
-        result = blind_agent_with_mocks.should_continue(test_state)
-        
-        assert result == "action"
-    
-    def test_should_end_without_tool_calls(self, blind_agent_with_mocks):
-        """Test routing when AI message has no tool calls."""
-        test_state = BlindAgentState(
-            input="test",
-            messages=[
-                HumanMessage(content="test"),
-                AIMessage(content="I have completed the task successfully.")
-            ],
-            task_completed=False
-        )
-        
-        result = blind_agent_with_mocks.should_continue(test_state)
-        
-        assert result == "end"
-    
-    @pytest.mark.asyncio
-    async def test_task_completion_check_should_detect_completion_indicators(self, blind_agent_with_mocks):
-        """Test task completion detection based on message content."""
-        test_state = BlindAgentState(
-            input="test task",
-            messages=[
-                HumanMessage(content="test task"),
-                AIMessage(content="I have successfully completed the task. All requirements have been fulfilled.")
-            ],
-            task_completed=False
-        )
-        
-        result = await blind_agent_with_mocks.check_task_completion(test_state)
-        
-        assert result == {"task_completed": True}
-    
-    @pytest.mark.asyncio
-    async def test_task_completion_check_should_not_detect_ongoing_work(self, blind_agent_with_mocks):
-        """Test that ongoing work is not detected as completion."""
-        test_state = BlindAgentState(
-            input="test task",
-            messages=[
-                HumanMessage(content="test task"),
-                AIMessage(content="I am currently working on the task. Let me navigate to the next page.")
-            ],
-            task_completed=False
-        )
-        
-        result = await blind_agent_with_mocks.check_task_completion(test_state)
-        
-        assert result == {"task_completed": False}
-    
-    def test_route_after_action_should_end_when_task_completed(self, blind_agent_with_mocks):
-        """Test routing to end when task is marked as completed."""
-        test_state = BlindAgentState(
-            input="test",
-            messages=[],
-            task_completed=True
-        )
-        
-        result = blind_agent_with_mocks.route_after_action(test_state)
-        
-        assert result == "end"
-    
-    def test_route_after_action_should_continue_when_task_not_completed(self, blind_agent_with_mocks):
-        """Test routing back to agent when task is not completed."""
-        test_state = BlindAgentState(
-            input="test",
-            messages=[],
-            task_completed=False
-        )
-        
-        result = blind_agent_with_mocks.route_after_action(test_state)
-        
-        assert result == "agent"
+    def mock_browser_context(self):
+        """Create a mock BrowserContext for testing."""
+        mock_context = Mock(spec=BrowserContext)
+        return mock_context
 
-
-class TestBlindAgentExecution:
-    """Test main execution methods (ainvoke and astream)."""
-    
     @pytest.fixture
-    def blind_agent_with_workflow_mock(self, mock_lame_agent):
-        """Create BlindAgent with mocked workflow for execution testing."""
-        with patch('kagebunshin.core.blind_and_lame.blind_agent.init_chat_model'):
-            blind_agent = BlindAgent(mock_lame_agent)
-            
-            # Mock the compiled workflow
-            blind_agent.agent = AsyncMock()
-            
-            return blind_agent
-    
-    @pytest.mark.asyncio
-    async def test_ainvoke_should_process_query_and_return_final_answer(self, blind_agent_with_workflow_mock):
-        """Test successful query processing through ainvoke."""
-        # Mock workflow execution result
-        final_state = BlindAgentState(
-            input="Search for Python tutorials",
-            messages=[
-                HumanMessage(content="Search for Python tutorials"),
-                AIMessage(content="I found several excellent Python tutorials on the website.", 
-                         tool_calls=[{"id": "1", "name": "act", "args": {"command": "search"}}]),
-                ToolMessage(content="Search results displayed", tool_call_id="1"),
-                AIMessage(content="Task completed successfully. I have found Python tutorials for you.")
-            ],
-            task_completed=True
-        )
-        
-        blind_agent_with_workflow_mock.agent.ainvoke.return_value = final_state
-        
-        result = await blind_agent_with_workflow_mock.ainvoke("Search for Python tutorials")
-        
-        assert "task completed successfully" in result.lower()
-        assert "python tutorials" in result.lower()
-        
-        # Verify workflow was called with proper initial state
-        call_args = blind_agent_with_workflow_mock.agent.ainvoke.call_args[0][0]
-        assert call_args["input"] == "Search for Python tutorials"
-        assert len(call_args["messages"]) == 1
-        assert isinstance(call_args["messages"][0], HumanMessage)
-        assert call_args["task_completed"] is False
-    
-    @pytest.mark.asyncio
-    async def test_ainvoke_should_handle_workflow_errors_gracefully(self, blind_agent_with_workflow_mock):
-        """Test error handling during workflow execution."""
-        blind_agent_with_workflow_mock.agent.ainvoke.side_effect = Exception("Workflow error")
-        
-        result = await blind_agent_with_workflow_mock.ainvoke("Do something")
-        
-        assert "error processing request" in result.lower()
-        assert "workflow error" in result.lower()
-    
-    @pytest.mark.asyncio
-    async def test_astream_should_yield_workflow_updates(self, blind_agent_with_workflow_mock):
-        """Test streaming execution yields intermediate results."""
-        # Mock streaming workflow results
-        mock_chunks = [
-            {"agent": {"messages": [AIMessage(content="Planning the task...")]}},
-            {"action": {"messages": [ToolMessage(content="Navigated to website", tool_call_id="1")]}},
-            {"agent": {"messages": [AIMessage(content="Task completed")]}}
-        ]
-        
-        async def mock_astream(*args, **kwargs):
-            for chunk in mock_chunks:
-                yield chunk
-        
-        blind_agent_with_workflow_mock.agent.astream = mock_astream
-        
-        chunks = []
-        async for chunk in blind_agent_with_workflow_mock.astream("Test query"):
-            chunks.append(chunk)
-        
-        assert len(chunks) == 3
-        assert "agent" in chunks[0]
-        assert "action" in chunks[1]
-        assert "planning the task" in chunks[0]["agent"]["messages"][0].content.lower()
-    
-    @pytest.mark.asyncio
-    async def test_astream_should_handle_streaming_errors(self, blind_agent_with_workflow_mock):
-        """Test error handling during streaming execution."""
-        async def mock_astream_error(*args, **kwargs):
-            raise Exception("Streaming error")
-            yield  # Unreachable but makes it a generator
-        
-        blind_agent_with_workflow_mock.agent.astream = mock_astream_error
-        
-        chunks = []
-        async for chunk in blind_agent_with_workflow_mock.astream("Test query"):
-            chunks.append(chunk)
-        
-        assert len(chunks) == 1
-        assert "error" in chunks[0]
-        assert "streaming error" in chunks[0]["error"].lower()
+    def mock_state_manager(self):
+        """Create a mock KageBunshinStateManager for testing."""
+        mock_state_manager = Mock(spec=KageBunshinStateManager)
+        mock_state_manager.get_tools_for_llm.return_value = []
+        mock_state_manager.num_actions_done = 5
+        mock_state_manager.current_state = None  # Add current_state attribute
+        return mock_state_manager
 
-
-class TestBlindAgentAnswerExtraction:
-    """Test final answer extraction from conversation."""
-    
-    @pytest.fixture
-    def blind_agent_for_extraction(self, mock_lame_agent):
-        """Create BlindAgent for testing answer extraction."""
-        with patch('kagebunshin.core.blind_and_lame.blind_agent.init_chat_model'):
-            return BlindAgent(mock_lame_agent)
-    
-    def test_should_extract_most_recent_substantial_ai_response(self, blind_agent_for_extraction):
-        """Test extraction of the most recent meaningful AI response."""
-        final_state = BlindAgentState(
-            input="test",
-            messages=[
-                HumanMessage(content="Do a task"),
-                AIMessage(content="I need to start by navigating..."),
-                ToolMessage(content="Navigated successfully", tool_call_id="1"),
-                AIMessage(content="Perfect! I have successfully completed your request and found the information you needed.")
-            ],
-            task_completed=True
-        )
-        
-        result = blind_agent_for_extraction._extract_final_answer(final_state)
-        
-        assert "successfully completed" in result.lower()
-        assert "information you needed" in result.lower()
-    
-    def test_should_skip_planning_messages_in_extraction(self, blind_agent_for_extraction):
-        """Test that planning/intermediate messages are skipped in favor of final results."""
-        final_state = BlindAgentState(
-            input="test",
-            messages=[
-                HumanMessage(content="Find product prices"),
-                AIMessage(content="I need to search for the products first"),
-                ToolMessage(content="Search results loaded", tool_call_id="1"),
-                AIMessage(content="The product costs $29.99 and is available for immediate shipping.")
-            ],
-            task_completed=True
-        )
-        
-        result = blind_agent_for_extraction._extract_final_answer(final_state)
-        
-        assert "$29.99" in result
-        assert "available for immediate shipping" in result
-        # Should not include the planning message
-        assert "need to search" not in result.lower()
-    
-    def test_should_provide_fallback_when_no_substantial_content(self, blind_agent_for_extraction):
-        """Test fallback response when no substantial content is found."""
-        final_state = BlindAgentState(
-            input="test",
-            messages=[
-                HumanMessage(content="Do something"),
-                AIMessage(content="I need to..."),
-                AIMessage(content="")
-            ],
-            task_completed=True
-        )
-        
-        result = blind_agent_for_extraction._extract_final_answer(final_state)
-        
-        assert result == "Task completed."
-
-
-class TestBlindAgentIntegration:
-    """Test integration with LameAgent and context retrieval."""
-    
     @pytest.mark.asyncio
-    async def test_should_retrieve_current_context_from_lame_agent(self, mock_lame_agent):
-        """Test context retrieval for debugging/monitoring."""
-        mock_lame_agent.get_current_state_description.return_value = "Current page: GitHub homepage with search box and sign-in button"
-        
+    async def test_should_create_blind_agent_with_kagebunshin_interface(self, mock_browser_context, mock_state_manager):
+        """Test that BlindAgent.create() works with KageBunshinAgent parameters."""
+        with patch('kagebunshin.core.blind_and_lame.lame_agent.LameAgent.create') as mock_lame_create:
+            mock_lame_agent = Mock()
+            mock_lame_agent.get_act_tool_for_blind.return_value = Mock()
+            mock_lame_create.return_value = mock_lame_agent
+            
+            with patch('kagebunshin.core.blind_and_lame.blind_agent.init_chat_model') as mock_init_llm:
+                mock_llm = Mock()
+                mock_llm.bind_tools.return_value = Mock()
+                mock_init_llm.return_value = mock_llm
+                
+                with patch('kagebunshin.core.state_manager.KageBunshinStateManager.create', return_value=mock_state_manager) as mock_state_create:
+                    with patch.object(BlindAgent, '_initialize_react_agent') as mock_init_react:
+                        # Create BlindAgent using KageBunshinAgent's interface
+                        blind_agent = await BlindAgent.create(
+                            context=mock_browser_context,
+                            additional_tools=[],
+                            system_prompt="Custom system prompt",
+                            enable_summarization=True,  # Should be ignored
+                            group_room="test_room",
+                            username="test_agent",
+                            clone_depth=1,
+                            llm_model="gpt-4",
+                            llm_provider="openai",
+                            filesystem_enabled=True,  # Should be ignored
+                        )
+                        
+                        # Manually set agent after creation to avoid tool creation issues
+                        blind_agent.agent = Mock()
+                    
+                    # Verify BlindAgent was created with proper attributes
+                    assert blind_agent.initial_context == mock_browser_context
+                    assert blind_agent.state_manager == mock_state_manager
+                    assert blind_agent.username == "test_agent"
+                    assert blind_agent.clone_depth == 1
+                    assert blind_agent.group_room == "test_room"
+                    assert blind_agent.system_prompt == "Custom system prompt"
+                    assert blind_agent.lame_agent == mock_lame_agent
+
+    def test_should_have_same_constructor_signature_as_kagebunshin_agent(self, mock_browser_context, mock_state_manager):
+        """Test that BlindAgent constructor accepts all KageBunshinAgent parameters."""
         with patch('kagebunshin.core.blind_and_lame.blind_agent.init_chat_model'):
-            blind_agent = BlindAgent(mock_lame_agent)
-            
-            context = await blind_agent.get_current_context()
-            
-            assert "github homepage" in context.lower()
-            assert "search box" in context.lower()
-            mock_lame_agent.get_current_state_description.assert_called_once()
-    
+            with patch('kagebunshin.core.blind_and_lame.blind_agent.LameAgent') as mock_lame_class:
+                mock_lame_agent = Mock()
+                mock_lame_agent.get_act_tool_for_blind.return_value = Mock()
+                mock_lame_class.return_value = mock_lame_agent
+                
+                # Create BlindAgent with all KageBunshinAgent parameters
+                blind_agent = BlindAgent(
+                    context=mock_browser_context,
+                    state_manager=mock_state_manager,
+                    additional_tools=[],
+                    system_prompt="Test prompt",
+                    enable_summarization=True,
+                    group_room="test_room",
+                    username="test_user",
+                    clone_depth=2,
+                    llm=None,
+                    llm_model="gpt-4",
+                    llm_provider="openai",
+                    llm_reasoning_effort="medium",
+                    llm_temperature=0.7,
+                    summarizer_llm=None,
+                    summarizer_model="gpt-3.5-turbo",
+                    summarizer_provider="openai",
+                    summarizer_reasoning_effort="low",
+                    recursion_limit=100,
+                    filesystem_enabled=True,
+                    filesystem_sandbox_base="/tmp",
+                )
+                
+                # Should not raise any errors and should have expected attributes
+                assert blind_agent.username == "test_user"
+                assert blind_agent.clone_depth == 2
+                assert blind_agent.recursion_limit == 100
+
     @pytest.mark.asyncio
-    async def test_should_handle_context_retrieval_errors(self, mock_lame_agent):
-        """Test error handling when context retrieval fails."""
-        mock_lame_agent.get_current_state_description.side_effect = Exception("Context error")
-        
-        with patch('kagebunshin.core.blind_and_lame.blind_agent.init_chat_model'):
-            blind_agent = BlindAgent(mock_lame_agent)
+    async def test_should_implement_kagebunshin_agent_interface_methods(self, mock_browser_context, mock_state_manager):
+        """Test that BlindAgent implements all required KageBunshinAgent methods."""
+        with patch('kagebunshin.core.blind_and_lame.lame_agent.LameAgent.create') as mock_lame_create:
+            mock_lame_agent = Mock()
+            mock_lame_agent.get_act_tool_for_blind.return_value = Mock()
+            mock_lame_agent.get_current_url = AsyncMock(return_value="https://example.com")
+            mock_lame_create.return_value = mock_lame_agent
             
-            context = await blind_agent.get_current_context()
-            
-            assert "could not get current context" in context.lower()
-            assert "context error" in context.lower()
-    
-    def test_should_dispose_cleanly_including_lame_agent(self, mock_lame_agent):
-        """Test that dispose method cleans up both agents."""
-        with patch('kagebunshin.core.blind_and_lame.blind_agent.init_chat_model'):
-            blind_agent = BlindAgent(mock_lame_agent)
-            
-            blind_agent.dispose()
-            
-            mock_lame_agent.dispose.assert_called_once()
+            with patch('kagebunshin.core.blind_and_lame.blind_agent.init_chat_model'):
+                with patch('kagebunshin.core.state_manager.KageBunshinStateManager.create', return_value=mock_state_manager):
+                    with patch.object(BlindAgent, '_initialize_react_agent'):
+                        blind_agent = await BlindAgent.create(
+                            context=mock_browser_context,
+                            username="test_agent"
+                        )
+                        blind_agent.agent = Mock()  # Set mock agent
+                        
+                        # Test interface methods exist and work
+                        url = await blind_agent.get_current_url()
+                        assert url == "https://example.com"
+                        
+                        title = await blind_agent.get_current_title()
+                        assert isinstance(title, str)
+                        
+                        action_count = blind_agent.get_action_count()
+                        assert isinstance(action_count, int)
+                        
+                        # Test dispose method
+                        blind_agent.dispose()
+                        mock_lame_agent.dispose.assert_called_once()
 
-
-class TestBlindAgentEdgeCases:
-    """Test edge cases and error conditions."""
-    
-    def test_should_handle_empty_messages_in_completion_check(self, mock_lame_agent):
-        """Test task completion check with empty message history."""
-        with patch('kagebunshin.core.blind_and_lame.blind_agent.init_chat_model'):
-            blind_agent = BlindAgent(mock_lame_agent)
+    @pytest.mark.asyncio
+    async def test_should_handle_ainvoke_like_kagebunshin_agent(self, mock_browser_context, mock_state_manager):
+        """Test that BlindAgent.ainvoke works like KageBunshinAgent.ainvoke."""
+        with patch('kagebunshin.core.blind_and_lame.lame_agent.LameAgent.create') as mock_lame_create:
+            mock_lame_agent = Mock()
+            mock_lame_agent.get_act_tool_for_blind.return_value = Mock()
+            mock_lame_create.return_value = mock_lame_agent
             
-            test_state = BlindAgentState(
-                input="test",
-                messages=[],
-                task_completed=False
+            with patch('kagebunshin.core.blind_and_lame.blind_agent.init_chat_model'):
+                with patch('kagebunshin.core.state_manager.KageBunshinStateManager.create', return_value=mock_state_manager):
+                    with patch.object(BlindAgent, '_initialize_react_agent'):
+                        blind_agent = await BlindAgent.create(
+                            context=mock_browser_context,
+                            username="test_agent"
+                        )
+                        
+                        # Mock the agent workflow
+                        mock_final_state = {
+                            "messages": [
+                                HumanMessage(content="Test task"),
+                                AIMessage(content="Task completed successfully!")
+                            ]
+                        }
+                        blind_agent.agent = AsyncMock()
+                        blind_agent.agent.ainvoke.return_value = mock_final_state
+                        
+                        # Test ainvoke
+                        result = await blind_agent.ainvoke("Test task")
+                        
+                        # Should return string like KageBunshinAgent
+                        assert isinstance(result, str)
+                        assert "task completed successfully" in result.lower()
+
+    @pytest.mark.asyncio
+    async def test_should_handle_astream_like_kagebunshin_agent(self, mock_browser_context, mock_state_manager):
+        """Test that BlindAgent.astream works like KageBunshinAgent.astream."""
+        with patch('kagebunshin.core.blind_and_lame.lame_agent.LameAgent.create') as mock_lame_create:
+            mock_lame_agent = Mock()
+            mock_lame_agent.get_act_tool_for_blind.return_value = Mock()
+            mock_lame_create.return_value = mock_lame_agent
+            
+            with patch('kagebunshin.core.blind_and_lame.blind_agent.init_chat_model'):
+                with patch('kagebunshin.core.state_manager.KageBunshinStateManager.create', return_value=mock_state_manager):
+                    with patch.object(BlindAgent, '_initialize_react_agent'):
+                        blind_agent = await BlindAgent.create(
+                            context=mock_browser_context,
+                            username="test_agent"
+                        )
+                        
+                        # Mock streaming workflow
+                        async def mock_astream(*args, **kwargs):
+                            yield {"agent": {"messages": [AIMessage(content="Planning...")]}}
+                            yield {"action": {"messages": [ToolMessage(content="Action executed", tool_call_id="1")]}}
+                        
+                        blind_agent.agent = Mock()
+                        blind_agent.agent.astream = mock_astream
+                        
+                        # Test astream
+                        chunks = []
+                        async for chunk in blind_agent.astream("Test streaming task"):
+                            chunks.append(chunk)
+                        
+                        # Should yield dictionaries like KageBunshinAgent
+                        assert len(chunks) == 2
+                        assert "agent" in chunks[0]
+                        assert "action" in chunks[1]
+
+    def test_should_maintain_persistent_messages_across_turns(self, mock_browser_context, mock_state_manager):
+        """Test that BlindAgent maintains message history like KageBunshinAgent."""
+        with patch('kagebunshin.core.blind_and_lame.blind_agent.init_chat_model'):
+            blind_agent = BlindAgent(
+                context=mock_browser_context,
+                state_manager=mock_state_manager,
+                username="test_agent"
             )
             
-            # Should not crash with empty messages
-            result = asyncio.run(blind_agent.check_task_completion(test_state))
-            assert result == {"task_completed": False}
-    
-    def test_should_handle_malformed_messages_gracefully(self, mock_lame_agent):
-        """Test handling of malformed or unexpected message types."""
-        with patch('kagebunshin.core.blind_and_lame.blind_agent.init_chat_model'):
-            blind_agent = BlindAgent(mock_lame_agent)
+            # Initially should have empty persistent messages
+            assert blind_agent.persistent_messages == []
             
-            # Create state with various message types including empty content
-            test_state = BlindAgentState(
-                input="test",
-                messages=[
-                    HumanMessage(content="test"),
-                    AIMessage(content=""),  # Empty content instead of None
-                    Mock()  # Unexpected message type
-                ],
-                task_completed=False
+            # Add some messages
+            test_messages = [
+                HumanMessage(content="First task"),
+                AIMessage(content="Completed first task")
+            ]
+            blind_agent.persistent_messages = test_messages
+            
+            # Should persist the messages
+            assert len(blind_agent.persistent_messages) == 2
+            assert blind_agent.persistent_messages[0].content == "First task"
+
+    @pytest.mark.asyncio
+    async def test_should_enforce_instance_limits_like_kagebunshin_agent(self, mock_browser_context):
+        """Test that BlindAgent enforces instance limits like KageBunshinAgent."""
+        with patch('kagebunshin.core.blind_and_lame.lame_agent.LameAgent.create'):
+            with patch('kagebunshin.core.blind_and_lame.blind_agent.init_chat_model'):
+                with patch('kagebunshin.core.state_manager.KageBunshinStateManager.create'):
+                    # Set instance count to max limit
+                    original_count = BlindAgent._INSTANCE_COUNT
+                    try:
+                        with patch('kagebunshin.config.settings.MAX_KAGEBUNSHIN_INSTANCES', 1):
+                            BlindAgent._INSTANCE_COUNT = 1
+                            
+                            # Should raise RuntimeError when limit exceeded
+                            with pytest.raises(RuntimeError, match="Instance limit reached"):
+                                await BlindAgent.create(context=mock_browser_context)
+                    finally:
+                        # Reset instance count
+                        BlindAgent._INSTANCE_COUNT = original_count
+
+    def test_should_support_group_chat_compatibility(self, mock_browser_context, mock_state_manager):
+        """Test that BlindAgent has group chat support like KageBunshinAgent."""
+        with patch('kagebunshin.core.blind_and_lame.blind_agent.init_chat_model'):
+            blind_agent = BlindAgent(
+                context=mock_browser_context,
+                state_manager=mock_state_manager,
+                group_room="test_room",
+                username="test_agent"
             )
             
-            # Should not crash, should handle gracefully
-            result = blind_agent._extract_final_answer(test_state)
-            assert isinstance(result, str)
-    
-    def test_should_handle_missing_lame_agent_gracefully(self):
-        """Test behavior when LameAgent is None or missing."""
+            # Should have group chat attributes
+            assert blind_agent.group_room == "test_room"
+            assert blind_agent.username == "test_agent"
+            assert hasattr(blind_agent, 'group_client')
+            assert hasattr(blind_agent, '_post_intro_message')
+
+    def test_should_provide_filesystem_compatibility_methods(self, mock_browser_context, mock_state_manager):
+        """Test that BlindAgent provides filesystem compatibility methods."""
         with patch('kagebunshin.core.blind_and_lame.blind_agent.init_chat_model'):
-            # BlindAgent requires a LameAgent, so None should raise an error
-            with pytest.raises(AttributeError, match="'NoneType' object has no attribute 'get_act_tool_for_blind'"):
-                BlindAgent(None)
+            blind_agent = BlindAgent(
+                context=mock_browser_context,
+                state_manager=mock_state_manager,
+                username="test_agent"
+            )
+            
+            # Should have filesystem compatibility methods
+            fs_context = blind_agent.get_filesystem_context()
+            assert isinstance(fs_context, str)
+            assert "blindagent" in fs_context.lower()
+            
+            cleanup_result = blind_agent.cleanup_filesystem()
+            assert isinstance(cleanup_result, dict)
+            assert cleanup_result["status"] == "skipped"

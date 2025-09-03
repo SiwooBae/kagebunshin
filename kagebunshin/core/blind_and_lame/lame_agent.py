@@ -19,10 +19,6 @@ from playwright.async_api import BrowserContext
 from ..state_manager import KageBunshinStateManager
 from ..state import Annotation
 from ...utils import (
-    format_unified_context, 
-    format_tab_context, 
-    format_text_context, 
-    format_img_context,
     build_page_context,
     normalize_chat_content
 )
@@ -75,11 +71,14 @@ class LameAgent:
         instance.llm = init_chat_model(
             model=LAME_MODEL,
             model_provider=LAME_PROVIDER,
-            temperature=LAME_TEMPERATURE
+            temperature=LAME_TEMPERATURE,
+            reasoning=(
+                    {"effort": "minimal"} if "gpt-5" in LAME_MODEL else None
+                ),
         )
         
         # Bind tools to LLM
-        instance.llm_with_tools = instance.llm.bind_tools(instance.browser_tools)
+        instance.llm_with_tools = instance.llm.bind_tools(instance.browser_tools, tool_choice="required")
         
         # Create tool node for execution
         instance.tool_node = ToolNode(instance.browser_tools)
@@ -109,7 +108,7 @@ class LameAgent:
             before_page_data = await self.state_manager.get_current_page_data()
 
             # Build messages using existing context builder patterns
-            before_context_messages = await self._build_page_context(before_page_data)
+            before_context_messages = await self._build_page_context(before_page_data, HumanMessage)
             messages: List[BaseMessage] = [SystemMessage(content=self.system_prompt)]
             messages.extend(before_context_messages)
             messages.append(HumanMessage(content=f"Command: {command}"))
@@ -134,16 +133,16 @@ class LameAgent:
 
             # ----- PASS 2: Summarize using before/after contexts and tool results -----
             after_page_data = await self.state_manager.get_current_page_data()
-            after_context_messages = await self._build_page_context(after_page_data)
+            after_context_messages = await self._build_page_context(after_page_data, HumanMessage)
 
-            # Load the same summarizer prompt used elsewhere for consistency
+            # Load the detailed explainer prompt for rich, actionable narration
             prompt_path = os.path.join(
                 os.path.dirname(__file__),
                 "..",
                 "..",
                 "config",
                 "prompts",
-                "diff_summarizer.md",
+                "lame_explainer.md",
             )
             with open(prompt_path, "r") as f:
                 prompt_content = f.read()
@@ -151,6 +150,7 @@ class LameAgent:
             # Build summarization prompt messages mirroring the summarizer's approach
             summary_prompt_messages: List[BaseMessage] = [
                 SystemMessage(content=prompt_content),
+                HumanMessage(content=f"User command (as given to the Lame Agent):\n{command}"),
                 HumanMessage(content="Here is the state of the page before the action:"),
             ]
             summary_prompt_messages.extend(before_context_messages)

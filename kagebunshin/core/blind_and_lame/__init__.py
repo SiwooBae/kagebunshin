@@ -13,12 +13,11 @@ creating a text-based interface that leverages the LLMs' training on similar env
 """
 
 from .lame_agent import LameAgent
-from .blind_agent import BlindAgent, BlindAgentState
+from .blind_agent import BlindAgent
 
 __all__ = [
     "LameAgent",
-    "BlindAgent", 
-    "BlindAgentState",
+    "BlindAgent",
 ]
 
 
@@ -36,10 +35,9 @@ async def create_blind_and_lame_pair(context):
         blind, lame = await create_blind_and_lame_pair(browser_context)
         result = await blind.ainvoke("Search for information about transformers")
     """
-    # Create Lame agent first (it owns the browser)
-    lame_agent = await LameAgent.create(context)
+    # Create BlindAgent using the new KageBunshinAgent-compatible interface
+    # This will internally create the LameAgent
+    blind_agent = await BlindAgent.create(context)
     
-    # Create Blind agent with reference to Lame agent
-    blind_agent = BlindAgent(lame_agent)
-    
-    return blind_agent, lame_agent
+    # Return the BlindAgent and its internal LameAgent for convenience
+    return blind_agent, blind_agent.lame_agent
