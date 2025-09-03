@@ -56,6 +56,10 @@ from typing import Dict, Any, List, Optional, Union
 from datetime import datetime, timezone, timedelta
 from langchain_core.tools import tool
 from dataclasses import dataclass
+# Additional helper imports for fetch tool
+import re
+import requests
+from ..utils.formatting import html_to_markdown
 
 # Configure logging for security auditing
 logger = logging.getLogger(__name__)
@@ -91,8 +95,11 @@ class FilesystemConfig:
         if self.allowed_extensions is None:
             # Default safe file extensions
             self.allowed_extensions = [
-                "txt", "md", "json", "csv", "xml", "html", "css", "js", 
-                "py", "yaml", "yml", "log", "rst", "ini", "cfg", "conf"
+                # Text/code
+                "txt", "md", "json", "csv", "xml", "html", "css", "js",
+                "py", "yaml", "yml", "log", "rst", "ini", "cfg", "conf",
+                # Documents/media commonly fetched
+                "pdf", "png", "jpg", "jpeg", "gif", "webp", "svg", "bmp", "tiff"
             ]
         
         # Convert to lowercase for case-insensitive matching
@@ -292,6 +299,72 @@ class FilesystemSandbox:
                 path=str(path),
                 operation=operation
             )
+
+    def write_bytes(self, path: str, content: bytes) -> Dict[str, Any]:
+        """
+        Write raw bytes to a file within the sandbox using atomic operations.
+        
+        Args:
+            path (str): Relative path to the file within the sandbox
+            content (bytes): Raw bytes to write
+        """
+        try:
+            target_path = self._validate_path(path, "write_file")
+            self._validate_extension(target_path, "write_file")
+            if not isinstance(content, (bytes, bytearray)):
+                raise FilesystemSecurityError(
+                    "write_bytes requires bytes-like content",
+                    path=path,
+                    operation="write_file"
+                )
+            content_size = len(content)
+            self._validate_file_size(content_size, path, "write_file")
+            # Create parent directories
+            target_path.parent.mkdir(parents=True, exist_ok=True)
+            temp_file = None
+            try:
+                temp_fd, temp_path = tempfile.mkstemp(
+                    dir=target_path.parent,
+                    prefix=f".{target_path.name}.tmp",
+                )
+                temp_file = Path(temp_path)
+                with os.fdopen(temp_fd, 'wb') as f:
+                    f.write(content)
+                temp_file.replace(target_path)
+                temp_file = None
+                result = {
+                    "status": "success",
+                    "file_path": path,
+                    "bytes_written": content_size,
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "operation": "write" if not target_path.exists() else "overwrite"
+                }
+                self._log_operation("write_file", path, True, metadata={"bytes_written": content_size})
+                return result
+            finally:
+                if temp_file and temp_file.exists():
+                    try:
+                        temp_file.unlink()
+                    except OSError:
+                        pass
+        except FilesystemSecurityError as e:
+            result = {
+                "status": "error",
+                "error_type": "security_violation",
+                "error_message": str(e),
+                "file_path": path
+            }
+            self._log_operation("write_file", path, False, str(e))
+            return result
+        except Exception as e:
+            result = {
+                "status": "error",
+                "error_type": "unexpected_error",
+                "error_message": f"Unexpected error writing bytes: {e}",
+                "file_path": path
+            }
+            self._log_operation("write_file", path, False, str(e))
+            return result
     
     def _validate_file_size(self, size: int, path: str, operation: str) -> None:
         """
@@ -1159,13 +1232,211 @@ def get_filesystem_tools(config: Union[Dict[str, Any], FilesystemConfig]) -> Lis
         return json.dumps(sandbox.file_info(path))
     
     # Return list of tools in the order they're typically used
+
+
+    def _safe_filename_from_url(url: str) -> str:
+        try:
+            from urllib.parse import urlparse
+            parsed = urlparse(url)
+            base = (parsed.path.rsplit('/', 1)[-1] or 'index').split('?')[0]
+            if not base or '.' not in base:
+                base = base or 'index.html'
+            # sanitize
+            base = re.sub(r"[^A-Za-z0-9._-]", "_", base)
+            return base
+        except Exception:
+            return "download.bin"
+
+    def _detect_content_type(url: str, headers: Dict[str, str]) -> str:
+        ctype = (headers.get('content-type') or '').lower()
+        if not ctype and url:
+            if url.lower().endswith('.pdf'):
+                return 'application/pdf'
+            if any(url.lower().endswith(ext) for ext in ['.html', '.htm']):
+                return 'text/html'
+        return ctype
+
+    @tool
+    def fetch(url: str, path: str = None) -> str:
+        """Fetch a URL and save it into the sandbox (HTML/PDF → Markdown, binaries as-is).
+
+        This tool downloads web content and stores it safely inside the filesystem sandbox
+        using atomic writes and sanitized filenames. It aims to preserve readable text by
+        converting HTML and extracting text from PDFs when possible, while still keeping
+        original binary assets when appropriate.
+
+        Use this tool to:
+        - Save web pages as clean Markdown for analysis or offline review
+        - Download PDF documents and generate a Markdown companion with extracted text
+        - Cache images and other binary assets for offline reference
+        - Persist evidence files (e.g., CSV, ZIP) produced by web tasks
+
+        Behavior:
+        - HTML: Converted to Markdown via html_to_markdown and saved as .md
+        - PDF: Original .pdf saved byte-for-byte and text extracted to a .md file
+                using pypdf (with best-effort fallbacks). No OCR is performed
+                (scanned/image-only PDFs may yield limited text)
+        - Other types (images/binaries): Saved byte-for-byte without modification
+
+        Security:
+        - All writes are confined to the sandbox directory and validated against
+          allowed extensions
+        - Paths are sanitized and validated; traversal and absolute paths are rejected
+        - File size limits are enforced; network requests have a 30s timeout
+        - Writes are atomic via temporary files to avoid corruption
+
+        Args:
+            url (str): The URL to fetch. Must be publicly reachable.
+            path (str, optional): Preferred relative save path within the sandbox. If omitted,
+                a safe filename is inferred from the URL:
+                - HTML → <name>.md
+                - PDF  → <name>.pdf and <name>.md
+                - Other → <name> (binary)
+
+        Returns:
+            str: JSON string.
+                 On success:
+                 {
+                   "status": "success",
+                   "url": "https://...",
+                   "content_type": "html" | "pdf" | "binary" | "<mime>",
+                   "saved_paths": { "markdown": "...", "pdf": "...", "binary": "..." },
+                   "http_status": 200
+                 }
+                 On error:
+                 {
+                   "status": "error",
+                   "error_type": "invalid_input" | "unexpected_error" | ...,
+                   "error_message": "..."
+                 }
+
+        Examples:
+            # Save a web page as Markdown
+            result = fetch("https://example.com/article")
+
+            # Download a PDF and extract text to Markdown
+            result = fetch("https://site.com/file.pdf")
+
+            # Save to a specific path inside sandbox
+            result = fetch("https://example.com/data.csv", path="data/example.csv")
+        """
+        try:
+            if not isinstance(url, str) or not url.strip():
+                return json.dumps({
+                    "status": "error",
+                    "error_type": "invalid_input",
+                    "error_message": "URL must be a non-empty string"
+                })
+
+            resp = requests.get(url, timeout=30)
+            status_code = resp.status_code
+            headers = {k.lower(): v for k, v in resp.headers.items()}
+            content_bytes = resp.content
+            ctype = _detect_content_type(url, headers)
+
+            # Decide destination filenames
+            suggested = _safe_filename_from_url(url)
+            saved_paths: Dict[str, str] = {}
+
+            # Handle PDF
+            if 'application/pdf' in ctype or (isinstance(url, str) and url.lower().endswith('.pdf')):
+                # Save original PDF
+                pdf_name = suggested if suggested.lower().endswith('.pdf') else (suggested + '.pdf')
+                pdf_path = path or pdf_name
+                pdf_res = sandbox.write_bytes(pdf_path, content_bytes)
+                if pdf_res.get('status') != 'success':
+                    return json.dumps(pdf_res)
+                saved_paths['pdf'] = pdf_path
+
+                # Extract text to markdown
+                markdown_text = ""
+                try:
+                    from io import BytesIO
+                    import pypdf
+                    reader = pypdf.PdfReader(BytesIO(content_bytes))
+                    for p in reader.pages:
+                        markdown_text += (p.extract_text() or '')
+                except Exception:
+                    markdown_text = ""
+                if not markdown_text.strip():
+                    # Try PyMuPDF if available
+                    try:
+                        import fitz  # type: ignore
+                        doc = fitz.open(stream=content_bytes, filetype='pdf')
+                        chunks = []
+                        for i in range(len(doc)):
+                            try:
+                                chunks.append(doc.load_page(i).get_text('text'))
+                            except Exception:
+                                continue
+                        markdown_text = "\n".join(chunks)
+                    except Exception:
+                        pass
+                md_suffix = pdf_name[:-4] if pdf_name.lower().endswith('.pdf') else pdf_name
+                md_path = f"{md_suffix}.md"
+                md_res = sandbox.write_file(md_path, markdown_text or "")
+                if md_res.get('status') == 'success':
+                    saved_paths['markdown'] = md_path
+
+                return json.dumps({
+                    "status": "success",
+                    "url": url,
+                    "content_type": "pdf",
+                    "saved_paths": saved_paths,
+                    "http_status": status_code
+                })
+
+            # Handle HTML
+            if 'text/html' in ctype or suggested.lower().endswith(('.html', '.htm')):
+                try:
+                    html_text = resp.text
+                except Exception:
+                    html_text = content_bytes.decode('utf-8', errors='ignore')
+                md = html_to_markdown(html_text) or ""
+                base_name = suggested
+                if base_name.lower().endswith(('.html', '.htm')):
+                    base_name = re.sub(r"\.(html|htm)$", "", base_name, flags=re.IGNORECASE)
+                md_name = base_name + '.md'
+                final_path = path or md_name
+                write_res = sandbox.write_file(final_path, md)
+                if write_res.get('status') != 'success':
+                    return json.dumps(write_res)
+                return json.dumps({
+                    "status": "success",
+                    "url": url,
+                    "content_type": "html",
+                    "saved_paths": {"markdown": final_path},
+                    "http_status": status_code
+                })
+
+            # Fallback: binary as-is
+            bin_name = suggested or 'download.bin'
+            final_bin = path or bin_name
+            bin_res = sandbox.write_bytes(final_bin, content_bytes)
+            if bin_res.get('status') != 'success':
+                return json.dumps(bin_res)
+            return json.dumps({
+                "status": "success",
+                "url": url,
+                "content_type": ctype or "binary",
+                "saved_paths": {"binary": final_bin},
+                "http_status": status_code
+            })
+        except Exception as e:
+            return json.dumps({
+                "status": "error",
+                "error_type": "unexpected_error",
+                "error_message": f"Failed to fetch URL: {e}"
+            })
+
     tools = [
         read_file,
-        write_file, 
+        write_file,
         list_directory,
         file_info,
         create_directory,
-        delete_file
+        delete_file,
+        fetch,
     ]
     
     logger.info(f"Created {len(tools)} filesystem tools with sandbox: {config.sandbox_base}")

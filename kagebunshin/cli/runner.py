@@ -199,6 +199,7 @@ class KageBunshinRunner:
             try:
                 self._print_step("PHASE", "Starting streaming automation...", Colors.OKCYAN)
                 last_agent_message = ""
+                structured_completion = None  # Prefer structured final answer when available
 
                 async for chunk in self.orchestrator.astream(user_query):
                     # Agent outputs
@@ -210,17 +211,60 @@ class KageBunshinRunner:
                                 self._print_step('MESSAGE', f"Agent: {content}", Colors.OKBLUE)
                             if hasattr(msg, 'tool_calls') and msg.tool_calls:
                                 for call in msg.tool_calls:
-                                    name = call.get('name', 'unknown')
-                                    args = call.get('args', {})
+                                    # Support both dict-shaped and object-shaped ToolCall
+                                    if isinstance(call, dict):
+                                        name = call.get('name', 'unknown')
+                                        args = call.get('args', {})
+                                    else:
+                                        name = getattr(call, 'name', 'unknown')
+                                        args = getattr(call, 'args', {})
                                     self._print_step('TOOL', f"{name}({args})", Colors.WARNING)
+                                    # Capture structured completion intent as soon as proposed
+                                    if name == 'complete_task' and not structured_completion:
+                                        try:
+                                            status = (args or {}).get('status', 'unknown')
+                                            result = (args or {}).get('result', '')
+                                            confidence = (args or {}).get('confidence')
+                                            status_text = f"[{str(status).upper()}]"
+                                            conf_text = (
+                                                f" (confidence: {confidence:.0%})"
+                                                if isinstance(confidence, (int, float))
+                                                else ""
+                                            )
+                                            structured_completion = f"{status_text}{conf_text} {result}"
+                                        except Exception:
+                                            pass
                     # Tool results (normalized)
                     if 'tools' in chunk:
-                        for evt in chunk['tools']:
-                            name = evt.get('name', 'tool')
-                            args = evt.get('args')
-                            result = evt.get('result', '')
-                            args_str = f"{args}" if args is not None else "{}"
-                            self._print_step('OBSERVATION', f"{name}{args_str} -> {result}", Colors.OKCYAN)
+                        tools_data = chunk['tools']
+                        # Handle normalized list (KageBunshinAgent)
+                        if isinstance(tools_data, list):
+                            for evt in tools_data:
+                                if isinstance(evt, dict):
+                                    name = evt.get('name', 'tool')
+                                    args = evt.get('args')
+                                    result = evt.get('result', '')
+                                    args_str = f"{args}" if args is not None else "{}"
+                                    self._print_step('OBSERVATION', f"{name}{args_str} -> {result}", Colors.OKCYAN)
+                                    if name == 'complete_task' and not structured_completion:
+                                        try:
+                                            status = (args or {}).get('status', 'unknown')
+                                            res = (args or {}).get('result', '')
+                                            confidence = (args or {}).get('confidence')
+                                            status_text = f"[{str(status).upper()}]"
+                                            conf_text = (
+                                                f" (confidence: {confidence:.0%})"
+                                                if isinstance(confidence, (int, float))
+                                                else ""
+                                            )
+                                            structured_completion = f"{status_text}{conf_text} {res}"
+                                        except Exception:
+                                            pass
+                        # Handle BlindAgent dict format {'messages': [ToolMessage, ...]}
+                        elif isinstance(tools_data, dict) and 'messages' in tools_data:
+                            for tmsg in tools_data.get('messages', []):
+                                if hasattr(tmsg, 'name') and hasattr(tmsg, 'content'):
+                                    self._print_step('OBSERVATION', f"{tmsg.name} -> {tmsg.content}", Colors.OKCYAN)
                     # Summarizer messages
                     if 'summarizer' in chunk:
                         for msg in chunk['summarizer'].get('messages', []):
@@ -228,7 +272,9 @@ class KageBunshinRunner:
                                 self._print_step('MESSAGE', normalize_chat_content(msg.content), Colors.OKBLUE)
 
                 # Final output
-                if last_agent_message:
+                if structured_completion:
+                    self._print_final_answer(structured_completion)
+                elif last_agent_message:
                     self._print_final_answer(last_agent_message)
                     # Print stats
                     current_url = await self.orchestrator.get_current_url()
@@ -331,6 +377,7 @@ class KageBunshinRunner:
                 async def process_turn(prompt_text: str) -> None:
                     self._print_step("PHASE", "Starting streaming automation...", Colors.OKCYAN)
                     last_agent_message = ""
+                    structured_completion = None  # Prefer structured final answer when available
                     async for chunk in self.orchestrator.astream(prompt_text):
                         if 'agent' in chunk:
                             for msg in chunk['agent'].get('messages', []):
@@ -340,9 +387,29 @@ class KageBunshinRunner:
                                     self._print_step('MESSAGE', f"Agent: {content}", Colors.OKBLUE)
                                 if hasattr(msg, 'tool_calls') and msg.tool_calls:
                                     for call in msg.tool_calls:
-                                        name = call.get('name', 'unknown')
-                                        args = call.get('args', {})
+                                        # Support both dict-shaped and object-shaped ToolCall
+                                        if isinstance(call, dict):
+                                            name = call.get('name', 'unknown')
+                                            args = call.get('args', {})
+                                        else:
+                                            name = getattr(call, 'name', 'unknown')
+                                            args = getattr(call, 'args', {})
                                         self._print_step('TOOL', f"{name}({args})", Colors.WARNING)
+                                        # Capture structured completion intent
+                                        if name == 'complete_task' and not structured_completion:
+                                            try:
+                                                status = (args or {}).get('status', 'unknown')
+                                                result = (args or {}).get('result', '')
+                                                confidence = (args or {}).get('confidence')
+                                                status_text = f"[{str(status).upper()}]"
+                                                conf_text = (
+                                                    f" (confidence: {confidence:.0%})"
+                                                    if isinstance(confidence, (int, float))
+                                                    else ""
+                                                )
+                                                structured_completion = f"{status_text}{conf_text} {result}"
+                                            except Exception:
+                                                pass
                         # Tool results (normalized)
                         if 'tools' in chunk:
                             tools_data = chunk['tools']
@@ -361,12 +428,28 @@ class KageBunshinRunner:
                                         result = evt.get('result', '')
                                         args_str = f"{args}" if args is not None else "{}"
                                         self._print_step('OBSERVATION', f"{name}{args_str} -> {result}", Colors.OKCYAN)
+                                        if name == 'complete_task' and not structured_completion:
+                                            try:
+                                                status = (args or {}).get('status', 'unknown')
+                                                res = (args or {}).get('result', '')
+                                                confidence = (args or {}).get('confidence')
+                                                status_text = f"[{str(status).upper()}]"
+                                                conf_text = (
+                                                    f" (confidence: {confidence:.0%})"
+                                                    if isinstance(confidence, (int, float))
+                                                    else ""
+                                                )
+                                                structured_completion = f"{status_text}{conf_text} {res}"
+                                            except Exception:
+                                                pass
                         if 'summarizer' in chunk:
                             for msg in chunk['summarizer'].get('messages', []):
                                 if hasattr(msg, 'content') and msg.content:
                                     self._print_step('MESSAGE', normalize_chat_content(msg.content), Colors.OKBLUE)
 
-                    if last_agent_message:
+                    if structured_completion:
+                        self._print_final_answer(structured_completion)
+                    elif last_agent_message:
                         self._print_final_answer(last_agent_message)
                         current_url = await self.orchestrator.get_current_url()
                         current_title = await self.orchestrator.get_current_title()

@@ -838,8 +838,25 @@ class KageBunshinStateManager:
             content_lc = html_content.lower()
             antibot_detected = any(sig in content_lc for sig in antibot_signals)
             
-            # Check if this is a PDF page using the same logic as annotate_page
+            # Check if this is a PDF page using multiple signals
             is_pdf = 'type="application/pdf"' in html_content or 'class="pdf' in html_content
+            try:
+                # URL-based heuristic
+                if not is_pdf and isinstance(url, str) and url.lower().endswith('.pdf'):
+                    is_pdf = True
+                # Header-based heuristic via context request (best-effort)
+                if not is_pdf:
+                    api_request_context = page.context.request
+                    head_resp = await api_request_context.get(url)
+                    try:
+                        content_type = head_resp.headers.get('content-type', '') if hasattr(head_resp, 'headers') else ''
+                    except Exception:
+                        content_type = ''
+                    if 'application/pdf' in (content_type or '').lower():
+                        is_pdf = True
+            except Exception:
+                # Never fail detection due to header check issues
+                pass
             
             if is_pdf:
                 # Handle PDF content extraction
@@ -849,23 +866,79 @@ class KageBunshinStateManager:
                     response = await api_request_context.get(page.url)
                     pdf_bytes = await response.body()
 
-                    # Extract text from PDF using pypdf
+                    # Extract text from PDF using pypdf first
                     from io import BytesIO
                     import pypdf
-                    
-                    pdf_file = BytesIO(pdf_bytes)
-                    reader = pypdf.PdfReader(pdf_file)
+
                     pdf_text = ""
-                    for p in reader.pages:
-                        pdf_text += p.extract_text() or ""
-                    
-                    # Format the output for PDF content
-                    output = f"URL: {url}\nTitle: {title}\nContent Type: PDF Document\n\n{pdf_text.strip()}"
+                    try:
+                        pdf_file = BytesIO(pdf_bytes)
+                        reader = pypdf.PdfReader(pdf_file)
+                        for p in reader.pages:
+                            pdf_text += p.extract_text() or ""
+                    except Exception as e:
+                        logger.warning(f"pypdf extraction failed, will try fallbacks: {e}")
+                        pdf_text = ""
+
+                    # Fallback 1: PyMuPDF (if available) for better extraction
+                    if len((pdf_text or '').strip()) < 200:
+                        try:
+                            import fitz  # type: ignore
+                            text_chunks = []
+                            doc = fitz.open(stream=pdf_bytes, filetype='pdf')
+                            for page_index in range(len(doc)):
+                                try:
+                                    page_obj = doc.load_page(page_index)
+                                    text_chunks.append(page_obj.get_text("text"))
+                                except Exception:
+                                    continue
+                            if text_chunks:
+                                pdf_text = "\n".join(text_chunks).strip()
+                        except Exception as e:
+                            # If PyMuPDF isn't installed or fails, continue
+                            logger.info(f"PyMuPDF fallback not available/succeeded: {e}")
+
+                    # Fallback 2: pdftotext CLI (if available on system)
+                    if len((pdf_text or '').strip()) < 200:
+                        try:
+                            import shutil as _shutil
+                            import subprocess as _subprocess
+                            import tempfile as _tempfile
+                            if _shutil.which('pdftotext'):
+                                with _tempfile.NamedTemporaryFile(suffix='.pdf', delete=True) as tf:
+                                    tf.write(pdf_bytes)
+                                    tf.flush()
+                                    proc = _subprocess.run(
+                                        ['pdftotext', '-layout', '-enc', 'UTF-8', tf.name, '-'],
+                                        capture_output=True,
+                                        text=True,
+                                        timeout=15
+                                    )
+                                    if proc.returncode == 0 and proc.stdout:
+                                        pdf_text = proc.stdout
+                        except Exception as e:
+                            logger.info(f"pdftotext CLI fallback not available/succeeded: {e}")
+
+                    # Format the output for PDF content, include hint if extraction is minimal
+                    note = ""
+                    if len((pdf_text or '').strip()) < 200:
+                        note = (
+                            "\n\n[Note] Only minimal text could be extracted. "
+                            "This PDF may be scanned or image-based. Consider using fetch(url) "
+                            "to download and run OCR."
+                        )
+                    output = (
+                        f"URL: {url}\nTitle: {title}\nContent Type: PDF Document\n\n"
+                        f"{(pdf_text or '').strip()}{note}"
+                    )
                     return output
-                    
+
                 except Exception as pdf_error:
                     logger.error(f"Failed to extract PDF content: {pdf_error}")
-                    return f"URL: {url}\nTitle: {title}\nContent Type: PDF Document\n\nError: Failed to extract text from PDF. {str(pdf_error)}"
+                    return (
+                        f"URL: {url}\nTitle: {title}\nContent Type: PDF Document\n\n"
+                        f"Error: Failed to extract text from PDF. {str(pdf_error)}"
+                    )
             else:
                 # Handle regular HTML content
                 cleaned_markdown = html_to_markdown(html_content)

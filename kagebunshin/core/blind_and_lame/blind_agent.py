@@ -21,7 +21,21 @@ from ..state import KageBunshinState
 from ..state_manager import KageBunshinStateManager
 from ...utils import normalize_chat_content, generate_agent_name
 from ...communication.group_chat import GroupChatClient
-
+from ...tools.filesystem import get_filesystem_tools, FilesystemConfig, FilesystemSandbox, cleanup_workspace
+from ...config.settings import (
+    # Filesystem configuration
+    FILESYSTEM_ENABLED,
+    FILESYSTEM_SANDBOX_BASE,
+    FILESYSTEM_MAX_FILE_SIZE,
+    FILESYSTEM_ALLOWED_EXTENSIONS,
+    FILESYSTEM_ALLOW_OVERWRITE,
+    FILESYSTEM_CREATE_SANDBOX,
+    FILESYSTEM_LOG_OPERATIONS,
+    FILESYSTEM_MAX_CONCURRENT_OPERATIONS,
+    FILESYSTEM_CLEANUP_ENABLED,
+    FILESYSTEM_CLEANUP_MAX_AGE_DAYS,
+    FILESYSTEM_CLEANUP_MAX_SIZE,
+)
 logger = logging.getLogger(__name__)
 
 
@@ -61,7 +75,7 @@ class BlindAgent:
         summarizer_provider: Optional[str] = None,
         summarizer_reasoning_effort: Optional[str] = None,
         # Optional workflow configuration
-        recursion_limit: int = 50,  # Default for ReAct agent
+        recursion_limit: int = 150,  # Default for ReAct agent
         # Optional filesystem configuration (ignored for BlindAgent)
         filesystem_enabled: Optional[bool] = None,
         filesystem_sandbox_base: Optional[str] = None,
@@ -153,11 +167,73 @@ class BlindAgent:
         if self.lame_agent is None:
             raise RuntimeError("LameAgent must be initialized before creating ReAct agent")
             
+                # Initialize filesystem tools if enabled
+        filesystem_tools = []
+
+        # Use provided filesystem configuration or fall back to global settings
+        fs_enabled = FILESYSTEM_ENABLED
+        fs_sandbox_base = FILESYSTEM_SANDBOX_BASE
+
+        if fs_enabled:
+            try:
+                # Perform workspace cleanup before initializing agent
+                if FILESYSTEM_CLEANUP_ENABLED:
+                    try:
+                        cleanup_result = cleanup_workspace(
+                            workspace_base=fs_sandbox_base,
+                            max_age_days=FILESYSTEM_CLEANUP_MAX_AGE_DAYS,
+                            max_size_bytes=FILESYSTEM_CLEANUP_MAX_SIZE,
+                            log_operations=FILESYSTEM_LOG_OPERATIONS,
+                        )
+                        if cleanup_result.get("directories_removed", 0) > 0:
+                            logger.info(
+                                f"Workspace cleanup: removed {cleanup_result['directories_removed']} "
+                                f"old agent directories, freed {cleanup_result['space_freed']:,} bytes"
+                            )
+                    except Exception as cleanup_error:
+                        # Log cleanup error but don't fail agent initialization
+                        logger.warning(
+                            f"Workspace cleanup failed but continuing: {cleanup_error}"
+                        )
+
+                # Create filesystem sandbox configuration for this agent
+                # Each agent gets its own subdirectory within the main sandbox for isolation
+                # This prevents agents from interfering with each other's files
+                agent_sandbox_path = Path(fs_sandbox_base) / f"agent_{self.username}"
+
+                filesystem_config = FilesystemConfig(
+                    sandbox_base=str(agent_sandbox_path),
+                    max_file_size=FILESYSTEM_MAX_FILE_SIZE,
+                    allowed_extensions=FILESYSTEM_ALLOWED_EXTENSIONS.copy(),  # Copy to avoid shared reference
+                    enabled=fs_enabled,
+                    allow_overwrite=FILESYSTEM_ALLOW_OVERWRITE,
+                    create_sandbox=FILESYSTEM_CREATE_SANDBOX,
+                    log_operations=FILESYSTEM_LOG_OPERATIONS,
+                )
+
+                # Store filesystem references for context building
+                self.filesystem_config = filesystem_config
+                self.filesystem_sandbox = FilesystemSandbox(filesystem_config)
+                
+                filesystem_tools.extend(get_filesystem_tools(filesystem_config))
+                logger.info(
+                    f"Filesystem tools enabled for agent {self.username} with sandbox: {agent_sandbox_path}"
+                )
+
+            except Exception as e:
+                # Log the error but don't fail agent initialization
+                # The agent can still function without filesystem tools
+                logger.error(
+                    f"Failed to initialize filesystem tools for agent {self.username}: {e}"
+                )
+                filesystem_tools = []
+        else:
+            logger.info(f"Filesystem tools disabled for agent {self.username}")
+        
         # Get act tool from Lame agent
         self.act_tool = self.lame_agent.get_act_tool_for_blind()
-        
         # Create a prebuilt ReAct agent that stops when no tool call is made
-        tools = [self.act_tool] + self.additional_tools
+        tools = [self.act_tool] + self.additional_tools + filesystem_tools
         self.agent = create_react_agent(
             self.llm,
             tools=tools,
@@ -293,7 +369,7 @@ class BlindAgent:
         summarizer_provider: Optional[str] = None,
         summarizer_reasoning_effort: Optional[str] = None,
         # Optional workflow configuration
-        recursion_limit: int = 50,
+        recursion_limit: int = 150,
         # Optional filesystem configuration (ignored for BlindAgent)
         filesystem_enabled: Optional[bool] = None,
         filesystem_sandbox_base: Optional[str] = None,
@@ -366,6 +442,13 @@ class BlindAgent:
         # Create LameAgent
         instance.lame_agent = await LameAgent.create(context)
         
+        # Append LameAgent tool names to the Blind agent's system prompt
+        try:
+            instance._append_lame_tools_to_prompt()
+        except Exception:
+            # Do not fail creation if augmentation fails
+            pass
+
         # Initialize ReAct agent
         instance._initialize_react_agent()
         
@@ -414,3 +497,24 @@ class BlindAgent:
     def cleanup_filesystem(self) -> Dict[str, Any]:
         """Filesystem cleanup (no-op for BlindAgent)."""
         return {"status": "skipped", "reason": "BlindAgent doesn't directly manage filesystem resources"}
+
+    def _append_lame_tools_to_prompt(self) -> None:
+        """Append the available Lame assistant tool names to the system prompt."""
+        if not getattr(self, "lame_agent", None):
+            return
+        tools = getattr(self.lame_agent, "browser_tools", None) or []
+        tool_names: List[str] = []
+        for t in tools:
+            name = getattr(t, "name", None)
+            if not name:
+                # Fallbacks for unusual tool wrappers
+                name = getattr(t, "__name__", None) or t.__class__.__name__
+            if name and name not in tool_names:
+                tool_names.append(name)
+
+        if not tool_names:
+            return
+
+        section_header = "\n\n## available tools for Lame assistant:\n"
+        names_block = "\n".join(f"- {n}" for n in tool_names)
+        self.system_prompt = f"{self.system_prompt.rstrip()}{section_header}{names_block}\n"

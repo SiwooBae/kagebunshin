@@ -52,6 +52,7 @@ class LameAgent:
         self.llm = None
         self.llm_with_tools = None
         self.tool_node: Optional[ToolNode] = None
+        self.reject_tool = None
         
     @classmethod
     async def create(cls, context: BrowserContext) -> "LameAgent":
@@ -63,6 +64,10 @@ class LameAgent:
         
         # Get browser tools from state manager
         instance.browser_tools = instance.state_manager.get_tools_for_llm()
+
+        # Create and add the reject(reason) tool (no-op tool used to decline non-atomic/undoable commands)
+        instance.reject_tool = instance._create_reject_tool()
+        instance.browser_tools = instance.browser_tools + [instance.reject_tool]
         
         # Import configuration here to avoid circular imports
         from ...config.settings import LAME_MODEL, LAME_PROVIDER, LAME_TEMPERATURE
@@ -119,6 +124,32 @@ class LameAgent:
             # If no tool calls were proposed, return the AI's explanation
             if not getattr(response, "tool_calls", None):
                 return normalize_chat_content(response.content) if getattr(response, "content", None) else "No action taken."
+
+            # If the model proposed the special reject(reason) tool, short-circuit and return a rejection message
+            try:
+                tool_calls = getattr(response, "tool_calls", []) or []
+                for tc in tool_calls:
+                    name = tc.get("name") if isinstance(tc, dict) else getattr(tc, "name", None)
+                    if name == "reject":
+                        args = tc.get("args", {}) if isinstance(tc, dict) else getattr(tc, "args", {})
+                        reason = None
+                        try:
+                            # args may be a dict or a pydantic-like object
+                            if isinstance(args, dict):
+                                reason = args.get("reason")
+                            else:
+                                reason = getattr(args, "reason", None)
+                        except Exception:
+                            reason = None
+                        reason_text = normalize_chat_content(reason) if isinstance(reason, str) else "Command is not atomic or not feasible with current tools."
+                        return (
+                            "Rejected: "
+                            + reason_text
+                            + "\nPlease provide a single, concrete, doable step (e.g., 'Click the \"Search\" button', 'Type \'foo\' in the input labeled \"Query\"', or 'Navigate to https://example.com')."
+                        )
+            except Exception:
+                # If any error happens during detection, proceed with normal execution
+                pass
 
             # ----- Execute tools -----
             tool_state = {"messages": messages + [response]}
@@ -188,6 +219,41 @@ class LameAgent:
             logger.error(f"Error executing command '{command}': {e}")
             return f"Error executing command: {str(e)}"
     
+    def _create_reject_tool(self):
+
+        @tool
+        async def reject(reason: str) -> str:
+            """
+            Decline executing the current command because it is not a single, concrete
+            browser action that can be safely and effectively performed with the tools
+            available right now.
+
+            When to use:
+            - The command requires multiple sequential steps (non-atomic).
+            - The target is ambiguous without further specification (multiple plausible matches).
+            - Required context is missing (e.g., URL, visible label/text, or field name).
+            - The requested capability is unavailable in the current toolset.
+            - Page state prevents action (element not present/visible, modal overlay, disabled control).
+            - Action could be unsafe or irreversible without explicit confirmation.
+
+            What to return in `reason`:
+            - A brief, specific explanation of why the action is rejected.
+            - A suggested next single, atomic step or a concise clarifying question.
+            - Refer to visible cues (text/label/role/location) rather than selectors or IDs.
+
+            Examples:
+            - "Non-atomic: requires entering text and clicking 'Search'. Please issue one step."
+            - "Ambiguous: multiple 'Sign in' links (header vs footer). Which one?"
+            - "Missing context: provide a URL to navigate to."
+            - "Unsupported: file upload not available."
+            - "Target not present: no button labeled 'Checkout' is visible."
+
+            Note: This tool is a no-op; it does not interact with the page.
+            """
+            # No-op implementation; never called during early-return path
+            return f"Rejected: {reason}"
+
+        return reject
     def get_act_tool_for_blind(self):
         """
         Returns the act() tool that the Blind Agent will use.

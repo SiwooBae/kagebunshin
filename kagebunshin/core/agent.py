@@ -468,6 +468,24 @@ class KageBunshinAgent:
                 return "end"
         except Exception:
             pass
+        
+        # Additional safeguard: detect recent complete_task tool call in messages
+        try:
+            from langchain_core.messages import AIMessage
+            messages = state.get("messages", []) or []
+            for msg in reversed(messages):
+                if isinstance(msg, AIMessage) and getattr(msg, "tool_calls", None):
+                    for tc in getattr(msg, "tool_calls", []) or []:
+                        try:
+                            name = tc.get("name") if isinstance(tc, dict) else getattr(tc, "name", None)
+                        except Exception:
+                            name = None
+                        if name == "complete_task":
+                            return "end"
+                    # Only inspect the most recent AI tool proposal
+                    break
+        except Exception:
+            pass
         return "summarizer" if self.enable_summarization else "agent"
 
     async def add_tool_call_reminder(self, state: KageBunshinState) -> Dict[str, Any]:
