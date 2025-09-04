@@ -706,6 +706,21 @@ If you continue without tool calls, the session will automatically terminate aft
             out_chunk = dict(chunk)
             if tools_events:
                 out_chunk["tools"] = tools_events
+            
+            # Inject agent_id into all messages in the chunk before yielding
+            try:
+                for node_key in ("agent", "action", "summarizer", "reminder"):
+                    node_update = out_chunk.get(node_key)
+                    if node_update and "messages" in node_update:
+                        enhanced_messages = []
+                        for msg in node_update["messages"]:
+                            enhanced_msg = self._inject_agent_id(msg)
+                            enhanced_messages.append(enhanced_msg)
+                        out_chunk[node_key]["messages"] = enhanced_messages
+            except Exception:
+                # Never let message enhancement break streaming
+                pass
+            
             yield out_chunk
 
             # Merge any new messages from nodes into our accumulated history
@@ -982,6 +997,26 @@ If you continue without tool calls, the session will automatically terminate aft
             tabs=tabs,
             current_tab_index=current_tab_index,
         )
+
+    def _inject_agent_id(self, message: BaseMessage) -> BaseMessage:
+        """Inject agent_id into a message's additional_kwargs."""
+        try:
+            if hasattr(message, 'additional_kwargs'):
+                # Create enhanced message with agent_id in additional_kwargs
+                enhanced_message = type(message)(
+                    **{
+                        **message.__dict__,
+                        "additional_kwargs": {
+                            "agent_id": self.username,
+                            **getattr(message, 'additional_kwargs', {}),
+                        }
+                    }
+                )
+                return enhanced_message
+            return message
+        except Exception:
+            # Return original message if enhancement fails
+            return message
 
     def _extract_final_answer(self) -> str:
         """Extract the final answer from the conversation."""
