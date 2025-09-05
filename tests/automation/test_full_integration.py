@@ -5,20 +5,49 @@ Full integration test for text merger with markPage function.
 import pytest
 from pathlib import Path
 from playwright.sync_api import Page
+import os
+
+
+def load_page_scripts():
+    """Load and combine all JavaScript modules in dependency order."""
+    # Module loading order from kagebunshin/utils/formatting.py
+    js_modules = [
+        "text_merger.js",      # Text fragment merging (external dependency)
+        "constants.js",        # Global variables and constants
+        "overlay.js",          # Overlay management functions
+        "utils.js",           # Viewport and utility functions
+        "element-filtering.js", # Element filtering and visibility detection
+        "element-analysis.js", # Hierarchical analysis functions
+        "iframe-processing.js", # iframe processing functions
+        "element-discovery.js", # Interactive elements discovery
+        "main.js"             # Main markPage and unmarkPage functions
+    ]
+    
+    browser_js_dir = Path(__file__).parent.parent.parent / "kagebunshin" / "automation" / "browser"
+    
+    js_scripts = []
+    for module_file in js_modules:
+        module_path = browser_js_dir / module_file
+        try:
+            script_content = module_path.read_text()
+            js_scripts.append(f"// ===== {module_file} =====\n{script_content}")
+        except FileNotFoundError:
+            raise FileNotFoundError(f"JavaScript module not found: {module_path}")
+    
+    return "\n\n".join(js_scripts)
 
 
 def test_mark_page_with_text_merging(page: Page):
     """Test markPage function with text merging enabled."""
     
-    # Load the page_utils.js file content and inject it
-    utils_path = Path(__file__).parent.parent.parent / "kagebunshin" / "automation" / "browser" / "page_utils.js"
-    script_content = utils_path.read_text()
+    # Load and combine all JavaScript modules
+    script_content = load_page_scripts()
     
     # Load test HTML
     fixture_path = Path(__file__).parent.parent / "fixtures" / "text_splitting_patterns.html"
     page.goto(f"file://{fixture_path}")
     
-    # Inject the page_utils.js script
+    # Inject the combined JavaScript scripts
     page.evaluate(script_content)
     
     # Test without merging first
@@ -73,9 +102,8 @@ def test_mark_page_with_text_merging(page: Page):
 def test_mark_page_merging_configuration(page: Page):
     """Test different merging configuration options."""
     
-    # Load the page_utils.js file content and inject it
-    utils_path = Path(__file__).parent.parent.parent / "kagebunshin" / "automation" / "browser" / "page_utils.js"
-    script_content = utils_path.read_text()
+    # Load and combine all JavaScript modules
+    script_content = load_page_scripts()
     
     fixture_path = Path(__file__).parent.parent / "fixtures" / "text_splitting_patterns.html"
     page.goto(f"file://{fixture_path}")
@@ -117,9 +145,8 @@ def test_mark_page_merging_configuration(page: Page):
 def test_mark_page_backwards_compatibility(page: Page):
     """Test that markPage works normally when text merging is disabled."""
     
-    # Load the page_utils.js file content and inject it
-    utils_path = Path(__file__).parent.parent.parent / "kagebunshin" / "automation" / "browser" / "page_utils.js"
-    script_content = utils_path.read_text()
+    # Load and combine all JavaScript modules
+    script_content = load_page_scripts()
     
     fixture_path = Path(__file__).parent.parent / "fixtures" / "text_splitting_patterns.html"
     page.goto(f"file://{fixture_path}")
@@ -149,14 +176,16 @@ def test_mark_page_backwards_compatibility(page: Page):
 def test_mark_page_error_handling(page: Page):
     """Test that markPage handles errors gracefully when text merger fails."""
     
-    # Load the page_utils.js file content
-    utils_path = Path(__file__).parent.parent.parent / "kagebunshin" / "automation" / "browser" / "page_utils.js"
-    script_content = utils_path.read_text()
+    # Load and combine all JavaScript modules
+    script_content = load_page_scripts()
     
-    # Modify the script to break the TextFragmentMerger
+    # Modify the script to remove TextFragmentMerger entirely to test graceful fallback
     broken_script = script_content.replace(
         "class TextFragmentMerger {",
-        "class BrokenTextFragmentMerger {"
+        "class TextFragmentMerger_DISABLED {"
+    ).replace(
+        "window.TextFragmentMerger = TextFragmentMerger;",
+        "// window.TextFragmentMerger = TextFragmentMerger; // Disabled for testing"
     )
     
     fixture_path = Path(__file__).parent.parent / "fixtures" / "text_splitting_patterns.html"
