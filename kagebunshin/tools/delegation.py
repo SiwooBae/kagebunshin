@@ -163,7 +163,7 @@ def get_additional_tools(context: BrowserContext, username: Optional[str] = None
     chat_client = GroupChatClient()
 
     @tool
-    async def delegate(tasks: List[str], state: Annotated[dict, InjectedState]) -> str:
+    async def delegate(tasks: List[str], state: Annotated[dict, InjectedState], clone_mode: str = "state_transfer") -> str:
         """Spawn shadow-clone sub-agents in parallel to execute multiple focused subtasks, enabling swarm intelligence.
 
         This is Kagebunshin's core delegation mechanism that creates parallel clone agents to divide and conquer
@@ -198,6 +198,12 @@ def get_additional_tools(context: BrowserContext, username: Optional[str] = None
         - Avoid overly broad or interdependent tasks
         - Example: ["Research Python frameworks", "Check pricing on Site A", "Extract contact info from Site B"]
 
+        **clone_mode** (str, optional, default: "state_transfer"):
+        - Controls how clones inherit parent's browser state
+        - "state_transfer": Creates new context with copied cookies/localStorage (recommended)
+        - "shared_page": Clones share parent's context but use different pages/tabs
+        - "isolated": Completely fresh contexts with no state inheritance (legacy mode)
+
         ## Returns
 
         **JSON string** containing array of results:
@@ -217,7 +223,10 @@ def get_additional_tools(context: BrowserContext, username: Optional[str] = None
         ## Behavior Details
 
         **Clone Creation Process:**
-        1. Creates fresh incognito BrowserContext for each task (complete isolation)
+        1. Context creation (varies by clone_mode):
+           - "state_transfer": Captures parent state (cookies/localStorage) and creates new context with inherited state
+           - "shared_page": Uses parent's context but creates new page/tab for each clone
+           - "isolated": Creates fresh incognito BrowserContext (complete isolation, legacy mode)
         2. Generates unique agent name for each clone
         3. Sets up isolated filesystem sandbox (if filesystem enabled)
         4. Summarizes parent's conversation history using lightweight LLM
@@ -246,23 +255,11 @@ def get_additional_tools(context: BrowserContext, username: Optional[str] = None
 
         ## Important Notes
 
-        **Performance Considerations:**
-        - Each clone uses significant resources (browser context + agent)
-        - Monitor system resources when delegating many tasks
-        - Consider task complexity vs. delegation overhead
-
         **Task Design Best Practices:**
         - Make tasks specific and actionable ("Research X" vs "Find information")
         - Ensure tasks are truly independent (no shared state requirements)
         - Include success criteria in task descriptions
         - Avoid tasks that require real-time coordination
-
-        **Error Handling:**
-        - Individual task failures don't affect other parallel tasks
-        - Resource cleanup occurs even if tasks fail
-        - Capacity limits enforced at both global and per-delegation level
-        - Clone creation failures return structured error information
-
         ## Troubleshooting
 
         **"Delegation denied: max agents reached":**
@@ -305,6 +302,11 @@ def get_additional_tools(context: BrowserContext, username: Optional[str] = None
         if not tasks or not isinstance(tasks, list):
             return json.dumps({"error": "'tasks' must be a non-empty list of strings"})
 
+        # Validate clone_mode parameter
+        valid_modes = ["state_transfer", "shared_page", "isolated"]
+        if clone_mode not in valid_modes:
+            return json.dumps({"error": f"Invalid clone_mode '{clone_mode}'. Valid modes: {valid_modes}"})
+
         # Get current conversation history from injected state
         current_messages = state.get("messages", [])
         parent_name = username or "parent-agent"
@@ -344,10 +346,59 @@ def get_additional_tools(context: BrowserContext, username: Optional[str] = None
                         "error": "Cannot create new BrowserContext from the current context",
                     }
 
-                created_context = await browser.new_context(
-                    permissions=DEFAULT_PERMISSIONS,
-                    viewport={'width': ACTUAL_VIEWPORT_WIDTH, 'height': ACTUAL_VIEWPORT_HEIGHT}
-                )
+                # Create context based on clone_mode
+                if clone_mode == "shared_page":
+                    # Mode 1: Share parent's context, create new page
+                    created_context = context
+                    logger.info(f"Clone {task_str[:50]}... using shared_page mode")
+                    
+                elif clone_mode == "state_transfer":
+                    # Mode 2: Transfer parent's state to new context
+                    try:
+                        # Get parent agent to capture its current state
+                        current_agent = _current_agent.get()
+                        if current_agent:
+                            # Capture parent state
+                            storage_state = await context.storage_state()
+                            
+                            # Get parent's current URL for navigation
+                            parent_url = None
+                            try:
+                                current_page = current_agent.state_manager.get_current_page()
+                                parent_url = current_page.url
+                            except Exception:
+                                parent_url = "about:blank"
+                            
+                            # Create new context with inherited state
+                            created_context = await browser.new_context(
+                                permissions=DEFAULT_PERMISSIONS,
+                                viewport={'width': ACTUAL_VIEWPORT_WIDTH, 'height': ACTUAL_VIEWPORT_HEIGHT},
+                                storage_state=storage_state
+                            )
+                            
+                            logger.info(f"Clone {task_str[:50]}... using state_transfer mode, parent URL: {parent_url}")
+                        else:
+                            # Fallback to isolated mode if no parent agent
+                            logger.warning("No parent agent found, falling back to isolated mode")
+                            created_context = await browser.new_context(
+                                permissions=DEFAULT_PERMISSIONS,
+                                viewport={'width': ACTUAL_VIEWPORT_WIDTH, 'height': ACTUAL_VIEWPORT_HEIGHT}
+                            )
+                    except Exception as e:
+                        logger.warning(f"State transfer failed ({e}), falling back to isolated mode")
+                        created_context = await browser.new_context(
+                            permissions=DEFAULT_PERMISSIONS,
+                            viewport={'width': ACTUAL_VIEWPORT_WIDTH, 'height': ACTUAL_VIEWPORT_HEIGHT}
+                        )
+                        
+                else:  # isolated mode (legacy/default fallback)
+                    # Mode 3: Complete isolation with fresh context
+                    created_context = await browser.new_context(
+                        permissions=DEFAULT_PERMISSIONS,
+                        viewport={'width': ACTUAL_VIEWPORT_WIDTH, 'height': ACTUAL_VIEWPORT_HEIGHT}
+                    )
+                    logger.info(f"Clone {task_str[:50]}... using isolated mode")
+
                 try:
                     await apply_fingerprint_profile_to_context(created_context)
                 except Exception:
@@ -403,6 +454,21 @@ def get_additional_tools(context: BrowserContext, username: Optional[str] = None
                         filesystem_enabled=clone_filesystem_enabled,
                         filesystem_sandbox_base=clone_sandbox_base,
                     )
+                    
+                    # Navigate clone to parent's URL if using state_transfer mode
+                    if clone_mode == "state_transfer":
+                        try:
+                            current_agent = _current_agent.get()
+                            if current_agent:
+                                parent_page = current_agent.state_manager.get_current_page()
+                                parent_url = parent_page.url
+                                if parent_url and parent_url != "about:blank":
+                                    clone_page = clone.state_manager.get_current_page()
+                                    await clone_page.goto(parent_url)
+                                    logger.info(f"Clone navigated to parent's URL: {parent_url}")
+                        except Exception as nav_error:
+                            logger.warning(f"Failed to navigate clone to parent URL: {nav_error}")
+                            
                 except RuntimeError as e:
                     return {"task": task_str, "status": "denied", "error": f"Delegation denied: {e}"}
 
@@ -412,7 +478,16 @@ def get_additional_tools(context: BrowserContext, username: Optional[str] = None
                 if clone_filesystem_enabled and clone_sandbox_base:
                     filesystem_info = f"\n🗂️  FILESYSTEM: You have access to a private filesystem sandbox for reading, writing, and organizing files. All file operations are isolated to your sandbox for security."
                 
+                # Add clone mode info to briefing
+                mode_info = {
+                    "state_transfer": "🔄 STATE INHERITANCE: You inherit parent's cookies, localStorage, and are navigated to their current page",
+                    "shared_page": "🔗 SHARED CONTEXT: You share parent's browser context (cookies/auth) but operate on a new page/tab",
+                    "isolated": "🏝️  ISOLATED MODE: You start with a fresh browser context (no inherited state)"
+                }.get(clone_mode, "")
+                
                 clone_context_message = f"""🧬 CLONE BRIEFING: You are a shadow clone of {parent_name} (Depth: {current_depth + 1})!
+
+{mode_info}
 
 PARENT CONTEXT: {conversation_summary}
 
@@ -451,7 +526,8 @@ Coordination Strategy: Share progress updates, coordinate to avoid duplicate wor
                         clone.dispose()
                 except Exception:
                     pass
-                if created_context is not None:
+                # Only close context if we created a new one (not shared_page mode)
+                if created_context is not None and clone_mode != "shared_page":
                     try:
                         await created_context.close()
                     except Exception:
