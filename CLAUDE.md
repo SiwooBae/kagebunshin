@@ -386,6 +386,6 @@ As of the latest update:
 
 ## Additional Guidelines
 - It is OKAY to make comments! Just be clear and concise.
-- **CRITICAL:** Do thorough research. Do not make any assumptions about the codebase. Be paranoid. Read until you are absolutely sure of what you are doing.
+- **CRITICAL:** Do thorough research. Do not make any assumptions about the codebase. Read until you are absolutely sure of what you are doing.
 - If you cannot infer any information within your capability, Don't hestitate to ask me clarifying questions.
 - Do not create anything outside of what I asked for. Think of Occam's Razor or mimimum description length; try to generate only necessary code while making sure it has all the functionalities and following software engineering principles (extensibility, readability, etc.).
