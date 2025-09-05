@@ -11,6 +11,7 @@ import logging
 import asyncio
 import json
 from pathlib import Path
+import contextvars
 
 from langchain_core.tools import tool
 from langchain_core.messages import HumanMessage, BaseMessage, SystemMessage, AIMessage, ToolMessage
@@ -41,6 +42,13 @@ from ..utils import generate_agent_name, normalize_chat_content
 
 
 logger = logging.getLogger(__name__)
+
+# Context variable to track the current agent during tool execution
+_current_agent: contextvars.ContextVar = contextvars.ContextVar('current_agent', default=None)
+
+def set_current_agent(agent: Any) -> None:
+    """Set the current agent in the context variable for tool access."""
+    _current_agent.set(agent)
 
 
 async def _summarize_conversation_history(messages: List[BaseMessage], parent_name: str) -> str:
@@ -375,6 +383,12 @@ def get_additional_tools(context: BrowserContext, username: Optional[str] = None
                         clone_filesystem_enabled = False
                 
                 try:
+                    # Get parent agent's streaming queue for message forwarding via context variable
+                    parent_message_queue = None
+                    current_agent = _current_agent.get()
+                    if current_agent and hasattr(current_agent, '_streaming_message_queue'):
+                        parent_message_queue = current_agent._streaming_message_queue
+                    
                     clone = await KageBunshinAgent.create(
                         created_context,
                         additional_tools=clone_tools,
@@ -382,6 +396,9 @@ def get_additional_tools(context: BrowserContext, username: Optional[str] = None
                         username=child_name,
                         enable_summarization=ENABLE_SUMMARIZATION,
                         clone_depth=current_depth + 1,
+                        # Pass message streaming configuration to clone
+                        parent_agent_id=parent_name,
+                        message_queue=parent_message_queue,
                         # Pass filesystem configuration to clone
                         filesystem_enabled=clone_filesystem_enabled,
                         filesystem_sandbox_base=clone_sandbox_base,
@@ -410,8 +427,21 @@ IMPORTANT: You are NOT limited by being a clone - the swarm intelligence philoso
 
 Coordination Strategy: Share progress updates, coordinate to avoid duplicate work, and leverage collective intelligence through the group chat system."""
 
-                result = await clone.ainvoke(clone_context_message)
-                return {"task": task_str, "status": "ok", "result": result}
+                # Use streaming instead of ainvoke and collect the final result
+                final_result = None
+                try:
+                    async for chunk in clone.astream(clone_context_message):
+                        # The streaming will automatically forward to parent's queue via clone.message_queue
+                        # We just need to collect chunks until we get a final answer
+                        pass
+                    
+                    # Extract final result from clone
+                    final_result = clone._extract_final_answer()
+                except Exception as stream_error:
+                    logger.error(f"Clone streaming failed: {stream_error}")
+                    final_result = f"Clone execution failed: {stream_error}"
+
+                return {"task": task_str, "status": "ok", "result": final_result}
             except Exception as e:
                 logger.error(f"Delegate task failed: {e}")
                 return {"task": task_str, "status": "error", "error": str(e)}

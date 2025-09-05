@@ -84,6 +84,9 @@ class KageBunshinAgent:
         group_room: Optional[str] = None,
         username: Optional[str] = None,
         clone_depth: int = 0,
+        # Optional message streaming configuration
+        parent_agent_id: Optional[str] = None,
+        message_queue: Optional[asyncio.Queue] = None,
         # Optional LLM configuration
         llm: Optional[Any] = None,
         llm_model: str = LLM_MODEL,
@@ -111,6 +114,10 @@ class KageBunshinAgent:
         self.recursion_limit = recursion_limit
         # Simple in-process memory of message history across turns
         self.persistent_messages: List[BaseMessage] = []
+        
+        # Message streaming properties for subagent coordination
+        self.parent_agent_id = parent_agent_id
+        self.message_queue = message_queue
         
         # Filesystem context tracking
         self.filesystem_sandbox: Optional[FilesystemSandbox] = None
@@ -313,6 +320,9 @@ class KageBunshinAgent:
         group_room: Optional[str] = None,
         username: Optional[str] = None,
         clone_depth: int = 0,
+        # Optional message streaming configuration
+        parent_agent_id: Optional[str] = None,
+        message_queue: Optional[asyncio.Queue] = None,
         # Optional LLM configuration
         llm: Optional[Any] = None,
         llm_model: str = LLM_MODEL,
@@ -381,6 +391,8 @@ class KageBunshinAgent:
             group_room=group_room,
             username=username,
             clone_depth=clone_depth,
+            parent_agent_id=parent_agent_id,
+            message_queue=message_queue,
             llm=llm,
             llm_model=llm_model,
             llm_provider=llm_provider,
@@ -553,11 +565,12 @@ If you continue without tool calls, the session will automatically terminate aft
 
     async def astream(self, user_query: str) -> AsyncGenerator[Dict, None]:
         """
-        Stream the agent's intermediate steps as structured chunks.
+        Stream the agent's intermediate steps as structured chunks, including subagent messages.
 
         This returns an async generator of streaming "update" chunks emitted by the
-        underlying LangGraph as nodes execute. Each yielded chunk preserves the
-        original LangGraph structure with agent_id injection for message attribution.
+        underlying LangGraph as nodes execute, plus messages from any delegated subagents.
+        Each yielded chunk preserves the original LangGraph structure with agent_id and
+        parent_agent_id injection for message attribution.
 
         Parameters:
             user_query: The user's task or instruction to execute.
@@ -572,18 +585,29 @@ If you continue without tool calls, the session will automatically terminate aft
               Summaries produced when summarization is enabled.
             - reminder (optional): { "messages": List[SystemMessage] }
               Reminder messages for missing tool calls.
+            - subagent (optional): { "messages": List[BaseMessage] }
+              Messages forwarded from delegated subagents.
 
         Notes:
-        - All messages include agent_id in additional_kwargs for attribution
+        - All messages include agent_id and parent_agent_id in additional_kwargs for attribution
         - Chunks are streamed in real-time as workflow nodes execute
+        - Subagent messages are merged into the stream in real-time
         - Original LangGraph structure is preserved for compatibility
         """
+        # Set current agent in context variable for tool access
+        from ..tools.delegation import set_current_agent
+        set_current_agent(self)
+        
         # Announce task to group chat (streaming entry)
         try:
             await self.group_client.connect()
             await self._post_intro_message()
         except Exception:
             pass
+
+        # Initialize message queue for this streaming session if not already present
+        if not hasattr(self, '_streaming_message_queue') or self._streaming_message_queue is None:
+            self._streaming_message_queue = asyncio.Queue()
 
         initial_messages = [*self.persistent_messages, HumanMessage(content=user_query)]
         initial_state = KageBunshinState(
@@ -597,25 +621,113 @@ If you continue without tool calls, the session will automatically terminate aft
 
         # Track messages for final state persistence
         accumulated_messages: List[BaseMessage] = list(initial_messages)
-
-        async for chunk in self.agent.astream(
-            initial_state,
-            stream_mode="updates",
-            config={"recursion_limit": self.recursion_limit},
-        ):
-            # Inject agent_id into all messages in the chunk
-            enhanced_chunk = self._inject_agent_id_into_chunk(chunk)
-            yield enhanced_chunk
-
-            # Accumulate messages for persistence
+        
+        # Task to monitor the message queue for subagent messages
+        async def queue_monitor():
             try:
-                for node_key in ("agent", "action", "summarizer", "reminder"):
-                    node_update = chunk.get(node_key) or {}
-                    new_msgs = node_update.get("messages", [])
-                    if new_msgs:
-                        accumulated_messages.extend(new_msgs)  # type: ignore[arg-type]
+                while True:
+                    try:
+                        # Wait for messages from subagents with a timeout to allow proper cleanup
+                        subagent_chunk = await asyncio.wait_for(
+                            self._streaming_message_queue.get(), 
+                            timeout=0.1
+                        )
+                        yield subagent_chunk
+                    except asyncio.TimeoutError:
+                        continue
+                    except Exception:
+                        break
             except Exception:
-                # Never let message accumulation break streaming
+                pass
+
+        # Create async generators for main stream and subagent queue
+        async def main_stream():
+            async for chunk in self.agent.astream(
+                initial_state,
+                stream_mode="updates",
+                config={"recursion_limit": self.recursion_limit},
+            ):
+                # Inject agent_id and parent_agent_id into all messages in the chunk
+                enhanced_chunk = self._inject_agent_id_into_chunk(chunk)
+                
+                # If this is a subagent, also forward to parent's queue
+                if self.message_queue:
+                    try:
+                        await self.message_queue.put(enhanced_chunk)
+                    except Exception:
+                        pass
+                
+                yield enhanced_chunk
+
+                # Accumulate messages for persistence
+                try:
+                    for node_key in ("agent", "action", "summarizer", "reminder"):
+                        node_update = chunk.get(node_key) or {}
+                        new_msgs = node_update.get("messages", [])
+                        if new_msgs:
+                            accumulated_messages.extend(new_msgs)  # type: ignore[arg-type]
+                except Exception:
+                    # Never let message accumulation break streaming
+                    pass
+
+        # Merge streams from main agent and subagents
+        main_gen = main_stream()
+        queue_gen = queue_monitor()
+        
+        try:
+            main_done = False
+            while True:
+                done_tasks, pending_tasks = await asyncio.wait(
+                    [
+                        asyncio.create_task(main_gen.__anext__()) if not main_done else None,
+                        asyncio.create_task(queue_gen.__anext__())
+                    ],
+                    return_when=asyncio.FIRST_COMPLETED,
+                    timeout=0.5  # Small timeout to prevent hanging
+                )
+                
+                # Process completed tasks
+                for task in done_tasks:
+                    if task.exception():
+                        # Main stream ended normally
+                        if not main_done:
+                            main_done = True
+                            continue
+                        else:
+                            # Queue monitor ended, continue to cleanup
+                            break
+                    else:
+                        try:
+                            result = task.result()
+                            yield result
+                        except StopAsyncIteration:
+                            if not main_done:
+                                main_done = True
+                            continue
+                
+                # Cancel pending tasks
+                for task in pending_tasks:
+                    task.cancel()
+                    try:
+                        await task
+                    except (asyncio.CancelledError, StopAsyncIteration):
+                        pass
+                
+                # If main stream is done and no pending tasks, break
+                if main_done and not pending_tasks:
+                    break
+                    
+        except Exception:
+            pass
+        finally:
+            # Clean up the queue
+            try:
+                while not self._streaming_message_queue.empty():
+                    try:
+                        self._streaming_message_queue.get_nowait()
+                    except:
+                        break
+            except:
                 pass
 
         # After stream completes, persist final messages and update state
@@ -883,15 +995,20 @@ If you continue without tool calls, the session will automatically terminate aft
         )
 
     def _inject_agent_id(self, message: BaseMessage) -> BaseMessage:
-        """Inject agent_id into a message's additional_kwargs."""
+        """Inject agent_id and parent_agent_id into a message's additional_kwargs."""
         try:
             if hasattr(message, 'additional_kwargs'):
-                # Create enhanced message with agent_id in additional_kwargs
+                # Build agent identification kwargs
+                agent_kwargs = {"agent_id": self.username}
+                if self.parent_agent_id:
+                    agent_kwargs["parent_agent_id"] = self.parent_agent_id
+                
+                # Create enhanced message with agent identification in additional_kwargs
                 enhanced_message = type(message)(
                     **{
                         **message.__dict__,
                         "additional_kwargs": {
-                            "agent_id": self.username,
+                            **agent_kwargs,
                             **getattr(message, 'additional_kwargs', {}),
                         }
                     }
@@ -903,7 +1020,7 @@ If you continue without tool calls, the session will automatically terminate aft
             return message
 
     def _inject_agent_id_into_chunk(self, chunk: Dict[str, Any]) -> Dict[str, Any]:
-        """Inject agent_id into all messages within a chunk."""
+        """Inject agent_id and parent_agent_id into all messages within a chunk."""
         try:
             enhanced_chunk = dict(chunk)
             for node_key in ("agent", "action", "summarizer", "reminder"):
