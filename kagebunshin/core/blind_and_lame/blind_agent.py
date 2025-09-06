@@ -19,7 +19,7 @@ from playwright.async_api import BrowserContext
 from .lame_agent import LameAgent
 from ..state import KageBunshinState
 from ..state_manager import KageBunshinStateManager
-from ...utils import normalize_chat_content, generate_agent_name
+from ...utils import normalize_chat_content, generate_agent_name, strip_openai_reasoning_items
 from ...communication.group_chat import GroupChatClient
 from ...tools.filesystem import get_filesystem_tools, FilesystemConfig, FilesystemSandbox, cleanup_workspace
 from ...config.settings import (
@@ -259,8 +259,20 @@ class BlindAgent:
             raise RuntimeError("BlindAgent not properly initialized. Use BlindAgent.create() method.")
         
         try:
-            # Prepare messages including persistent history
-            messages = self.persistent_messages + [HumanMessage(content=user_query)]
+            # Prepare messages including persistent history; sanitize any prior outputs
+            sanitized_history: List[BaseMessage] = []
+            for m in self.persistent_messages:
+                try:
+                    if hasattr(m, "content"):
+                        cleaned = strip_openai_reasoning_items(getattr(m, "content", None))
+                        normalized = normalize_chat_content(cleaned)
+                        mm = type(m)(**{**getattr(m, "__dict__", {}), "content": normalized})
+                        sanitized_history.append(mm)
+                    else:
+                        sanitized_history.append(m)
+                except Exception:
+                    sanitized_history.append(m)
+            messages = sanitized_history + [HumanMessage(content=user_query)]
             
             # Run the prebuilt ReAct agent; it terminates when no tool call is made
             final_state = await self.agent.ainvoke({
@@ -292,8 +304,20 @@ class BlindAgent:
             raise RuntimeError("BlindAgent not properly initialized. Use BlindAgent.create() method.")
             
         try:
-            # Prepare messages including persistent history
-            messages = self.persistent_messages + [HumanMessage(content=user_query)]
+            # Prepare messages including persistent history; sanitize any prior outputs
+            sanitized_history: List[BaseMessage] = []
+            for m in self.persistent_messages:
+                try:
+                    if hasattr(m, "content"):
+                        cleaned = strip_openai_reasoning_items(getattr(m, "content", None))
+                        normalized = normalize_chat_content(cleaned)
+                        mm = type(m)(**{**getattr(m, "__dict__", {}), "content": normalized})
+                        sanitized_history.append(mm)
+                    else:
+                        sanitized_history.append(m)
+                except Exception:
+                    sanitized_history.append(m)
+            messages = sanitized_history + [HumanMessage(content=user_query)]
             
             accumulated_messages = list(messages)
             

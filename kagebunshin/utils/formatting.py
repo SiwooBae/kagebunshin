@@ -178,34 +178,62 @@ def strip_openai_reasoning_items(content: Any) -> Any:
     requests. This function removes such parts while preserving other content.
 
     The function is intentionally tolerant of unknown shapes and will recurse
-    into lists/dicts, filtering out any dict with type == "reasoning" and any
-    dict that looks like a reasoning artifact (id starting with "rs_").
+    into lists/dicts/objects, filtering out any item with type == "reasoning"
+    and any item that looks like a reasoning artifact (id starting with "rs_").
     """
     try:
-        # Drop entire dicts that explicitly mark reasoning
-        if isinstance(content, dict):
-            ctype = content.get("type")
-            cid = content.get("id")
-            if ctype == "reasoning":
+        # Helper to detect a 'reasoning' item on dicts or objects
+        def is_reasoning_like(obj: Any) -> bool:
+            try:
+                if isinstance(obj, dict):
+                    ctype = obj.get("type")
+                    cid = obj.get("id")
+                else:
+                    ctype = getattr(obj, "type", None)
+                    cid = getattr(obj, "id", None)
+                if ctype == "reasoning":
+                    return True
+                if isinstance(cid, str) and cid.startswith("rs_"):
+                    return True
+            except Exception:
+                pass
+            return False
+
+        # Drop entire dicts/objects that explicitly mark reasoning
+        if isinstance(content, dict) or hasattr(content, "type") or hasattr(content, "id"):
+            if is_reasoning_like(content):
                 return None
-            if isinstance(cid, str) and cid.startswith("rs_"):
-                return None
-            # Recurse into values
-            cleaned: Dict[str, Any] = {}
-            for k, v in content.items():
-                cv = strip_openai_reasoning_items(v)
-                if cv is not None:
-                    cleaned[k] = cv
-            return cleaned
-        # For lists, filter out any None entries after recursion
-        if isinstance(content, list):
+            # Recurse into mappings or object attributes
+            if isinstance(content, dict):
+                cleaned: Dict[str, Any] = {}
+                for k, v in content.items():
+                    cv = strip_openai_reasoning_items(v)
+                    if cv is not None:
+                        cleaned[k] = cv
+                return cleaned
+            # Pydantic/BaseModel: try model_dump/dict/__dict__ in that order
+            try:
+                if hasattr(content, "model_dump"):
+                    dumped = content.model_dump()
+                elif hasattr(content, "dict"):
+                    dumped = content.dict()
+                else:
+                    dumped = getattr(content, "__dict__", {})
+            except Exception:
+                dumped = getattr(content, "__dict__", {})
+            return strip_openai_reasoning_items(dumped)
+
+        # For lists/tuples, filter out None entries after recursion
+        if isinstance(content, (list, tuple)):
             cleaned_list = []
             for part in content:
                 cp = strip_openai_reasoning_items(part)
                 if cp is None:
                     continue
                 cleaned_list.append(cp)
-            return cleaned_list
+            # Preserve type
+            return type(content)(cleaned_list) if isinstance(content, tuple) else cleaned_list
+
         # Primitive types are safe
         return content
     except Exception:

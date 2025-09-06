@@ -5,6 +5,7 @@ by coordinating with the stateless state manager.
 """
 
 import logging
+import copy
 import asyncio
 import time
 from pathlib import Path
@@ -251,7 +252,7 @@ class KageBunshinAgent:
         self.group_client = GroupChatClient()
 
         # Bind tools to the LLM so it knows what functions it can call
-        self.llm_with_tools = self.llm.bind_tools(self.all_tools)
+        self.llm_with_tools = self.llm.bind_tools(self.all_tools, parallel_tool_calls=False)
 
         # Define the graph
         workflow = StateGraph(KageBunshinState)
@@ -421,20 +422,41 @@ class KageBunshinAgent:
 
         # Add agent_id to response's additional_kwargs for backend server
         if isinstance(response, AIMessage):
-            # Safely copy all fields and only modify additional_kwargs to preserve internal structure
-            enhanced_response = type(response)(
-                **{
-                    **response.__dict__,
-                    "additional_kwargs": {
-                        "agent_id": self.username,
-                        **response.additional_kwargs,
-                    }
-                }
-            )
-            result: Dict[str, Any] = {"messages": [enhanced_response]}
+            # Deep-copy the message to avoid sharing references (especially content parts)
+            safe_response = copy.deepcopy(response)
+            # Strip any OpenAI 'reasoning' items from content before persisting into state
+            try:
+                if hasattr(safe_response, "content"):
+                    cleaned_content = strip_openai_reasoning_items(
+                        getattr(safe_response, "content", None)
+                    )
+                    # Normalize to plain text to guarantee no residual typed parts
+                    normalized_content = normalize_chat_content(cleaned_content)
+                    setattr(safe_response, "content", normalized_content)
+            except Exception:
+                # If anything goes wrong, keep original content
+                pass
+            # Inject agent identifiers into additional_kwargs without losing existing data
+            try:
+                current_kwargs = getattr(safe_response, "additional_kwargs", {}) or {}
+                # Sanitize any nested structures in additional_kwargs
+                current_kwargs = strip_openai_reasoning_items(current_kwargs) or {}
+                setattr(
+                    safe_response,
+                    "additional_kwargs",
+                    {"agent_id": self.username, **current_kwargs},
+                )
+            except Exception:
+                # If assignment fails, fall back to original response
+                safe_response = response
+
+            result: Dict[str, Any] = {"messages": [safe_response]}
             # Reset retry count if the agent made tool calls in this step
-            if enhanced_response.tool_calls:
-                result["tool_call_retry_count"] = 0
+            try:
+                if getattr(safe_response, "tool_calls", None):
+                    result["tool_call_retry_count"] = 0
+            except Exception:
+                pass
         else:
             result: Dict[str, Any] = {"messages": [response]}
 
@@ -719,11 +741,12 @@ If you continue without tool calls, the session will automatically terminate aft
                 pass
 
             # Yield enriched chunk (original keys plus optional 'tools')
-            out_chunk = dict(chunk)
+            # Make a deep copy so that any enhancement doesn't mutate the original chunk
+            out_chunk = copy.deepcopy(chunk)
             if tools_events:
                 out_chunk["tools"] = tools_events
-            
-            # Inject agent_id into all messages in the chunk before yielding
+
+            # Inject agent_id into all messages in the copy before yielding
             try:
                 for node_key in ("agent", "action", "summarizer", "reminder"):
                     node_update = out_chunk.get(node_key)
@@ -732,11 +755,11 @@ If you continue without tool calls, the session will automatically terminate aft
                         for msg in node_update["messages"]:
                             enhanced_msg = self._inject_agent_id(msg)
                             enhanced_messages.append(enhanced_msg)
-                        out_chunk[node_key]["messages"] = enhanced_messages
+                        node_update["messages"] = enhanced_messages
             except Exception:
                 # Never let message enhancement break streaming
                 pass
-            
+
             yield out_chunk
 
             # Merge any new messages from nodes into our accumulated history
@@ -787,10 +810,31 @@ If you continue without tool calls, the session will automatically terminate aft
         # Sanitize prior messages to avoid re-sending OpenAI 'reasoning' items
         for msg in state["messages"]:
             try:
-                if hasattr(msg, "content") and msg.content is not None:
-                    cleaned = strip_openai_reasoning_items(msg.content)
-                    # Replace content in a shallow copy to preserve message type
-                    msg_copy = type(msg)(**{**msg.__dict__, "content": cleaned})
+                if hasattr(msg, "content"):
+                    cleaned = strip_openai_reasoning_items(getattr(msg, "content", None))
+                    # Flatten to plain text for safety (removes any typed parts/images)
+                    normalized = normalize_chat_content(cleaned)
+                    # Prefer deep-copy + setattr; fall back to reconstructing from deep-copied __dict__
+                    try:
+                        msg_copy = copy.deepcopy(msg)
+                        setattr(msg_copy, "content", normalized)
+                        # Also sanitize any additional_kwargs to avoid leaking response artifacts
+                        if hasattr(msg_copy, "additional_kwargs"):
+                            try:
+                                ak = getattr(msg_copy, "additional_kwargs", {}) or {}
+                                sanitized_ak = strip_openai_reasoning_items(ak)
+                                setattr(msg_copy, "additional_kwargs", sanitized_ak or {})
+                            except Exception:
+                                pass
+                    except Exception:
+                        try:
+                            data = copy.deepcopy(getattr(msg, "__dict__", {}))
+                            data["content"] = normalized
+                            ak = data.get("additional_kwargs", {}) or {}
+                            data["additional_kwargs"] = strip_openai_reasoning_items(ak) or {}
+                            msg_copy = type(msg)(**data)
+                        except Exception:
+                            msg_copy = msg
                     messages.append(msg_copy)
                 else:
                     messages.append(msg)
@@ -1015,24 +1059,29 @@ If you continue without tool calls, the session will automatically terminate aft
         )
 
     def _inject_agent_id(self, message: BaseMessage) -> BaseMessage:
-        """Inject agent_id and parent_agent_id into a message's additional_kwargs."""
+        """Inject agent_id and parent_agent_id into a message's additional_kwargs.
+
+        Uses deep copies to avoid mutating shared message objects that LangGraph
+        or LangChain may keep references to. This prevents subtle bugs where
+        output-only items (like OpenAI 'reasoning' parts) leak back into inputs.
+        """
         try:
-            if hasattr(message, 'additional_kwargs'):
+            if hasattr(message, "additional_kwargs"):
                 # Build agent identification kwargs
                 agent_kwargs = {"agent_id": self.username}
                 if self.parent_agent_id:
                     agent_kwargs["parent_agent_id"] = self.parent_agent_id
-                
-                # Create enhanced message with agent identification in additional_kwargs
-                enhanced_message = type(message)(
-                    **{
-                        **message.__dict__,
-                        "additional_kwargs": {
-                            **agent_kwargs,
-                            **getattr(message, 'additional_kwargs', {}),
-                        }
-                    }
-                )
+
+                enhanced_message = copy.deepcopy(message)
+                current_kwargs = getattr(enhanced_message, "additional_kwargs", {}) or {}
+                try:
+                    setattr(
+                        enhanced_message,
+                        "additional_kwargs",
+                        {**agent_kwargs, **current_kwargs},
+                    )
+                except Exception:
+                    return message
                 return enhanced_message
             return message
         except Exception:
